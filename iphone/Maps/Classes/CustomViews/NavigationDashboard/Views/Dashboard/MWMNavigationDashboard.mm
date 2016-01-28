@@ -28,7 +28,7 @@
   if (IPAD)
     self.statusbarBackground = nil;
   [self.progress setThumbImage:[UIImage imageNamed:@"progress_circle_light"] forState:UIControlStateNormal];
-  [self.progress setMaximumTrackTintColor:[UIColor colorWithWhite:0. alpha:0.08]];
+  [self.progress setMaximumTrackTintColor:[UIColor blackOpaque]];
   [self.progress setMinimumTrackTintColor:[UIColor blackSecondaryText]];
   CALayer * l = self.layer;
   l.shouldRasterize = YES;
@@ -38,6 +38,7 @@
 - (void)configureWithEntity:(MWMNavigationDashboardEntity *)entity
 {
   self.direction.image = entity.turnImage;
+  [self.direction makeImageAlwaysTemplate];
   if (!entity.isPedestrian)
     self.direction.transform = CGAffineTransformIdentity;
   self.distanceToNextAction.text = entity.distanceToTurn;
@@ -69,7 +70,6 @@
   {
     if (!v.hidden)
       height += v.height;
-    continue;
   }
   return height;
 }

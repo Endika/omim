@@ -12,19 +12,21 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.mapswithme.maps.LocationState;
 import com.mapswithme.maps.MwmApplication;
 import com.mapswithme.maps.R;
+import com.mapswithme.maps.background.AppBackgroundTracker;
+import com.mapswithme.maps.bookmarks.data.MapObject;
+import com.mapswithme.util.Listeners;
 import com.mapswithme.util.LocationUtils;
 import com.mapswithme.util.concurrency.UiThread;
 import com.mapswithme.util.log.Logger;
 import com.mapswithme.util.log.SimpleLogger;
-
-import java.util.HashSet;
 
 public enum LocationHelper implements SensorEventListener
 {
@@ -38,23 +40,25 @@ public enum LocationHelper implements SensorEventListener
   public static final int ERROR_GPS_OFF = 3;
 
   public static final String LOCATION_PREDICTOR_PROVIDER = "LocationPredictorProvider";
-  private static final long STOP_DELAY = 5000;
+  private static final float DISTANCE_TO_RECREATE_MAGNETIC_FIELD_M = 1000;
+  private static final long STOP_DELAY_MS = 5000;
 
   public interface LocationListener
   {
     void onLocationUpdated(final Location l);
-
     void onCompassUpdated(long time, double magneticNorth, double trueNorth, double accuracy);
-
     void onLocationError(int errorCode);
   }
 
-  private final HashSet<LocationListener> mListeners = new HashSet<>();
+  private final Listeners<LocationListener> mListeners = new Listeners<>();
+
+  private boolean mActive;
 
   private Location mLastLocation;
+  private MapObject.MyPosition mMyPosition;
   private long mLastLocationTime;
 
-  private SensorManager mSensorManager;
+  private final SensorManager mSensorManager;
   private Sensor mAccelerometer;
   private Sensor mMagnetometer;
   private GeomagneticField mMagneticField;
@@ -66,10 +70,14 @@ public enum LocationHelper implements SensorEventListener
   private final float[] mI = new float[9];
   private final float[] mOrientation = new float[3];
 
-  private Runnable mStopLocationTask = new Runnable() {
+  private final Runnable mStopLocationTask = new Runnable() {
     @Override
     public void run()
     {
+      if (!mActive)
+        return;
+
+      mActive = false;
       mLocationProvider.stopUpdates();
       mMagneticField = null;
       if (mSensorManager != null)
@@ -87,6 +95,15 @@ public enum LocationHelper implements SensorEventListener
       mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
       mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
+
+    MwmApplication.backgroundTracker().addListener(new AppBackgroundTracker.OnTransitionListener()
+    {
+      @Override
+      public void onTransit(boolean foreground)
+      {
+        setForegroundMode();
+      }
+    });
   }
 
   @SuppressWarnings("deprecation")
@@ -129,8 +146,26 @@ public enum LocationHelper implements SensorEventListener
       mLocationProvider = new AndroidNativeProvider();
     }
 
-    if (!mListeners.isEmpty())
+    mActive = !mListeners.isEmpty();
+    if (mActive)
       mLocationProvider.startUpdates();
+  }
+
+  public @Nullable MapObject.MyPosition getMyPosition()
+  {
+    if (!LocationState.isTurnedOn())
+    {
+      mMyPosition = null;
+      return null;
+    }
+
+    if (mLastLocation == null)
+      return null;
+
+    if (mMyPosition == null)
+      mMyPosition = new MapObject.MyPosition(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+
+    return mMyPosition;
   }
 
   public Location getLastLocation() { return mLastLocation; }
@@ -140,65 +175,81 @@ public enum LocationHelper implements SensorEventListener
   public void setLastLocation(@NonNull Location loc)
   {
     mLastLocation = loc;
+    mMyPosition = null;
     mLastLocationTime = System.currentTimeMillis();
     notifyLocationUpdated();
   }
 
-  void notifyLocationUpdated()
+  protected void notifyLocationUpdated()
   {
     if (mLastLocation == null)
       return;
 
     for (LocationListener listener : mListeners)
       listener.onLocationUpdated(mLastLocation);
+    mListeners.finishIterate();
   }
 
-  void notifyLocationError(int errCode)
+  protected void notifyLocationError(int errCode)
   {
     for (LocationListener listener : mListeners)
       listener.onLocationError(errCode);
+    mListeners.finishIterate();
   }
 
   private void notifyCompassUpdated(long time, double magneticNorth, double trueNorth, double accuracy)
   {
     for (LocationListener listener : mListeners)
       listener.onCompassUpdated(time, magneticNorth, trueNorth, accuracy);
+    mListeners.finishIterate();
   }
 
-  public void addLocationListener(LocationListener listener)
+  @android.support.annotation.UiThread
+  public void addLocationListener(LocationListener listener, boolean forceUpdate)
   {
     UiThread.cancelDelayedTasks(mStopLocationTask);
+
     if (mListeners.isEmpty())
+    {
+      mActive = true;
       mLocationProvider.startUpdates();
-    mListeners.add(listener);
-    notifyLocationUpdated();
+    }
+
+    mListeners.register(listener);
+
+    if (forceUpdate)
+      notifyLocationUpdated();
   }
 
+  @android.support.annotation.UiThread
   public void removeLocationListener(LocationListener listener)
   {
-    mListeners.remove(listener);
-    if (mListeners.isEmpty())
+    boolean wasEmpty = mListeners.isEmpty();
+    mListeners.unregister(listener);
+
+    if (!wasEmpty && mListeners.isEmpty())
       // Make a delay with disconnection from location providers, so that orientation changes and short app sleeps
       // doesn't take long time to connect again.
-      UiThread.runLater(mStopLocationTask, STOP_DELAY);
+      UiThread.runLater(mStopLocationTask, STOP_DELAY_MS);
   }
 
   void registerSensorListeners()
   {
     if (mSensorManager != null)
     {
-      final int COMPASS_REFRESH_MKS = SensorManager.SENSOR_DELAY_UI;
-
       if (mAccelerometer != null)
-        mSensorManager.registerListener(this, mAccelerometer, COMPASS_REFRESH_MKS);
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
       if (mMagnetometer != null)
-        mSensorManager.registerListener(this, mMagnetometer, COMPASS_REFRESH_MKS);
+        mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
     }
   }
 
   @Override
   public void onSensorChanged(SensorEvent event)
   {
+    if (!MwmApplication.get().isFrameworkInitialized())
+      return;
+
     boolean hasOrientation = false;
 
     switch (event.sensor.getType())
@@ -237,8 +288,6 @@ public enum LocationHelper implements SensorEventListener
     }
   }
 
-  private native float[] nativeUpdateCompassSensor(int ind, float[] arr);
-
   @Override
   public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
@@ -248,9 +297,34 @@ public enum LocationHelper implements SensorEventListener
     {
       // Recreate magneticField if location has changed significantly
       if (mMagneticField == null || mLastLocation == null ||
-          newLocation.distanceTo(mLastLocation) > BaseLocationProvider.DISTANCE_TO_RECREATE_MAGNETIC_FIELD_M)
+          newLocation.distanceTo(mLastLocation) > DISTANCE_TO_RECREATE_MAGNETIC_FIELD_M)
         mMagneticField = new GeomagneticField((float) newLocation.getLatitude(), (float) newLocation.getLongitude(),
             (float) newLocation.getAltitude(), newLocation.getTime());
     }
   }
+
+  private void setForegroundMode()
+  {
+    if (!mActive)
+      return;
+
+    mLocationProvider.stopUpdates();
+    if (!mListeners.isEmpty())
+      mLocationProvider.startUpdates();
+  }
+
+  public static void onLocationUpdated(@NonNull Location location)
+  {
+    nativeLocationUpdated(location.getTime(),
+                          location.getLatitude(),
+                          location.getLongitude(),
+                          location.getAccuracy(),
+                          location.getAltitude(),
+                          location.getSpeed(),
+                          location.getBearing());
+  }
+
+  public static native void nativeOnLocationError(int errorCode);
+  private static native void nativeLocationUpdated(long time, double lat, double lon, float accuracy, double altitude, float speed, float bearing);
+  private static native float[] nativeUpdateCompassSensor(int ind, float[] arr);
 }

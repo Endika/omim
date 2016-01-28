@@ -146,6 +146,11 @@ string FeatureParamsBase::DebugString() const
           (!ref.empty() ? " Ref:" + ref : ""));
 }
 
+bool FeatureParamsBase::IsEmptyNames() const
+{
+  return name.IsEmpty() && house.IsEmpty() && ref.empty();
+}
+
 namespace
 {
 
@@ -354,6 +359,10 @@ bool FeatureParams::FinishAddingTypes()
 
     newTypes.push_back(candidate);
   }
+
+  // Remove duplicated types.
+  sort(newTypes.begin(), newTypes.end());
+  newTypes.erase(unique(newTypes.begin(), newTypes.end()), newTypes.end());
 
   m_Types.swap(newTypes);
 

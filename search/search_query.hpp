@@ -1,6 +1,7 @@
 #pragma once
 #include "intermediate_result.hpp"
 #include "keyword_lang_matcher.hpp"
+#include "suggest.hpp"
 
 #include "indexer/ftypes_matcher.hpp"
 #include "indexer/search_trie.hpp"
@@ -54,25 +55,9 @@ namespace impl
 class Query : public my::Cancellable
 {
 public:
-  struct TSuggest
-  {
-    strings::UniString m_name;
-    uint8_t m_prefixLength;
-    int8_t m_locale;
-
-    TSuggest(strings::UniString const & name, uint8_t len, int8_t locale)
-      : m_name(name), m_prefixLength(len), m_locale(locale)
-    {
-    }
-  };
-
-  // Vector of suggests.
-  using TStringsToSuggestVector = vector<TSuggest>;
-
-  Query(Index const * pIndex, CategoriesHolder const * pCategories,
-        TStringsToSuggestVector const * pStringsToSuggest,
-        storage::CountryInfoGetter const * pInfoGetter);
-  virtual ~Query();
+  Query(Index & index, CategoriesHolder const & categories,
+        vector<Suggest> const & suggests,
+        storage::CountryInfoGetter const & infoGetter);
 
   inline void SupportOldFormat(bool b) { m_supportOldFormat = b; }
 
@@ -129,6 +114,8 @@ private:
 
   int GetCategoryLocales(int8_t (&arr) [3]) const;
   template <class ToDo> void ForEachCategoryTypes(ToDo toDo) const;
+  template <class ToDo> void ProcessEmojiIfNeeded(
+      strings::UniString const & token, size_t ind, ToDo & toDo) const;
 
   using TMWMVector = vector<shared_ptr<MwmInfo>>;
   using TOffsetsVector = map<MwmSet::MwmId, vector<uint32_t>>;
@@ -189,10 +176,10 @@ private:
   Result MakeResult(impl::PreResult2 const & r) const;
   void MakeResultHighlight(Result & res) const;
 
-  Index const * m_pIndex;
-  CategoriesHolder const * m_pCategories;
-  TStringsToSuggestVector const * m_pStringsToSuggest;
-  storage::CountryInfoGetter const * m_pInfoGetter;
+  Index & m_index;
+  CategoriesHolder const & m_categories;
+  vector<Suggest> const & m_suggests;
+  storage::CountryInfoGetter const & m_infoGetter;
 
   string m_region;
   string const * m_query;

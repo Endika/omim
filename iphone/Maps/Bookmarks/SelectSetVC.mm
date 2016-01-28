@@ -1,8 +1,9 @@
-
-#import "SelectSetVC.h"
 #import "AddSetVC.h"
-#import "MWMPlacePageViewManager.h"
+#import "Common.h"
 #import "MWMPlacePageEntity.h"
+#import "MWMPlacePageViewManager.h"
+#import "SelectSetVC.h"
+#import "UIColor+MapsMeColor.h"
 #import "UIViewController+Navigation.h"
 
 #include "Framework.h"
@@ -29,20 +30,22 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  if (!self.iPadOwnerNavigationController)
-    return;
-
   [self.iPadOwnerNavigationController setNavigationBarHidden:NO];
-  [(UIViewController *)self showBackButton];
-  CGFloat const bottomOffset = 88.;
-  self.iPadOwnerNavigationController.view.height = self.tableView.height + bottomOffset;
+  if (self.iPadOwnerNavigationController)
+  {
+    [(UIViewController *)self showBackButton];
+    [self.tableView reloadData];
+    CGFloat const navBarHeight = self.navigationController.navigationBar.height;
+    [UIView animateWithDuration:kDefaultAnimationDuration animations:^
+    {
+      [self.manager changeHeight:self.tableView.contentSize.height + navBarHeight];
+    }];
+  }
 }
 
 - (void)popViewController
 {
-  if (self.iPadOwnerNavigationController)
-    [self.iPadOwnerNavigationController setNavigationBarHidden:YES];
-
+  [self.iPadOwnerNavigationController setNavigationBarHidden:YES];
   [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -72,11 +75,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  static NSString * kSetCellId = @"AddSetCell";
-  UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:kSetCellId];
-  if (cell == nil)
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:kSetCellId];
-  // Customize cell
+  UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:[UITableViewCell className]];
   if (indexPath.section == 0)
   {
     cell.textLabel.text = L(@"add_new_set");
@@ -95,6 +94,8 @@
     else
       cell.accessoryType = UITableViewCellAccessoryNone;
   }
+  cell.backgroundColor = [UIColor white];
+  cell.textLabel.textColor = [UIColor blackPrimaryText];
   return cell;
 }
 
@@ -116,6 +117,7 @@
 
   BookmarkCategory const * category = GetFramework().GetBookmarkManager().GetBmCategory(bac.first);
   entity.bookmarkCategory = @(category->GetName().c_str());
+  [self.manager changeBookmarkCategory:bac];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

@@ -19,15 +19,17 @@ static NSString * const kStatisticsEvent = @"Routing Disclaimer Alert";
 
 + (instancetype)alertWithInitialOrientation:(UIInterfaceOrientation)orientation
 {
-  [Statistics.instance logEvent:[NSString stringWithFormat:@"%@ - %@", kStatisticsEvent, @"open"]];
+  [[Statistics instance] logEvent:kStatisticsEvent withParameters:@{kStatAction : kStatOpen}];
   MWMRoutingDisclaimerAlert * alert = [[[NSBundle mainBundle] loadNibNamed:[MWMRoutingDisclaimerAlert className]
                                                                      owner:nil
                                                                    options:nil] firstObject];
-  NSString * message = [NSString stringWithFormat:@"%@\n\n%@\n\n%@\n\n%@",
+  NSString * message = [NSString stringWithFormat:@"%@\n\n%@\n\n%@\n\n%@\n\n%@",
                         L(@"dialog_routing_disclaimer_priority"),
                         L(@"dialog_routing_disclaimer_precision"),
                         L(@"dialog_routing_disclaimer_recommendations"),
+                        L(@"dialog_routing_disclaimer_borders"),
                         L(@"dialog_routing_disclaimer_beware")];
+
   alert.textView.attributedText = [[NSAttributedString alloc] initWithString:message
                                                       attributes:@{NSFontAttributeName : UIFont.regular14,
                                                         NSForegroundColorAttributeName : UIColor.blackSecondaryText}];
@@ -44,7 +46,7 @@ static NSString * const kStatisticsEvent = @"Routing Disclaimer Alert";
 
 - (IBAction)okTap
 {
-  [Statistics.instance logEvent:[NSString stringWithFormat:@"%@ - %@", kStatisticsEvent, @"okTap"]];
+  [[Statistics instance] logEvent:kStatisticsEvent withParameters:@{kStatAction : kStatApply}];
   [self close];
 }
 
@@ -65,7 +67,7 @@ static NSString * const kStatisticsEvent = @"Routing Disclaimer Alert";
 - (CGFloat)bounded:(CGFloat)f withHeight:(CGFloat)h
 {
   CGFloat const currentHeight = [self.subviews.firstObject height];
-  CGFloat const maximumHeight = h - 2. * kMinimumOffset;
+  CGFloat const maximumHeight = h - (isIOSVersionLessThan(8) ? 4. : 2.) * kMinimumOffset;
   CGFloat const availableHeight = maximumHeight - currentHeight;
   return MIN(f, availableHeight + self.textViewHeight.constant);
 }

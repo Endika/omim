@@ -1,6 +1,9 @@
+#import "Common.h"
 #import "MWMPlacePageEntity.h"
 #import "MWMPlacePageInfoCell.h"
+#import "Statistics.h"
 #import "UIFont+MapsMeFonts.h"
+#import "UIImageView+Coloring.h"
 
 #include "platform/settings.hpp"
 #include "platform/measurement_utils.hpp"
@@ -21,44 +24,50 @@ extern NSString * const kUserDefaultsLatLonAsDMSKey;
 
 - (void)configureWithType:(MWMPlacePageMetadataType)type info:(NSString *)info;
 {
-  NSMutableString * imageName = [@"ic_" mutableCopy];
+  NSString * typeName = nil;
   switch (type)
   {
     case MWMPlacePageMetadataTypeURL:
     case MWMPlacePageMetadataTypeWebsite:
-      [imageName appendString:@"Website"];
+      typeName = @"website";
       break;
     case MWMPlacePageMetadataTypeEmail:
-      [imageName appendString:@"Email"];
+      typeName = @"email";
       break;
     case MWMPlacePageMetadataTypePhoneNumber:
-      [imageName appendString:@"PhoneNumber"];
+      typeName = @"phone_number";
       break;
     case MWMPlacePageMetadataTypeCoordinate:
-      [imageName appendString:@"Coordinate"];
+      typeName = @"coordinate";
       break;
     case MWMPlacePageMetadataTypePostcode:
-      [imageName appendString:@"Postcode"];
+      typeName = @"postcode";
       break;
     case MWMPlacePageMetadataTypeOpenHours:
-      [imageName appendString:@"OpenHours"];
+      typeName = @"open_hours";
       break;
     case MWMPlacePageMetadataTypeWiFi:
-      [imageName appendFormat:@"WiFi"];
+      typeName = @"wifi";
       break;
     case MWMPlacePageMetadataTypeBookmark:
       NSAssert(false, @"Incorrect type!");
       break;
   }
   
-  UIImage * image = [UIImage imageNamed:imageName];
+  UIImage * image = [UIImage imageNamed:[NSString stringWithFormat:@"%@%@", @"ic_placepage_", typeName]];
   self.type = type;
   self.icon.image = image;
 
   if ([self.textContainer isKindOfClass:[UITextView class]])
+  {
     [self.textContainer setAttributedText:[[NSAttributedString alloc] initWithString:info attributes:@{NSFontAttributeName : [UIFont light16]}]];
+    self.icon.mwm_coloring = MWMImageColoringBlue;
+  }
   else
+  {
     [self.textContainer setText:info];
+    self.icon.mwm_coloring = MWMImageColoringBlack;
+  }
 
   UILongPressGestureRecognizer * longTap = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longTap:)];
   longTap.minimumPressDuration = 0.3;
@@ -73,16 +82,34 @@ extern NSString * const kUserDefaultsLatLonAsDMSKey;
 - (void)layoutSubviews
 {
   CGFloat const leftOffset = 16.;
-  CGFloat const topOffset = 15.;;
-  self.icon.origin = CGPointMake(leftOffset, topOffset);
-  [self.textContainer setMinX:3 * leftOffset];
+  CGFloat const topOffset = 8.;
+  CGFloat const textOffset= 60.;
+  self.icon.origin = {leftOffset, topOffset};
+  [self.textContainer setMinX:textOffset];
 }
 
 - (IBAction)cellTap
 {
+  switch (self.type)
+  {
+    case MWMPlacePageMetadataTypeURL:
+    case MWMPlacePageMetadataTypeWebsite:
+      [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatOpenSite)];
+      break;
+    case MWMPlacePageMetadataTypeEmail:
+      [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatSendEmail)];
+      break;
+    case MWMPlacePageMetadataTypePhoneNumber:
+      [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatCallPhoneNumber)];
+      break;
+    case MWMPlacePageMetadataTypeCoordinate:
+      [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatToggleCoordinates)];
+      break;
+    default:
+      break;
+  }
   if (self.type != MWMPlacePageMetadataTypeCoordinate)
     return;
-
   NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
   BOOL const showLatLonAsDMS = [defaults boolForKey:kUserDefaultsLatLonAsDMSKey];
   m2::PointD const point = self.currentEntity.point;

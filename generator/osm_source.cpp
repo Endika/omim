@@ -11,7 +11,7 @@
 #include "generator/osm_element.hpp"
 
 #include "indexer/classificator.hpp"
-#include "indexer/mercator.hpp"
+#include "geometry/mercator.hpp"
 
 #include "coding/parse_xml.hpp"
 
@@ -312,12 +312,21 @@ public:
     }
     else if (m_coastsHolder)
     {
-      feature::ForEachFromDatRawFormat(m_srcCoastsFile, [this](FeatureBuilder1 const & fb, uint64_t)
+      CHECK(m_countries, ());
+
+      feature::ForEachFromDatRawFormat(m_srcCoastsFile, [this](FeatureBuilder1 fb, uint64_t)
       {
+        auto & emitter = m_countries->Parent();
+
+        emitter.Start();
+        (*m_countries)(fb);
+        emitter.Finish();
+
         if (m_coastsHolder)
+        {
+          fb.AddName("default", emitter.m_currentNames);
           (*m_coastsHolder)(fb);
-        if (m_countries)
-          (*m_countries)(fb);
+        }
       });
     }
     return true;

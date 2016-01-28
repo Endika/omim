@@ -49,13 +49,14 @@ static size_t constexpr kCategoriesCount = ARRAY_SIZE(categoriesNames);
 - (void)tableView:(UITableView *)tableView willDisplayCell:(MWMSearchCategoryCell *)cell
 forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  [cell setCategory:@(categoriesNames[indexPath.row]) isLightTheme:YES];
+  [cell setCategory:@(categoriesNames[indexPath.row])];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   NSString * string = @(categoriesNames[indexPath.row]);
-  [Statistics.instance logEvent:@"Category Selection" withParameters:@{ @"Category" : string }];
+  [[Statistics instance] logEvent:kStatEventName(kStatSearch, kStatSelectResult)
+                   withParameters:@{kStatValue : string, kStatScreen : kStatCategories}];
   [self.delegate searchText:[L(string) stringByAppendingString:@" "] forInputLocale:nil];
 }
 

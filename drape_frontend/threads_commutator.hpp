@@ -7,7 +7,8 @@ namespace df
 {
 
 class Message;
-class MessageAcceptor;
+enum class MessagePriority;
+class BaseRenderer;
 
 class ThreadsCommutator
 {
@@ -18,12 +19,12 @@ public:
     ResourceUploadThread
   };
 
-  void RegisterThread(ThreadName name, MessageAcceptor *acceptor);
-  void PostMessage(ThreadName name, dp::TransferPointer<Message> message);
+  void RegisterThread(ThreadName name, BaseRenderer * acceptor);
+  void PostMessage(ThreadName name, drape_ptr<Message> && message, MessagePriority priority);
 
 private:
-  typedef map<ThreadName, MessageAcceptor *> acceptors_map_t;
-   acceptors_map_t m_acceptors;
+  using TAcceptorsMap = map<ThreadName, BaseRenderer *>;
+  TAcceptorsMap m_acceptors;
 };
 
 } // namespace df

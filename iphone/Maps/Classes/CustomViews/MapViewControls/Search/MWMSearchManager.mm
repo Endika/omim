@@ -1,10 +1,14 @@
+#import "LocationManager.h"
+#import "MapsAppDelegate.h"
 #import "MapsObservers.h"
 #import "MWMConsole.h"
+#import "MWMRoutingProtocol.h"
 #import "MWMSearchDownloadViewController.h"
 #import "MWMSearchManager.h"
 #import "MWMSearchTabbedViewController.h"
 #import "MWMSearchTabButtonsView.h"
 #import "MWMSearchTableViewController.h"
+#import "Statistics.h"
 
 #import "3party/Alohalytics/src/alohalytics_objc.h"
 
@@ -12,6 +16,8 @@
 #include "map/active_maps_layout.hpp"
 
 extern NSString * const kAlohalyticsTapEventKey;
+extern NSString * const kSearchStateWillChangeNotification = @"SearchStateWillChangeNotification";
+extern NSString * const kSearchStateKey = @"SearchStateKey";
 
 @interface MWMSearchManager ()<MWMSearchTableViewProtocol, MWMSearchDownloadProtocol,
                                MWMSearchTabbedViewProtocol, ActiveMapsObserverProtocol,
@@ -39,7 +45,7 @@ extern NSString * const kAlohalyticsTapEventKey;
 }
 
 - (nullable instancetype)initWithParentView:(nonnull UIView *)view
-                                   delegate:(nonnull id<MWMSearchManagerProtocol, MWMSearchViewProtocol>)delegate
+                                   delegate:(nonnull id<MWMSearchManagerProtocol, MWMSearchViewProtocol, MWMRoutingProtocol>)delegate
 {
   self = [super init];
   if (self)
@@ -48,10 +54,18 @@ extern NSString * const kAlohalyticsTapEventKey;
     self.delegate = delegate;
     self.rootView.delegate = delegate;
     self.parentView = view;
-    self.searchTextField.placeholder = L(@"search");
     self.state = MWMSearchManagerStateHidden;
   }
   return self;
+}
+
+- (void)refresh
+{
+  [self.rootView refresh];
+  if (self.state == MWMSearchManagerStateHidden)
+    return;
+  [self.tabbedController refresh];
+  [self.tableViewController refresh];
 }
 
 - (void)beginSearch
@@ -103,8 +117,13 @@ extern NSString * const kAlohalyticsTapEventKey;
 
 - (IBAction)cancelButtonPressed
 {
+  [[Statistics instance] logEvent:kStatEventName(kStatSearch, kStatCancel)];
   [Alohalytics logEvent:kAlohalyticsTapEventKey withValue:@"searchCancel"];
   self.state = MWMSearchManagerStateHidden;
+  MapsAppDelegate * a = MapsAppDelegate.theApp;
+  MWMRoutingPlaneMode const m = a.routingPlaneMode;
+  if (m == MWMRoutingPlaneModeSearchDestination || m == MWMRoutingPlaneModeSearchSource)
+    a.routingPlaneMode = MWMRoutingPlaneModePlacePage;
 }
 
 - (void)tabButtonPressed:(MWMSearchTabButtonsView *)sender
@@ -146,6 +165,39 @@ extern NSString * const kAlohalyticsTapEventKey;
   self.searchTextField.text = text;
   NSString * inputLocale = locale ? locale : self.searchTextField.textInputMode.primaryLanguage;
   [self.tableViewController searchText:text forInputLocale:inputLocale];
+}
+
+- (void)tapMyPositionFromHistory
+{
+  MapsAppDelegate * a = MapsAppDelegate.theApp;
+  MWMRoutePoint const p = MWMRoutePoint::MWMRoutePoint(a.m_locationManager.lastLocation.mercator);
+  if (a.routingPlaneMode == MWMRoutingPlaneModeSearchSource)
+    [self.delegate buildRouteFrom:p];
+  else if (a.routingPlaneMode == MWMRoutingPlaneModeSearchDestination)
+    [self.delegate buildRouteTo:p];
+  else
+    NSAssert(false, @"Incorrect state for process my position tap");
+  if (!IPAD)
+    a.routingPlaneMode = MWMRoutingPlaneModePlacePage;
+  self.state = MWMSearchManagerStateHidden;
+}
+
+- (void)processSearchWithResult:(search::Result const &)result query:(search::QuerySaver::TSearchRequest const &)query
+{
+  auto & f = GetFramework();
+  f.SaveSearchQuery(query);
+  MapsAppDelegate * a = MapsAppDelegate.theApp;
+  MWMRoutingPlaneMode const m = a.routingPlaneMode;
+  MWMRoutePoint const p = {result.GetFeatureCenter(), @(result.GetString())};
+  if (m == MWMRoutingPlaneModeSearchSource)
+    [self.delegate buildRouteFrom:p];
+  else if (m == MWMRoutingPlaneModeSearchDestination)
+     [self.delegate buildRouteTo:p];
+  else
+    f.ShowSearchResult(result);
+  if (!IPAD && a.routingPlaneMode != MWMRoutingPlaneModeNone)
+    a.routingPlaneMode = MWMRoutingPlaneModePlacePage;
+  self.state = MWMSearchManagerStateHidden;
 }
 
 #pragma mark - MWMSearchDownloadMapRequest
@@ -219,6 +271,7 @@ extern NSString * const kAlohalyticsTapEventKey;
 
 - (void)changeToDefaultState
 {
+  self.view.alpha = 1.;
   GetFramework().PrepareSearch();
   [self updateTopController];
   [self.navigationController popToRootViewControllerAnimated:NO];
@@ -239,11 +292,12 @@ extern NSString * const kAlohalyticsTapEventKey;
 {
   Framework & f = GetFramework();
   UITextField * textField = self.searchTextField;
-  f.SaveSearchQuery(make_pair(textField.textInputMode.primaryLanguage.UTF8String,
-                              textField.text.precomposedStringWithCompatibilityMapping.UTF8String));
-  PinClickManager & bm = f.GetBalloonManager();
-  bm.RemovePin();
-  bm.Dismiss();
+
+  string const locale = textField.textInputMode.primaryLanguage ?
+            textField.textInputMode.primaryLanguage.UTF8String :
+            self.tableViewController.searchParams.m_inputLocale;
+  f.SaveSearchQuery(make_pair(locale, textField.text.precomposedStringWithCompatibilityMapping.UTF8String));
+  f.ActivateUserMark(nullptr, true);
   [self.searchTextField resignFirstResponder];
   self.rootView.compact = YES;
   self.tableViewController.searchOnMap = YES;
@@ -318,24 +372,32 @@ extern NSString * const kAlohalyticsTapEventKey;
 {
   if (_state == state)
     return;
-  [self.delegate searchViewWillEnterState:state];
+  [[NSNotificationCenter defaultCenter] postNotificationName:kSearchStateWillChangeNotification
+                                                      object:nil
+                                                    userInfo:@{
+                                                      kSearchStateKey : @(state)
+                                                    }];
   if (_state == MWMSearchManagerStateHidden)
     [self changeFromHiddenState];
   _state = state;
   switch (state)
   {
-    case MWMSearchManagerStateHidden:
-      [self changeToHiddenState];
-      break;
-    case MWMSearchManagerStateDefault:
-      [self changeToDefaultState];
-      break;
-    case MWMSearchManagerStateTableSearch:
-      [self changeToTableSearchState];
-      break;
-    case MWMSearchManagerStateMapSearch:
-      [self changeToMapSearchState];
-      break;
+  case MWMSearchManagerStateHidden:
+    [[Statistics instance] logEvent:kStatSearchEnteredState withParameters:@{kStatName : kStatClose}];
+    [self changeToHiddenState];
+    break;
+  case MWMSearchManagerStateDefault:
+    [[Statistics instance] logEvent:kStatSearchEnteredState withParameters:@{kStatName : kStatOpen}];
+    [self changeToDefaultState];
+    break;
+  case MWMSearchManagerStateTableSearch:
+    [[Statistics instance] logEvent:kStatSearchEnteredState withParameters:@{kStatName : kStatTable}];
+    [self changeToTableSearchState];
+    break;
+  case MWMSearchManagerStateMapSearch:
+    [[Statistics instance] logEvent:kStatSearchEnteredState withParameters:@{kStatName : kStatMap}];
+    [self changeToMapSearchState];
+    break;
   }
   [self.delegate searchViewDidEnterState:state];
 }

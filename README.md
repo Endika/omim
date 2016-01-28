@@ -19,7 +19,7 @@ and Android debug packages.
 For detailed installation instructions and Android/iOS building process,
 see [INSTALL.md](https://github.com/mapsme/omim/tree/master/docs/INSTALL.md).
 
-Nightly builds for Android and iOS are published to [osmz.ru](http://osmz.ru/mwm/)
+Nightly builds for Android are published to [osmz.ru](http://osmz.ru/mwm/)
 and Dropbox: [release](http://maps.me/release), [debug](http://maps.me/debug).
 
 ## Building maps
@@ -27,7 +27,7 @@ and Dropbox: [release](http://maps.me/release), [debug](http://maps.me/debug).
 To create one or many map files, first build the project, then use `generate_mwm.sh` script from
 `tools/unix` to create a single mwm file from pbf/o5m/bz2 source, or `generate_planet.sh`
 to generate multiple countries at once from a planet o5m file. See detailed instructions
-in [MWM.md](https://github.com/mapsme/omim/tree/master/docs/MWM.md).
+in [MAPS.md](https://github.com/mapsme/omim/tree/master/docs/MAPS.md).
 
 ## Map styles
 
@@ -66,4 +66,4 @@ or by mail to bugs@maps.me.
 
 This source code is Copyright (C) 2015 My.com B.V. (Mail.Ru Group), published under Apache Public License 2.0,
 except third-party libraries. See [NOTICE](https://github.com/mapsme/omim/blob/master/NOTICE)
-and [data/copyright.html](https://github.com/mapsme/omim/blob/master/data/copyright.html) files for more information.
+and [data/copyright.html](http://htmlpreview.github.io/?https://github.com/mapsme/omim/blob/master/data/copyright.html) files for more information.

@@ -2,12 +2,6 @@
 #import "UIColor+MapsMeColor.h"
 #import "UIFont+MapsMeFonts.h"
 
-static NSDictionary * const kSelectedAttributes =
-    @{NSForegroundColorAttributeName : UIColor.linkBlue, NSFontAttributeName : UIFont.bold16};
-
-static NSDictionary * const kUnelectedAttributes =
-    @{NSForegroundColorAttributeName : UIColor.linkBlue, NSFontAttributeName : UIFont.regular16};
-
 @interface MWMSearchSuggestionCell ()
 
 @property (weak, nonatomic) IBOutlet UIImageView * icon;
@@ -17,14 +11,20 @@ static NSDictionary * const kUnelectedAttributes =
 
 @implementation MWMSearchSuggestionCell
 
+- (void)awakeFromNib
+{
+  if (IPAD)
+    self.contentView.backgroundColor = [UIColor white];
+}
+
 - (NSDictionary *)selectedTitleAttributes
 {
-  return kSelectedAttributes;
+  return @{NSForegroundColorAttributeName : UIColor.linkBlue, NSFontAttributeName : UIFont.bold16};
 }
 
 - (NSDictionary *)unselectedTitleAttributes
 {
-  return kUnelectedAttributes;
+  return @{NSForegroundColorAttributeName : UIColor.linkBlue, NSFontAttributeName : UIFont.regular16};
 }
 
 + (CGFloat)cellHeight
@@ -33,12 +33,6 @@ static NSDictionary * const kUnelectedAttributes =
 }
 
 #pragma mark - Properties
-
-- (void)setIsLightTheme:(BOOL)isLightTheme
-{
-  _isLightTheme = isLightTheme;
-  self.icon.image = [UIImage imageNamed:isLightTheme ? @"ic_search_suggest_light" : @"ic_search_suggest_dark"];
-}
 
 - (void)setIsLastCell:(BOOL)isLastCell
 {

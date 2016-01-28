@@ -4,6 +4,7 @@
 #import "MWMSearchTabbedViewController.h"
 #import "MWMSearchTabbedViewLayout.h"
 #import "MWMSearchTabbedViewProtocol.h"
+#import "Statistics.h"
 
 #include "Framework.h"
 
@@ -55,14 +56,20 @@ BOOL isOffsetInButton(CGFloat offset, MWMSearchTabButtonsView * button)
   [self resetSelectedTab];
 }
 
+- (void)refresh
+{
+  [self.view refresh];
+}
+
 - (void)resetSelectedTab
 {
-  self.selectedButtonTag = GetFramework().GetLastSearchQueries().empty() ? 1 : 0;
+  self.selectedButtonTag = GetFramework().GetLastSearchQueries().empty() && !self.historyManager.isRouteSearchMode ? 1 : 0;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
   [self.tablesCollectionView reloadData];
+  [self resetSelectedTab];
   [self refreshScrollPosition];
   [super viewWillAppear:animated];
 }
@@ -135,6 +142,19 @@ BOOL isOffsetInButton(CGFloat offset, MWMSearchTabButtonsView * button)
   {
     if (isOffsetInButton(btnMid, btn))
     {
+      switch (btn.tag)
+      {
+      case MWMSearchTabbedViewCellHistory:
+        [[Statistics instance] logEvent:kStatEventName(kStatSearch, kStatSelectTab)
+                         withParameters:@{kStatValue : kStatHistory}];
+        break;
+      case MWMSearchTabbedViewCellCategories:
+        [[Statistics instance] logEvent:kStatEventName(kStatSearch, kStatSelectTab)
+                         withParameters:@{kStatValue : kStatCategories}];
+        break;
+      default:
+        break;
+      }
       self.selectedButton = btn;
       *stop = YES;
     }

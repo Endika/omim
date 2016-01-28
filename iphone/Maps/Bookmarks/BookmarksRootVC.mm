@@ -1,6 +1,9 @@
 #import "BookmarksRootVC.h"
 #import "BookmarksVC.h"
 #import "Common.h"
+#import "Statistics.h"
+#import "UIColor+MapsMeColor.h"
+#import "UIImageView+Coloring.h"
 
 #include "Framework.h"
 #include "platform/platform.hpp"
@@ -52,6 +55,7 @@
     label.textAlignment = NSTextAlignmentCenter;
     label.lineBreakMode = NSLineBreakByWordWrapping;
     label.numberOfLines = 0;
+    label.textColor = [UIColor blackPrimaryText];
     [m_hint addSubview:label];
   }
   UILabel * label = [m_hint.subviews objectAtIndex:0];
@@ -88,8 +92,15 @@
   {
     // Invert visibility
     bool visible = !cat->IsVisible();
-    cell.imageView.image = [UIImage imageNamed:(visible ? @"eye" : @"empty")];
-    cat->SetVisible(visible);
+    [[Statistics instance] logEvent:kStatEventName(kStatBookmarks, kStatToggleVisibility)
+                     withParameters:@{kStatValue : visible ? kStatVisible : kStatHidden}];
+    cell.imageView.image = [UIImage imageNamed:(visible ? @"ic_show" : @"ic_hide")];
+    [cell.imageView makeImageAlwaysTemplate];
+    cell.imageView.mwm_coloring = visible ? MWMImageColoringBlue : MWMImageColoringBlack;
+    {
+      BookmarkCategory::Guard guard(*cat);
+      guard.m_controller.SetIsVisible(visible);
+    }
     cat->SaveToKMLFile();
   }
 }
@@ -115,9 +126,14 @@
   {
     NSString * title = @(cat->GetName().c_str());
     cell.textLabel.text = [self truncateString:title toWidth:(self.tableView.width - 122) withFont:cell.textLabel.font];
-    cell.imageView.image = [UIImage imageNamed:(cat->IsVisible() ? @"eye" : @"empty")];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%ld", cat->GetBookmarksCount() + cat->GetTracksCount()];
+    BOOL const isVisible = cat->IsVisible();
+    cell.imageView.image = [UIImage imageNamed:(isVisible ? @"ic_show" : @"ic_hide")];
+    cell.imageView.mwm_coloring = isVisible ? MWMImageColoringBlue : MWMImageColoringBlack;
+    [cell.imageView makeImageAlwaysTemplate];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%ld", cat->GetUserMarkCount() + cat->GetTracksCount()];
   }
+  cell.backgroundColor = [UIColor white];
+  cell.textLabel.textColor = [UIColor blackPrimaryText];
   return cell;
 }
 
@@ -219,6 +235,7 @@
 {
   if (editingStyle == UITableViewCellEditingStyleDelete)
   {
+    [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatRemove)];
     [[NSNotificationCenter defaultCenter] postNotificationName:BOOKMARK_CATEGORY_DELETED_NOTIFICATION object:@(indexPath.row)];
     Framework & f = GetFramework();
     f.DeleteBmCategory(indexPath.row);
@@ -230,13 +247,6 @@
       [self setEditing:NO animated:YES];
     }
   }
-}
-
-- (void)viewDidLoad
-{
-  [super viewDidLoad];
-  self.tableView.backgroundView = nil;
-  self.tableView.backgroundColor = [UIColor applicationBackgroundColor];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -273,7 +283,7 @@
     else
     {
       cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-      cell.textLabel.textColor = [UIColor blackColor];
+      cell.textLabel.textColor = [UIColor blackPrimaryText];
     }
   }
 }
@@ -281,6 +291,7 @@
 // To hide keyboard and apply changes
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+  [[Statistics instance] logEvent:kStatEventName(kStatBookmarks, kStatRename)];
   if (textField.text.length == 0)
     return YES;
 

@@ -9,12 +9,13 @@
 #include "routing/osrm_engine.hpp"
 #include "routing/cross_routing_context.hpp"
 
+#include "indexer/classificator.hpp"
 #include "indexer/classificator_loader.hpp"
 #include "indexer/data_header.hpp"
 #include "indexer/feature.hpp"
 #include "indexer/ftypes_matcher.hpp"
 #include "indexer/index.hpp"
-#include "indexer/mercator.hpp"
+#include "geometry/mercator.hpp"
 
 #include "geometry/distance_on_sphere.hpp"
 
@@ -39,6 +40,22 @@ namespace routing
 using RawRouteResult = InternalRouteResult;
 
 static double const EQUAL_POINT_RADIUS_M = 2.0;
+
+// For debug purposes only. So I do not use constanst or string representations.
+uint8_t GetWarningRank(FeatureType const & ft)
+{
+  feature::TypesHolder types(ft);
+  Classificator const & c = classif();
+  if (types.Has(c.GetTypeByPath({"highway", "trunk"})) ||
+      types.Has(c.GetTypeByPath({"highway", "trunk_link"})))
+    return 1;
+  if (types.Has(c.GetTypeByPath({"highway", "primary"})) ||
+      types.Has(c.GetTypeByPath({"highway", "primary_link"})) ||
+      types.Has(c.GetTypeByPath({"highway", "secondary"})) ||
+      types.Has(c.GetTypeByPath({"highway", "secondary_link"})))
+    return 2;
+  return 3;
+}
 
 bool LoadIndexes(string const & mwmFile, string const & osrmFile, osrm::NodeDataVectorT & nodeData, gen::OsmID2FeatureID & osm2ft)
 {
@@ -79,10 +96,13 @@ bool CheckBBoxCrossingBorder(m2::RegionD const & border, osrm::NodeData const & 
   return any && !all;
 }
 
-void FindCrossNodes(osrm::NodeDataVectorT const & nodeData, gen::OsmID2FeatureID const & osm2ft, borders::CountriesContainerT const & m_countries, string const & countryName, routing::CrossRoutingContextWriter & crossContext)
+void FindCrossNodes(osrm::NodeDataVectorT const & nodeData, gen::OsmID2FeatureID const & osm2ft,
+                    borders::CountriesContainerT const & countries, string const & countryName,
+                    Index const & index, MwmSet::MwmId mwmId,
+                    routing::CrossRoutingContextWriter & crossContext)
 {
   vector<m2::RegionD> regionBorders;
-  m_countries.ForEach([&](borders::CountryPolygons const & c)
+  countries.ForEach([&](borders::CountryPolygons const & c)
   {
     if (c.m_name == countryName)
       c.m_regions.ForEach([&regionBorders](m2::RegionD const & region)
@@ -91,7 +111,7 @@ void FindCrossNodes(osrm::NodeDataVectorT const & nodeData, gen::OsmID2FeatureID
       });
   });
 
-  for (WritedNodeID nodeId = 0; nodeId < nodeData.size(); ++nodeId)
+  for (TWrittenNodeId nodeId = 0; nodeId < nodeData.size(); ++nodeId)
   {
     auto const & data = nodeData[nodeId];
 
@@ -110,6 +130,8 @@ void FindCrossNodes(osrm::NodeDataVectorT const & nodeData, gen::OsmID2FeatureID
             continue;
 
           m2::PointD intersection = m2::PointD::Zero();
+          ms::LatLon wgsIntersection = ms::LatLon::Zero();
+          size_t intersectionCount = 0;
           for (auto const & segment : data.m_segments)
           {
             bool const outStart =
@@ -119,19 +141,23 @@ void FindCrossNodes(osrm::NodeDataVectorT const & nodeData, gen::OsmID2FeatureID
             if (outStart == outEnd)
               continue;
 
-            border.FindIntersection(MercatorBounds::FromLatLon(segment.lat1, segment.lon1),
-                                    MercatorBounds::FromLatLon(segment.lat2, segment.lon2),
-                                    intersection);
+            if (!border.FindIntersection(MercatorBounds::FromLatLon(segment.lat1, segment.lon1),
+                                         MercatorBounds::FromLatLon(segment.lat2, segment.lon2),
+                                         intersection))
 
-            // for old format compatibility
-            intersection = m2::PointD(MercatorBounds::XToLon(intersection.x), MercatorBounds::YToLat(intersection.y));
+            {
+                ASSERT(false, ("Can't determine a intersection point with a border!"));
+                continue;
+            }
+            intersectionCount++;
+            wgsIntersection = MercatorBounds::ToLatLon(intersection);
             if (!outStart && outEnd)
-              crossContext.AddIngoingNode(nodeId, intersection);
+              crossContext.AddIngoingNode(nodeId, wgsIntersection);
             else if (outStart && !outEnd)
             {
               string mwmName;
               m2::PointD const & mercatorPoint = MercatorBounds::FromLatLon(endSeg.lat2, endSeg.lon2);
-              m_countries.ForEachInRect(m2::RectD(mercatorPoint, mercatorPoint), [&](borders::CountryPolygons const & c)
+              countries.ForEachInRect(m2::RectD(mercatorPoint, mercatorPoint), [&](borders::CountryPolygons const & c)
               {
                 if (c.m_name == countryName)
                   return;
@@ -143,10 +169,17 @@ void FindCrossNodes(osrm::NodeDataVectorT const & nodeData, gen::OsmID2FeatureID
                 });
               });
               if (!mwmName.empty())
-                crossContext.AddOutgoingNode(nodeId, mwmName, intersection);
+                crossContext.AddOutgoingNode(nodeId, mwmName, wgsIntersection);
               else
                 LOG(LINFO, ("Unknowing outgoing edge", endSeg.lat2, endSeg.lon2, startSeg.lat1, startSeg.lon1));
             }
+          }
+          if (intersectionCount > 1)
+          {
+            FeatureType ft;
+            Index::FeaturesLoaderGuard loader(index, mwmId);
+            loader.GetFeatureByIndex(osm2ft.GetFeatureID(startSeg.wayId), ft);
+            LOG(LINFO, ("Double border intersection", wgsIntersection, "rank:", GetWarningRank(ft)));
           }
         }
       }
@@ -169,10 +202,10 @@ void CalculateCrossAdjacency(string const & mwmRoutingPath, routing::CrossRoutin
   // Fill sources and targets with start node task for ingoing (true) and target node task
   // (false) for outgoing nodes
   for (auto i = in.first; i != in.second; ++i)
-    sources.emplace_back(i->m_nodeId, true /* isStartNode */, mwmRoutingPath);
+    sources.emplace_back(i->m_nodeId, true /* isStartNode */, Index::MwmId());
 
   for (auto i = out.first; i != out.second; ++i)
-    targets.emplace_back(i->m_nodeId, false /* isStartNode */, mwmRoutingPath);
+    targets.emplace_back(i->m_nodeId, false /* isStartNode */, Index::MwmId());
 
   LOG(LINFO, ("Cross section has", sources.size(), "incomes and ", targets.size(), "outcomes."));
   vector<EdgeWeight> costs;
@@ -200,25 +233,39 @@ void WriteCrossSection(routing::CrossRoutingContextWriter const & crossContext, 
   LOG(LINFO, ("Have written routing info, bytes written:", w.Pos() - start_size, "bytes"));
 }
 
-void BuildCrossRoutingIndex(string const & baseDir, string const & countryName, string const & osrmFile)
+void BuildCrossRoutingIndex(string const & baseDir, string const & countryName,
+                            string const & osrmFile)
 {
   LOG(LINFO, ("Cross mwm routing section builder"));
-  string const mwmFile = baseDir + countryName + DATA_FILE_EXTENSION;
+  classificator::Load();
+
+  CountryFile countryFile(countryName);
+  LocalCountryFile localFile(baseDir, countryFile, 0 /* version */);
+  localFile.SyncWithDisk();
+  Index index;
+  auto p = index.Register(localFile);
+  if (p.second != MwmSet::RegResult::Success)
+  {
+    LOG(LCRITICAL, ("MWM file not found"));
+    return;
+  }
+
+  LOG(LINFO, ("Loading indexes..."));
   osrm::NodeDataVectorT nodeData;
   gen::OsmID2FeatureID osm2ft;
-  if (!LoadIndexes(mwmFile, osrmFile, nodeData, osm2ft))
+  if (!LoadIndexes(localFile.GetPath(MapOptions::Map), osrmFile, nodeData, osm2ft))
     return;
 
-  routing::CrossRoutingContextWriter crossContext;
-  LOG(LINFO, ("Loading countries borders"));
-  borders::CountriesContainerT m_countries;
-  CHECK(borders::LoadCountriesList(baseDir, m_countries),
+  LOG(LINFO, ("Loading countries borders..."));
+  borders::CountriesContainerT countries;
+  CHECK(borders::LoadCountriesList(baseDir, countries),
         ("Error loading country polygons files"));
 
-  FindCrossNodes(nodeData, osm2ft, m_countries, countryName, crossContext);
+  LOG(LINFO, ("Finding cross nodes..."));
+  routing::CrossRoutingContextWriter crossContext;
+  FindCrossNodes(nodeData, osm2ft, countries, countryName, index, p.first, crossContext);
 
-  string const mwmRoutingPath = mwmFile + ROUTING_FILE_EXTENSION;
-
+  string const mwmRoutingPath = localFile.GetPath(MapOptions::CarRouting);
   CalculateCrossAdjacency(mwmRoutingPath, crossContext);
   WriteCrossSection(crossContext, mwmRoutingPath);
 }
@@ -250,7 +297,7 @@ void BuildRoutingIndex(string const & baseDir, string const & countryName, strin
 
   uint32_t found = 0, all = 0, multiple = 0, equal = 0, moreThan1Seg = 0, stored = 0;
 
-  for (WritedNodeID nodeId = 0; nodeId < nodeData.size(); ++nodeId)
+  for (TWrittenNodeId nodeId = 0; nodeId < nodeData.size(); ++nodeId)
   {
     auto const & data = nodeData[nodeId];
 

@@ -53,7 +53,7 @@
 	<!-- Settings/Downloader - No internet connection dialog title -->
 	<string name="no_internet_connection_detected">Nie wykryto połączenia z Internetem</string>
 	<!-- Settings/Downloader - 3G download warning dialog title -->
-	<string name="no_wifi_ask_cellular_download">Nie wykryto połączenia z siecią WiFi. Czy chciałbyś skorzystać z trybu sieci danych (GPRS, EDGE lub 3G), aby pobrać %s?</string>
+	<string name="no_wifi_ask_cellular_download">Nie wykryto połączenia z siecią WiFi. Czy chciałbyś skorzystać z trybu sieci danych (GPRS, EDGE, 3G lub LTE), aby pobrać %s?</string>
 	<!-- not used? Search View - Location is disabled by user warning text -->
 	<string name="enable_location_services">Proszę włączyć usługi lokalizacji</string>
 	<!-- Leave Review dialog - Not now button (remind me later) -->
@@ -89,7 +89,7 @@
 	<!-- Message to display at the center of the screen when the country is added to the downloading queue -->
 	<string name="country_status_added_to_queue">^\ndodano do kolejki pobierania</string>
 	<!-- Message to display at the center of the screen when the country is downloading -->
-	<string name="country_status_downloading">Pobieranie\n^\n^%</string>
+	<string name="country_status_downloading">Pobieranie\n^\n^</string>
 	<!-- Button text for the button at the center of the screen when the country is not downloaded -->
 	<string name="country_status_download">Pobierz mapę\n(^ ^)</string>
 	<!-- Button text for the button at the center of the screen when the country is not downloaded -->
@@ -304,10 +304,48 @@
 	<!-- Length of track in cell that describes route -->
 	<string name="length">Długość</string>
 	<string name="share_my_location">Udostępnij moją lokalizację</string>
-	<string name="become_a_pro">Uaktualnij</string>
 	<string name="menu_search">Szukaj</string>
+	<!-- Settings screen: "Map" category title -->
+	<string name="prefs_group_map">Mapa</string>
+	<!-- Settings screen: "Miscellaneous" category title -->
+	<string name="prefs_group_misc">Różne</string>
+	<string name="prefs_group_route">Nawigacja</string>
 	<string name="pref_zoom_title">Przyciski powiększania</string>
 	<string name="pref_zoom_summary">Wyświetl na ekranie</string>
+	<!-- Settings «Map» category: «Night style» title -->
+	<string name="pref_map_style_title">Tryb nocny</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_default">Wyłączony</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_night">Włączony</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_auto">Automatyczny</string>
+	<!-- Settings «Map» category: «Perspective view» title -->
+	<string name="pref_map_3d_title">Widok z perspektywy</string>
+	<!-- Settings «Map» category: «3D buildings» title -->
+	<string name="pref_map_3d_buildings_title">Budynki w 3D</string>
+	<!-- Settings «Map» category: «3D buildings» summary -->
+	<string name="pref_map_3d_buildings_subtitle">Wpływa na czas pracy baterii</string>
+	<!-- Settings «Route» category: «Tts enabled» title -->
+	<string name="pref_tts_enable_title">Instrukcje głosowe</string>
+	<!-- Settings «Route» category: «Tts language» title -->
+	<string name="pref_tts_language_title">Język instrukcji</string>
+	<!-- Settings «Route» category: «Tts unavailable» subtitle -->
+	<string name="pref_tts_unavailable">Niedostępne</string>
+	<!-- Title for "Other" section in TTS settings. -->
+	<string name="pref_tts_other_section_title">Inny</string>
+	<string name="pref_tts_how_to_set_up_voice">Jak skonfigurować usługę głosową</string>
+	<!-- Settings «Map» category: «Record track» title -->
+	<string name="pref_track_record_title">Ostatnia trasa</string>
+	<string name="duration_disabled">Wyłącz</string>
+	<string name="duration_1_hour">1 godzina</string>
+	<string name="duration_2_hours">2 godziny</string>
+	<string name="duration_6_hours">6 godzin</string>
+	<string name="duration_12_hours">12 godzin</string>
+	<string name="duration_1_day">1 dzień</string>
+	<string name="recent_track_help_text">Uwaga: aktywacja tej funkcji spowoduje większe zużycie baterii.</string>
+	<string name="pref_track_ios_caption">Ostatnia trasa pokazuje pokonaną przez Ciebie ścieżkę.</string>
+	<string name="pref_track_ios_subcaption">Wybierz zakres czasowy dla zapisywanej trasy.</string>
 	<string name="placepage_distance">Dystans</string>
 	<string name="placepage_coordinates">Współrzędne</string>
 	<string name="placepage_unsorted">Niesklasyfikowane</string>
@@ -332,10 +370,6 @@
 	<string name="route">Trasa</string>
 	<!-- category title -->
 	<string name="routes">Marszruty</string>
-	<!-- button in the interface -->
-	<string name="choose_starting_point">Wybierz punkt początkowy…</string>
-	<!-- button in the interface -->
-	<string name="choose_destination">Wybierz miejsce docelowe…</string>
 	<!-- text of notification -->
 	<string name="download_map_notification">Pobierz mapę miejsca, w którym się zajdujesz</string>
 	<!-- text of notification -->
@@ -429,7 +463,7 @@
 	<!-- Context menu item for downloader. -->
 	<string name="downloader_download_map">Pobierz mapę</string>
 	<string name="downloader_download_map_no_routing">Pobierz mapę bez oznaczania tras</string>
-	<!-- Button for routing PP. -->
+	<!-- Button for routing. -->
 	<string name="routing_go">Przejdź!</string>
 	<!-- Item status in downloader. -->
 	<string name="downloader_retry">Spróbuj ponownie</string>
@@ -711,6 +745,7 @@
 	<string name="dialog_routing_disclaimer_priority">— Warunki na drodze, przepisy ruchu drogowego i znaki drogowe zawsze są ważniejsze niż wskazówki nawigacji;</string>
 	<string name="dialog_routing_disclaimer_precision">— Mapa może być niedokładna, a sugerowana trasa może nie być optymalnym sposobem dotarcia do celu;</string>
 	<string name="dialog_routing_disclaimer_recommendations">— Sugerowane trasy należy traktować jedynie jako rekomendacje;</string>
+	<string name="dialog_routing_disclaimer_borders">— Prosimy zachować ostrożność na trasach w strefie nadgranicznej: wyznaczone przez naszą aplikację trasy mogą przecinać granice państw w niedozwolonych do przekroczenia miejscach;</string>
 	<string name="dialog_routing_disclaimer_beware">Podczas podróży zachowaj czujność i prowadź ostrożnie!</string>
 	<string name="dialog_routing_check_gps">Sprawdź sygnał GPS</string>
 	<string name="dialog_routing_error_location_not_found">Nie można wyznaczyć trasy. Nie można ustalić współrzędnych GPS.</string>
@@ -759,35 +794,9 @@
 	<!-- Failed planning route message in navigation view -->
 	<string name="routing_planning_error">Planowanie trasy nieudane</string>
 	<!-- Arrive routing message in navigation view -->
-	<string name="routing_arrive">Przybycie</string>
-	<!-- Routing Start button title -->
-	<string name="routing_start">Rozpocznij</string>
-	<!-- Planning route message in navigation view -->
-	<string name="routing_planning">Planowanie trasy</string>
+	<string name="routing_arrive">Przybycie: %s</string>
 	<!-- Text for routing::IRouter::FileTooOld dialog. -->
 	<string name="dialog_routing_download_and_update_maps">Aby utworzyć trasę, pobierz i zaktualizuj wszystkie właściwe dla niej mapy.</string>
-	<!-- Text for facebook sharing news about walking routes -->
-	<string name="share_walking_routes_facebook">MAPS.ME pozwala oszczędzić czas potrzebny na dojście do celu. Wskazówki dojścia dla ponad 2 milionów km tras pieszych, dróg i ścieżek są już dostępne.</string>
-	<!-- Text for messenger sharing news about walking routes -->
-	<string name="share_walking_routes_messenger">MAPS.ME wytycza najkrótsze trasy piesze na całym świecie! Sprawdź sam: http://maps.me/get?walk_im</string>
-	<!-- Text for sms sharing news about walking routes -->
-	<string name="share_walking_routes_sms">MAPS.ME wytycza najkrótsze trasy piesze: http://maps.me/get?walk</string>
-	<!-- Subject for email sharing news about walking routes -->
-	<string name="share_walking_routes_email_subject">Najkrótsze trasy piesze są już dostępne</string>
-	<!-- Text for email sharing news about walking routes -->
-	<string name="share_walking_routes_email_body">MAPS.ME opublikowało właśnie Wskazówki dojścia w oparciu o najbardziej szczegółową mapę na świecie! Określają one najkrótszą trasę do dowolnego celu. Wypróbuj je: http://maps.me/get?walk_em</string>
-	<!-- Title for walking routes dialog, notifications etc. -->
-	<string name="title_walking_available">Wskazówki dojścia są dostępne w MAPS.ME!</string>
-	<!-- Text for walking routes dialog -->
-	<string name="share_walking_routes_first_launch">Określają najkrótszą trasę do dowolnego celu. Pomóż również swoim znajomym oszczędzić czas potrzebny na dojście do celu!</string>
-	<!-- Title for walking routes dialog after 3 built routes -->
-	<string name="share_walking_routes_congratulations">Gratulacje!</string>
-	<!-- Text for walking routes dialog after 3 built routes -->
-	<string name="share_walking_routes_mastering">Opanowałeś funkcję wskazówki dojścia. Możesz pomóc również swoim znajomym oszczędzić czas potrzebny na dojście do celu. Opowiedz im o MAPS.ME.</string>
-	<!-- Android notification about walking directions for update users -->
-	<string name="walking_notification_text">Czy chcesz je wypróbować?</string>
-	<!-- Android notification with picture (rich) about walking directions for update users -->
-	<string name="walking_rich_notification_text">Określają najkrótszą trasę do dowolnego celu. Wypróbuj je sam i pomóż znajomym oszczędzić czas w podróży.</string>
 	<string name="rate_alert_title">Lubisz tę aplikację?</string>
 	<string name="rate_alert_default_message">Dziękujemy za korzystanie z MAPS.ME. Prosimy wystawić aplikacji ocenę. Twoja opinia pozwoli nam udoskonalać nasze produkty.</string>
 	<string name="rate_alert_five_star_message">Hurra! My też Cię uwielbiamy!</string>
@@ -804,8 +813,21 @@
 	<string name="search_not_found_location">Pobierz mapę swojej bieżącej lokalizacji.</string>
 	<string name="search_history_title">Historia wyszukiwania</string>
 	<string name="search_history_text">Uzyskaj szybki dostęp do ostatniego hasła wyszukiwania.</string>
-	<string name="update_maps_alert_title">Orientacja stała się prostsza</string>
-	<string name="update_maps_alert_message">Ulepszyliśmy style map: teraz wszystkie obiekty wyglądają przyjaźnie i bardziej zrozumiale. Proszę zaktualizować mapy, aby wykorzystać zalety nowego design’u.</string>
-	<string name="update_maps_alert_button_title">Zaktualizuj mapy</string>
 	<string name="clear_search">Wyczyść historię wyszukiwania</string>
+	<!-- Title for settings to enable/disable showcase menu button -->
+	<string name="showcase_settings_title">Pokaż oferty</string>
+	<string name="showcase_more_apps">Więcej aplikacji My.com</string>
+	<string name="p2p_route_planning">Planowanie trasy</string>
+	<string name="p2p_your_location">Twoja lokalizacja</string>
+	<string name="p2p_from">Miejsce wyjazdu</string>
+	<string name="p2p_to">Miejsce docelowe</string>
+	<string name="p2p_start">Start</string>
+	<string name="p2p_planning">Planowanie…</string>
+	<string name="p2p_from_here">Z</string>
+	<string name="p2p_to_here">Do</string>
+	<string name="p2p_only_from_current">Nawigacja jest dostępna tylko od twojej bieżącej lokalizacji.</string>
+	<string name="p2p_reroute_from_current">Czy chcesz, byśmy zaplanowali trasę z Twojej bieżącej lokalizacji?</string>
+	<string name="whats_new_next_button">Dalej</string>
+	<string name="whats_new_night_caption">Nawigacja w trybie nocnym</string>
+	<string name="whats_new_night_body">Aby umożliwić korzystanie z MAPS.ME podczas prowadzenia po zmroku, dodaliśmy tryb nocny. Włącza się on automatycznie po zachodzie słońca.</string>
 </resources>

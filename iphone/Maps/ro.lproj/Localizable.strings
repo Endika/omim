@@ -83,7 +83,7 @@
 "no_internet_connection_detected" = "Nu a fost detectată nicio conexiune la internet.";
 
 /* Settings/Downloader - 3G download warning dialog title */
-"no_wifi_ask_cellular_download" = "Nu a fost detectată nicio conexiune WiFi. Doriți să utilizați datele mobile (GPRS, EDGE sau 3G) pentru a descărca %@?";
+"no_wifi_ask_cellular_download" = "Nu a fost detectată nicio conexiune WiFi. Doriți să utilizați datele mobile (GPRS, EDGE, 3G sau LTE) pentru a descărca %@?";
 
 "ok" = "OK";
 
@@ -142,7 +142,7 @@
 "country_status_added_to_queue" = "^\neste adăugată la coada de descărcare.";
 
 /* Message to display at the center of the screen when the country is downloading */
-"country_status_downloading" = "Se descarcă\n^\n^%";
+"country_status_downloading" = "Se descarcă\n^\n^";
 
 /* Button text for the button at the center of the screen when the country is not downloaded */
 "country_status_download" = "Descărcare hartă\n(^ ^)";
@@ -432,7 +432,7 @@
 "message" = "Tin nhắn";
 
 /* Share by email button text */
-"email" = "E-Mail";
+"email" = "E-mail";
 
 /* Copy Link */
 "copy_link" = "Copiați link-ul";
@@ -467,6 +467,9 @@
 /* Prints version number in About dialog */
 "version" = "Versiune: %@";
 
+/* Data version in «About» screen */
+"data_version" = "Data version: %d";
+
 /* Confirmation in downloading countries dialog */
 "are_you_sure" = "Sunteți sigur că doriți să continuați?";
 
@@ -478,13 +481,75 @@
 
 "share_my_location" = "Partajează-mi poziția";
 
-"become_a_pro" = "Upgrade";
-
 "menu_search" = "Căutare";
+
+/* Settings screen: "Map" category title */
+"prefs_group_map" = "Hartă";
+
+/* Settings screen: "Miscellaneous" category title */
+"prefs_group_misc" = "Diverse";
+
+"prefs_group_route" = "Navigație";
 
 "pref_zoom_title" = "Butoane zoom";
 
 "pref_zoom_summary" = "Afișare pe ecran";
+
+/* Settings «Map» category: «Night style» title */
+"pref_map_style_title" = "Mod nocturn";
+
+/* «Map style» entry value */
+"pref_map_style_default" = "Oprit";
+
+/* «Map style» entry value */
+"pref_map_style_night" = "Pornit";
+
+/* «Map style» entry value */
+"pref_map_style_auto" = "Automat";
+
+/* Settings «Map» category: «Perspective view» title */
+"pref_map_3d_title" = "Vizualizare în perspectivă";
+
+/* Settings «Map» category: «3D buildings» title */
+"pref_map_3d_buildings_title" = "Clădiri 3D";
+
+/* Settings «Map» category: «3D buildings» summary */
+"pref_map_3d_buildings_subtitle" = "Afectează durata de funcționare a bateriei";
+
+/* Settings «Route» category: «Tts enabled» title */
+"pref_tts_enable_title" = "Instrucțiuni vocale";
+
+/* Settings «Route» category: «Tts language» title */
+"pref_tts_language_title" = "Limba ghidului vocal";
+
+/* Settings «Route» category: «Tts unavailable» subtitle */
+"pref_tts_unavailable" = "Nu există";
+
+/* Title for "Other" section in TTS settings. */
+"pref_tts_other_section_title" = "Alta";
+
+"pref_tts_how_to_set_up_voice" = "Modalitatea de configurare a vocii";
+
+/* Settings «Map» category: «Record track» title */
+"pref_track_record_title" = "Rute recente";
+
+"duration_disabled" = "Oprit";
+
+"duration_1_hour" = "1 oră";
+
+"duration_2_hours" = "2 ore";
+
+"duration_6_hours" = "6 ore";
+
+"duration_12_hours" = "12 ore";
+
+"duration_1_day" = "1 zi";
+
+"recent_track_help_text" = "Vă rugăm să rețineți: activarea acestei funcții determină un consum accelerat al bateriei.";
+
+"pref_track_ios_caption" = "Opțiunea Rută recentă vă afișează ruta folosită anterior.";
+
+"pref_track_ios_subcaption" = "Vă rugăm să selectați intervalul orar corespunzător salvării rutei.";
 
 "placepage_distance" = "Distanță";
 
@@ -524,12 +589,6 @@
 /* category title */
 "routes" = "Trasee";
 
-/* button in the interface */
-"choose_starting_point" = "Alegeți punctul de pornire…";
-
-/* button in the interface */
-"choose_destination" = "Alegeți destinația…";
-
 /* Show on first launch. */
 "maps_licence_info" = "Această aplicație utilizează date geografice (inclusiv hărți, liste de firme, puncte de interes, frontiere de țări și regiuni etc.) preluate din proiectul OpenStreetMap. Nu garantăm uniformitatea, acuratețea, integralitatea sau aplicabilitatea datelor OpenStreetMap.";
 
@@ -558,6 +617,12 @@
 "settings_and_more" = "Setări și altele";
 
 /* Text in menu */
+"website" = "Website";
+
+/* Text in menu */
+"blog" = "Blog";
+
+/* Text in menu */
 "maps_me_community" = "Comunitatea MAPS.ME";
 
 /* Text in menu */
@@ -569,11 +634,26 @@
 /* Text in menu */
 "contact_us" = "Contactați-ne";
 
+/* Settings: Send feedback button and dialog title */
+"feedback" = "Feedback";
+
+/* Settings: "Send general feedback" button */
+"feedback_general" = "General feedback";
+
 /* Text in menu */
 "subscribe_to_news" = "Abonați-vă la știrile noastre";
 
 /* Text in menu */
 "rate_the_app" = "Votați-ne aplicația";
+
+/* Rate in Google Play (Android only) */
+"rate_gp" = "Rate on Google Play";
+
+/* Share with friends: menu item title */
+"tell_friends" = "Tell a Friend";
+
+/* Share with friends: sharing text */
+"tell_friends_text" = "Hi! Install Maps.me!";
 
 /* Text in menu */
 "help" = "Ajutor";
@@ -589,6 +669,9 @@
 
 /* Email body */
 "subscribe_me_body" = "Vreau să fiu primul care află despre cele mai recente actualizări și promoții. Îmi pot anula abonamentul în orice moment.";
+
+/* About short text (below logo) */
+"about_description" = "Joined efforts of Mail.Ru Group and OpenStreetMap make the most useful application for travelers!";
 
 /* About text */
 "about_text" = "MAPS.ME oferă cele mai rapide hărți offline ale tuturor orașelor, tuturor țărilor din lume. Călătoriți cu încredere deplină: oriunde v-ați afla, MAPS.ME vă ajută să vă reperați poziția pe hartă, să găsiți cel mai apropiat restaurant sau hotel, cea mai apropiată bancă sau benzinărie etc. Nu necesită conexiune la internet.\n\nLucrăm încontinuu să introducem funcții noi și ne-ar face mare plăcere să ne comunicați cum credeți dvs. că am putea îmbunătăți MAPS.ME. Dacă aveți probleme cu aplicația, nu ezitați să ne contactați la adresa support@maps.me. Răspundem la fiecare solicitare!\n\nVă place MAPS.ME și doriți să ne susțineți? Iată câteva moduri simple și complet gratuite:\n- publicați o recenzie în magazinul de aplicații\n- apreciați-ne pagina de Facebook: http://www.facebook.com/mapswithme\n- sau spuneți și mamei, prietenilor și colegilor despre MAPS.ME. :)\n\nVă mulțumim că ne sunteți alături. Vă apreciem foarte mult susținerea!\n\nP.S. Noi preluăm datele din OpenStreetMap, un proiect de cartografiere similar Wikipediei, ce permite utilizatorilor să creeze și să editeze hărți. Dacă vedeți că ceva lipsește sau este greșit pe hartă, puteți corecta hărțile direct la adresa: http://openstreetmap.org, iar modificările dvs. vor apărea în aplicația MAPS.ME atunci când va fi lansată versiunea următoare.";
@@ -679,7 +762,7 @@
 
 "downloader_download_map_no_routing" = "Descărcare hartă fără rutare";
 
-/* Button for routing PP. */
+/* Button for routing. */
 "routing_go" = "Pornește!";
 
 /* Item status in downloader. */
@@ -1105,6 +1188,8 @@
 
 "dialog_routing_disclaimer_recommendations" = "— Traseele sugerate au numai rol de recomandări;";
 
+"dialog_routing_disclaimer_borders" = "— Aveți grijă în zonele de graniță: rutele create de aplicația noastră ar putea, ocazional, să treacă granița prin locuri nepermise;";
+
 "dialog_routing_disclaimer_beware" = "Rămâneţi vigilenţi şi conduceţi în siguranţă!";
 
 "dialog_routing_check_gps" = "Verificaţi semnalul GPS";
@@ -1193,49 +1278,10 @@
 "routing_planning_error" = "Planificarea rutei a eșuat";
 
 /* Arrive routing message in navigation view */
-"routing_arrive" = "Sosire";
-
-/* Routing Start button title */
-"routing_start" = "Incepeți";
-
-/* Planning route message in navigation view */
-"routing_planning" = "Se determină ruta";
+"routing_arrive" = "Sosire: %s";
 
 /* Text for routing::IRouter::FileTooOld dialog. */
 "dialog_routing_download_and_update_maps" = "Pentru a crea o rută, vă rugăm să descărcați și să actualizați toate hărțile de pe parcursul rutei.";
-
-/* Text for facebook sharing news about walking routes */
-"share_walking_routes_facebook" = "MAPS.ME vă reduce timpul de mers pe jos. Peste 2 milioane de kilometri de rute pietonale, trasee și itinerarii sunt disponibile acum la indicațiile pentru deplasarea pietonală.";
-
-/* Text for messenger sharing news about walking routes */
-"share_walking_routes_messenger" = "MAPS.ME oferă cele mai scurte rute de deplasare pietonală din întreaga lume! Vizitați http://maps.me/get?walk_im";
-
-/* Text for sms sharing news about walking routes */
-"share_walking_routes_sms" = "MAPS.ME oferă cele mai scurte rute de deplasare pietonală: http://maps.me/get?walk";
-
-/* Subject for email sharing news about walking routes */
-"share_walking_routes_email_subject" = "Sunt disponibile cele mai scurte rute de mers de jos";
-
-/* Text for email sharing news about walking routes */
-"share_walking_routes_email_body" = "MAPS.ME tocmai a lansat rute de mers pe jos, bazată pe cea mai detaliată hartă din lume! Ea vă oferă cea mai scurtă rută către orice destinație. Încercați-o: http://maps.me/get?walk_em";
-
-/* Title for walking routes dialog, notifications etc. */
-"title_walking_available" = "Rute de mers pe jos este disponibilă în MAPS.ME!";
-
-/* Text for walking routes dialog */
-"share_walking_routes_first_launch" = "Ea vă oferă cea mai scurtă rută către orice destinație. Ajutați-i și pe prietenii dvs. să-și reducă timpul de deplasare pe jos!";
-
-/* Title for walking routes dialog after 3 built routes */
-"share_walking_routes_congratulations" = "Felicitări!";
-
-/* Text for walking routes dialog after 3 built routes */
-"share_walking_routes_mastering" = "Ați utilizat cu succes rute de mers pe jos. Ajutați-i și pe prietenii dvs. să-și reducă timpul de deplasare pe jos. Spuneți-le despre MAPS.ME.";
-
-/* Android notification about walking directions for update users */
-"walking_notification_text" = "Doriți să o încercați?";
-
-/* Android notification with picture (rich) about walking directions for update users */
-"walking_rich_notification_text" = "Ea vă oferă cea mai scurtă rută către orice punct de destinație. Încercați-o și ajutați-vă prietenii să-și reducă timpul de deplasare.";
 
 "rate_alert_title" = "Vă place aplicația?";
 
@@ -1269,10 +1315,38 @@
 
 "search_history_text" = "Accesare rapidă a căutărilor recente.";
 
-"update_maps_alert_title" = "Explorarea hărții a devenit mai simplă acum";
-
-"update_maps_alert_message" = "Stilurile hărții au fost îmbunătățite: acum toate obiectivele sunt prezentate într-un mod mai clar și atractiv. Actualizează hărțile pentru a beneficia din plin de noul design.";
-
-"update_maps_alert_button_title" = "Actualizare hărți";
-
 "clear_search" = "Ștergere istoric de căutare";
+
+/* Title for settings to enable/disable showcase menu button */
+"showcase_settings_title" = "Afișare oferte";
+
+"showcase_more_apps" = "Mai multe aplicații My.com";
+
+/* Place Page link to Wikipedia article (if map object has it). */
+"read_in_wikipedia" = "Wikipedia";
+
+"p2p_route_planning" = "Planificare rută";
+
+"p2p_your_location" = "Locația dvs.";
+
+"p2p_from" = "Punctul de plecare";
+
+"p2p_to" = "Punctul de sosire";
+
+"p2p_start" = "Start";
+
+"p2p_planning" = "Se planifică…";
+
+"p2p_from_here" = "Din";
+
+"p2p_to_here" = "În";
+
+"p2p_only_from_current" = "Navigația este disponibilă doar având ca punct de pornire locațiacctuală.";
+
+"p2p_reroute_from_current" = "Doriți să vă planificăm o rută având ca punct de pornire locația actuală?";
+
+"whats_new_next_button" = "Următoarea";
+
+"whats_new_night_caption" = "Navigație mod nocturn";
+
+"whats_new_night_body" = "Pentru a facilita utilizarea MAPS.ME atunci când conduceți noaptea, am adăugat modul nocturn. Acesta pornește automat după apusul soarelui.";

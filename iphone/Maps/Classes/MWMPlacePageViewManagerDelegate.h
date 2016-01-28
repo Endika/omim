@@ -1,9 +1,14 @@
-@protocol MWMPlacePageViewManagerProtocol <NSObject>
+#import "MWMRoutingProtocol.h"
 
-- (void)dragPlacePage:(CGPoint)point;
+#include "platform/location.hpp"
+
+@protocol MWMPlacePageViewManagerProtocol <MWMRoutingProtocol>
+
+@property (nonatomic, readonly) location::EMyPositionMode myPositionMode;
+
+- (void)dragPlacePage:(CGRect)frame;
 - (void)addPlacePageViews:(NSArray *)views;
 - (void)updateStatusBarStyle;
-- (void)buildRoute:(m2::PointD)destination;
 - (void)apiBack;
 - (void)placePageDidClose;
 

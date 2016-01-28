@@ -33,7 +33,9 @@ world  +
         car_sharing  -
         casino  -
         cinema  -
+        clinic  -
         college  -
+        dentist  -
         doctors  -
         drinking_water  -
         embassy  -
@@ -67,7 +69,15 @@ world  +
                 {}
             {}
         pharmacy  -
-        place_of_worship  -
+        place_of_worship  +
+            buddhist  -
+            christian  -
+            hindu  -
+            jewish  -
+            muslim  -
+            shinto  -
+            taoist  -
+            {}
         police  -
         post_box  -
         post_office  -
@@ -86,6 +96,10 @@ world  +
         toilets  -
         townhall  -
         university  -
+        vending_machine  +
+            parking_tickets  -
+            public_transport_tickets  -
+            {}
         waste_disposal  -
         {}
     area:highway  +
@@ -108,8 +122,10 @@ world  +
     barrier  +
         block  -
         bollard  -
+        border_control  -
         city_wall  -
         cycle_barrier  -
+        entrance  -
         fence  -
         gate  -
         hedge  -
@@ -147,6 +163,7 @@ world  +
     building  +
         address  -
         {}
+    building:part  -
     communication  +
         line  +
             underground  -
@@ -427,6 +444,7 @@ world  +
             {}
         survey_point  -
         wastewater_plant  -
+        water_tower  -
         windmill  -
         {}
     mapswithme  +
@@ -715,6 +733,7 @@ world  +
         hardware  -
         jewelry  -
         kiosk  -
+        laundry  -
         mall  -
         mobile_phone  -
         optician  -

@@ -55,7 +55,7 @@
 	<!-- Settings/Downloader - No internet connection dialog title -->
 	<string name="no_internet_connection_detected">ไม่สามารถตรวจพบการเชื่อมต่ออินเทอร์เน็ต</string>
 	<!-- Settings/Downloader - 3G download warning dialog title -->
-	<string name="no_wifi_ask_cellular_download">ไม่สามารถตรวจพบการเชื่อมต่อ WiFi คุณต้องการใช้ข้อมูลโทรศัพท์มือถือ (GPRS, EDGE หรือ 3G) เพื่อดาวน์โหลด %s?</string>
+	<string name="no_wifi_ask_cellular_download">ไม่สามารถตรวจพบการเชื่อมต่อ WiFi คุณต้องการใช้ข้อมูลโทรศัพท์มือถือ (GPRS, EDGE, 3G หรือ LTE) เพื่อดาวน์โหลด %s?</string>
 	<string name="ok">ตกลง</string>
 	<!-- not used? Search View - Location is disabled by user warning text -->
 	<string name="enable_location_services">โปรดเปิดการใช้งานการบริการตำแหน่งที่ตั้ง</string>
@@ -92,7 +92,7 @@
 	<!-- Message to display at the center of the screen when the country is added to the downloading queue -->
 	<string name="country_status_added_to_queue">มีการเพิ่ม ^\nไปยังลำดับการดาวน์โหลดแล้ว</string>
 	<!-- Message to display at the center of the screen when the country is downloading -->
-	<string name="country_status_downloading">กำลังดาวน์โหลด\n^\n^%</string>
+	<string name="country_status_downloading">กำลังดาวน์โหลด\n^\n^</string>
 	<!-- Button text for the button at the center of the screen when the country is not downloaded -->
 	<string name="country_status_download">ดาวน์โหลดแผนที่\n(^ ^)</string>
 	<!-- Button text for the button at the center of the screen when the country is not downloaded -->
@@ -305,10 +305,48 @@
 	<!-- Length of track in cell that describes route -->
 	<string name="length">ระยะเวลา</string>
 	<string name="share_my_location">แชร์ตำแหน่งที่ตั้งของฉัน</string>
-	<string name="become_a_pro">อัปเกรด</string>
 	<string name="menu_search">ค้นหา</string>
+	<!-- Settings screen: "Map" category title -->
+	<string name="prefs_group_map">แผนที่</string>
+	<!-- Settings screen: "Miscellaneous" category title -->
+	<string name="prefs_group_misc">เบ็ดเตล็ด</string>
+	<string name="prefs_group_route">การนำทาง</string>
 	<string name="pref_zoom_title">ปุ่มซูม</string>
 	<string name="pref_zoom_summary">แสดงบนหน้าจอ</string>
+	<!-- Settings «Map» category: «Night style» title -->
+	<string name="pref_map_style_title">โหมดกลางคืน</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_default">ปิด</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_night">เปิด</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_auto">อัตโนมัติ</string>
+	<!-- Settings «Map» category: «Perspective view» title -->
+	<string name="pref_map_3d_title">มุมมองเพอร์สเปกทีฟ</string>
+	<!-- Settings «Map» category: «3D buildings» title -->
+	<string name="pref_map_3d_buildings_title">ตึก 3D</string>
+	<!-- Settings «Map» category: «3D buildings» summary -->
+	<string name="pref_map_3d_buildings_subtitle">มีผลกระทบต่ออายุการใช้งานแบตเตอรี่</string>
+	<!-- Settings «Route» category: «Tts enabled» title -->
+	<string name="pref_tts_enable_title">คำแนะนำด้วยเสียง</string>
+	<!-- Settings «Route» category: «Tts language» title -->
+	<string name="pref_tts_language_title">ภาษาสำหรับเสียง</string>
+	<!-- Settings «Route» category: «Tts unavailable» subtitle -->
+	<string name="pref_tts_unavailable">ไม่สามารถใช้ได้</string>
+	<!-- Title for "Other" section in TTS settings. -->
+	<string name="pref_tts_other_section_title">อื่น ๆ</string>
+	<string name="pref_tts_how_to_set_up_voice">วิธีตั้งค่าเสียง</string>
+	<!-- Settings «Map» category: «Record track» title -->
+	<string name="pref_track_record_title">เส้นทางล่าสุด</string>
+	<string name="duration_disabled">ปิด</string>
+	<string name="duration_1_hour">1 ชั่วโมง</string>
+	<string name="duration_2_hours">2 ชั่วโมง</string>
+	<string name="duration_6_hours">6 ชั่วโมง</string>
+	<string name="duration_12_hours">12 ชั่วโมง</string>
+	<string name="duration_1_day">1 วัน</string>
+	<string name="recent_track_help_text">โปรดทราบ: การเปิดใช้งานฟังก์ชันนี้จะส่งผลให้มีการใช้งานแบตเตอรี่เพิ่มขึ้น</string>
+	<string name="pref_track_ios_caption">เส้นทางล่าสุดแสดงให้เห็นถึงเส้นทางที่เดินทางแล้วของคุณ</string>
+	<string name="pref_track_ios_subcaption">โปรดเลือกช่วงเวลาในการบันทึกการติดตาม</string>
 	<string name="placepage_distance">ระยะห่าง</string>
 	<string name="placepage_coordinates">พิกัด</string>
 	<string name="placepage_unsorted">ไม่เรียงลำดับ</string>
@@ -333,10 +371,6 @@
 	<string name="route">เส้นทาง</string>
 	<!-- category title -->
 	<string name="routes">เส้นทาง</string>
-	<!-- button in the interface -->
-	<string name="choose_starting_point">เลือกจุดเริ่มต้น…</string>
-	<!-- button in the interface -->
-	<string name="choose_destination">เลือกจุดหมาย…</string>
 	<!-- text of notification -->
 	<string name="download_map_notification">ดาวน์โหลดแผนที่เกี่ยวกับสถานที่ที่คุณอยู่</string>
 	<!-- text of notification -->
@@ -430,7 +464,7 @@
 	<!-- Context menu item for downloader. -->
 	<string name="downloader_download_map">ดาวน์โหลดแผนที่</string>
 	<string name="downloader_download_map_no_routing">ดาวน์โหลดแผนที่โดยไม่กำหนดเส้นทาง</string>
-	<!-- Button for routing PP. -->
+	<!-- Button for routing. -->
 	<string name="routing_go">ไป!</string>
 	<!-- Item status in downloader. -->
 	<string name="downloader_retry">ลองอีกครั้ง</string>
@@ -712,6 +746,7 @@
 	<string name="dialog_routing_disclaimer_priority">— สภาพถนน กฎจราจร และสัญลักษณ์บนถนนย่อมมีความสำคัญกว่าคำแนะนำเพื่อบอกทางเสมอ;</string>
 	<string name="dialog_routing_disclaimer_precision">— แผนที่อาจมีความคลาดเคลื่อนและเส้นทางที่แนะนำอาจไม่ใช่เส้นทางที่เหมาะสมที่สุดเสมอไปสำหรับการไปยังที่หมาย;</string>
 	<string name="dialog_routing_disclaimer_recommendations">— เส้นทางที่แนะนำเป็นเพียงคำแนะนำเท่านั้น;</string>
+	<string name="dialog_routing_disclaimer_borders">— โปรดระมัดระวังเมื่อใช้เส้นทางในพื้นที่ชายแดน: บางครั้งเส้นทางที่สร้างขึ้นโดยแอปของเรานั้นอาจข้ามผ่านชายแดนประเทศในพื้นที่ที่ไม่ได้รับการอนุญา;</string>
 	<string name="dialog_routing_disclaimer_beware">โปรดมีสติอยู่เสมอและยึดถือความปลอดภัยบนถนน!</string>
 	<string name="dialog_routing_check_gps">ตรวจสอบสัญญาณ GPS</string>
 	<string name="dialog_routing_error_location_not_found">ไม่สามารถสร้างเส้นทางได้ ไม่สามารถระบุพิกัด GPS ปัจจุบันได้</string>
@@ -760,35 +795,9 @@
 	<!-- Failed planning route message in navigation view -->
 	<string name="routing_planning_error">การวางแผนเส้นทางล้มเหลว</string>
 	<!-- Arrive routing message in navigation view -->
-	<string name="routing_arrive">มาถึง</string>
-	<!-- Routing Start button title -->
-	<string name="routing_start">เริ่มต้น</string>
-	<!-- Planning route message in navigation view -->
-	<string name="routing_planning">กำลังวางแผนเส้นทาง</string>
+	<string name="routing_arrive">มาถึง: %s</string>
 	<!-- Text for routing::IRouter::FileTooOld dialog. -->
 	<string name="dialog_routing_download_and_update_maps">เพื่อสร้างเส้นทาง โปรดดาวน์โหลดและอัปเดตแผนที่ทั้งหมดตลอดเส้นทาง</string>
-	<!-- Text for facebook sharing news about walking routes -->
-	<string name="share_walking_routes_facebook">MAPS.ME ช่วยคุณประหยัดเวลาเดิน มีเส้นทางเดินเท้า ทางเดินเท้าและทางเดินอยู่มากกว่า 2 ล้านกิโลเมตรสำหรับการแนะนำเส้นทางเดินในตอนนี้</string>
-	<!-- Text for messenger sharing news about walking routes -->
-	<string name="share_walking_routes_messenger">MAPS.ME บอกเส้นทางเดินที่สั้นที่สุดทั่วโลก! ลองดูที่: http://maps.me/get?walk_im</string>
-	<!-- Text for sms sharing news about walking routes -->
-	<string name="share_walking_routes_sms">MAPS.ME บอกเส้นทางเดินที่สั้นที่สุด: http://maps.me/get?walk</string>
-	<!-- Subject for email sharing news about walking routes -->
-	<string name="share_walking_routes_email_subject">มีเส้นทางเดินที่สั้นที่สุดให้คุณแล้ว</string>
-	<!-- Text for email sharing news about walking routes -->
-	<string name="share_walking_routes_email_body">MAPS.ME เพิ่งเปิดตัวการแนะนำเส้นทางเดินตามเส้นทางในแผนที่ที่ละเอียดที่สุดในโลก! มันบอกเส้นทางเดินที่สั้นที่สุดไปยังจุดหมายปลายทางต่าง ๆ ทดลองใช้มันที่: http://maps.me/get?walk_em</string>
-	<!-- Title for walking routes dialog, notifications etc. -->
-	<string name="title_walking_available">มีการแนะนำเส้นทางเดินให้ใช้แล้วใน MAPS.ME!</string>
-	<!-- Text for walking routes dialog -->
-	<string name="share_walking_routes_first_launch">มันบอกเส้นทางที่สั้นที่สุดไปยังจุดหมายปลายทาง ทดลองมันด้วยตัวคุณเอง ช่วยเพื่อนของคุณประหยัดเวลาเดินด้วย!</string>
-	<!-- Title for walking routes dialog after 3 built routes -->
-	<string name="share_walking_routes_congratulations">ขอแสดงความยินดี!</string>
-	<!-- Text for walking routes dialog after 3 built routes -->
-	<string name="share_walking_routes_mastering">คุณใช้ฟังก์ชันการแนะนำเส้นทางเดินเป็นแล้ว ช่วยเพื่อนของคุณประหยัดเวลาเดินด้วย! บอกพวกเขาเกี่ยวกับ MAPS.ME!</string>
-	<!-- Android notification about walking directions for update users -->
-	<string name="walking_notification_text">ต้องการทดลองใช้มันหรือไม่?</string>
-	<!-- Android notification with picture (rich) about walking directions for update users -->
-	<string name="walking_rich_notification_text">มันบอกเส้นทางที่สั้นที่สุดไปยังจุดหมายปลายทาง ทดลองมันด้วยตัวคุณเองและช่วยเพื่อน ๆ ประหยัดเวลาเดินทาง</string>
 	<string name="rate_alert_title">ชอบแอปหรือไม่?</string>
 	<string name="rate_alert_default_message">ขอบพระคุณสำหรับการใช้ MAPS.ME โปรดให้คะแนนแอป ข้อเสนอแนะของคุณจะช่วยทำให้เราทำได้ดียิ่งขึ้น</string>
 	<string name="rate_alert_five_star_message">ฮูเร่! เราก็รักคุณเช่นกัน!</string>
@@ -805,8 +814,21 @@
 	<string name="search_not_found_location">ดาวน์โหลดแผนที่ของตำแหน่งปัจจุบันของคุณ</string>
 	<string name="search_history_title">ประวัติการค้นหา</string>
 	<string name="search_history_text">เข้าถึงคำถามที่ใช้ในการค้นหาเมื่อเร็ว ๆ นี้ได้อย่างรวดเร็ว</string>
-	<string name="update_maps_alert_title">การสำรวจแผนที่ง่ายขึ้นในตอนนี้</string>
-	<string name="update_maps_alert_message">เราได้ปรับปรุงรูปแบบของแผนที่: ตอนนี้วัตถุทั้งหมดดูเป็นมิตรและชัดเจนยิ่งขึ้น อัปเดตแผนที่เพื่อรับประโยชน์สูงสุดจากการออกแบบใหม่</string>
-	<string name="update_maps_alert_button_title">อัปเดตแผนที่</string>
 	<string name="clear_search">ล้างการค้นหาประวัติ</string>
+	<!-- Title for settings to enable/disable showcase menu button -->
+	<string name="showcase_settings_title">แสดงข้อเสนอ</string>
+	<string name="showcase_more_apps">แอป My.com เพิ่มเติม</string>
+	<string name="p2p_route_planning">การวางแผนเส้นทาง</string>
+	<string name="p2p_your_location">ตำแหน่งที่ตั้งของคุณ</string>
+	<string name="p2p_from">จุดที่ออกเดินทาง</string>
+	<string name="p2p_to">จุดที่เป็นปลายทาง</string>
+	<string name="p2p_start">เริ่มต้น</string>
+	<string name="p2p_planning">กำลังวางแผน…</string>
+	<string name="p2p_from_here">จาก</string>
+	<string name="p2p_to_here">ถึง</string>
+	<string name="p2p_only_from_current">สามารถใช้การนำทางได้เฉพาะจากตำแหน่งที่ตั้งปัจจุบันของคุณเท่านั้น</string>
+	<string name="p2p_reroute_from_current">คุณต้องการให้เราาวงแผนเส้นทางจากสถานที่ตั้งปัจจุบันของคุณหรือไม่?</string>
+	<string name="whats_new_next_button">ถัดไป</string>
+	<string name="whats_new_night_caption">การนำทางในโหมดกลางคืน</string>
+	<string name="whats_new_night_body">เราได้เพิ่มโหมดกลางคืนเพื่อส่งเสริมการใช้ MAPS.ME เมื่อคุณกำลังขับรถในสภาพมืด จะมีการเปิดใช้โหมดนี้โดยอัตโนมัติหลังจากพระอาทิตย์ตก</string>
 </resources>

@@ -2,27 +2,23 @@ package com.mapswithme.maps.search;
 
 import android.app.Activity;
 import android.text.TextUtils;
-import android.view.View;
-
-import com.mapswithme.maps.Framework;
 import com.mapswithme.maps.MwmActivity;
 import com.mapswithme.maps.api.ParsedMwmRequest;
 import com.mapswithme.maps.widget.SearchToolbarController;
+import com.mapswithme.util.Animations;
 import com.mapswithme.util.UiUtils;
 
 public class FloatingSearchToolbarController extends SearchToolbarController
 {
-  private static String sSavedQuery = "";
-
   public FloatingSearchToolbarController(Activity activity)
   {
     super(activity.getWindow().getDecorView(), activity);
   }
 
   @Override
-  protected void onUpClick()
+  public void onUpClick()
   {
-    MwmActivity.startSearch(mActivity, getQuery());
+    ((MwmActivity) mActivity).showSearch(getQuery());
     cancelSearchApiAndHide(true);
   }
 
@@ -30,8 +26,7 @@ public class FloatingSearchToolbarController extends SearchToolbarController
   protected void onQueryClick(String query)
   {
     super.onQueryClick(query);
-
-    MwmActivity.startSearch(mActivity, query);
+    ((MwmActivity) mActivity).showSearch(getQuery());
     hide();
   }
 
@@ -48,40 +43,25 @@ public class FloatingSearchToolbarController extends SearchToolbarController
 
     if (ParsedMwmRequest.hasRequest())
     {
-      UiUtils.appearSlidingDown(mToolbar, null);
+      Animations.appearSliding(mToolbar, Animations.TOP, null);
       setQuery(ParsedMwmRequest.getCurrentRequest().getTitle());
     }
-    else if (!TextUtils.isEmpty(sSavedQuery))
+    else if (!TextUtils.isEmpty(SearchEngine.getQuery()))
     {
-      UiUtils.appearSlidingDown(mToolbar, null);
-      setQuery(sSavedQuery);
+      Animations.appearSliding(mToolbar, Animations.TOP, null);
+      setQuery(SearchEngine.getQuery());
     }
     else
+    {
       hide();
-  }
-
-  public static void saveQuery(String query)
-  {
-    sSavedQuery = (query == null) ? "" : query;
-  }
-
-  public static void cancelApiCall()
-  {
-    if (ParsedMwmRequest.hasRequest())
-      ParsedMwmRequest.setCurrentRequest(null);
-    Framework.nativeClearApiPoints();
-  }
-
-  public static void cancelSearch()
-  {
-    saveQuery(null);
-    Framework.cleanSearchLayerOnMap();
+      clear();
+    }
   }
 
   private void cancelSearchApiAndHide(boolean clearText)
   {
-    cancelApiCall();
-    cancelSearch();
+    SearchEngine.cancelApiCall();
+    SearchEngine.cancelSearch();
 
     if (clearText)
       clear();
@@ -91,10 +71,10 @@ public class FloatingSearchToolbarController extends SearchToolbarController
 
   public boolean hide()
   {
-    if (mToolbar.getVisibility() != View.VISIBLE)
+    if (!UiUtils.isVisible(mToolbar))
       return false;
 
-    UiUtils.disappearSlidingUp(mToolbar, null);
+    Animations.disappearSliding(mToolbar, Animations.TOP, null);
     return true;
   }
 }

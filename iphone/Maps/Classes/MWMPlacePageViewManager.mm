@@ -14,9 +14,14 @@
 #import "MWMPlacePageNavigationBar.h"
 #import "MWMPlacePageViewManager.h"
 #import "MWMPlacePageViewManagerDelegate.h"
+#import "Statistics.h"
 
-#include "Framework.h"
+#import "3party/Alohalytics/src/alohalytics_objc.h"
 
+#include "geometry/distance_on_sphere.hpp"
+#include "platform/measurement_utils.hpp"
+
+extern NSString * const kAlohalyticsTapEventKey;
 extern NSString * const kBookmarksChangedNotification;
 
 typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
@@ -30,7 +35,7 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
   unique_ptr<UserMarkCopy> m_userMark;
 }
 
-@property (weak, nonatomic) UIViewController<MWMPlacePageViewManagerProtocol> * ownerViewController;
+@property (weak, nonatomic) UIViewController * ownerViewController;
 @property (nonatomic, readwrite) MWMPlacePageEntity * entity;
 @property (nonatomic) MWMPlacePage * placePage;
 @property (nonatomic) MWMPlacePageManagerState state;
@@ -55,15 +60,21 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
   return self;
 }
 
+- (void)hidePlacePage
+{
+  [self.placePage hide];
+}
+
 - (void)dismissPlacePage
 {
+  if (!m_userMark)
+    return;
   [self.delegate placePageDidClose];
   self.state = MWMPlacePageManagerStateClosed;
   [self.placePage dismiss];
   [[MapsAppDelegate theApp].m_locationManager stop:self];
-  GetFramework().GetBalloonManager().RemovePin();
   m_userMark = nullptr;
-  self.entity = nil;
+  GetFramework().DeactivateUserMark();
   self.placePage = nil;
 }
 
@@ -102,7 +113,7 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
   if (IPAD)
   {
     self.placePage.parentViewHeight = self.ownerViewController.view.width;
-    [(MWMiPadPlacePage *)self.placePage updatePlacePageLayout];
+    [(MWMiPadPlacePage *)self.placePage updatePlacePageLayoutAnimated:NO];
   }
   else
   {
@@ -119,10 +130,10 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
     BOOL hasSpeed;
     self.entity.category = [[MapsAppDelegate theApp].m_locationManager formattedSpeedAndAltitude:hasSpeed];
   }
-  self.placePage.topBound = self.topBound;
-  self.placePage.leftBound = self.leftBound;
   self.placePage.parentViewHeight = self.ownerViewController.view.height;
   [self.placePage configure];
+  self.placePage.topBound = self.topBound;
+  self.placePage.leftBound = self.leftBound;
   [self refreshPlacePage];
 }
 
@@ -130,6 +141,17 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
 {
   [self.placePage show];
   [self updateDistance];
+}
+
+- (void)refresh
+{
+  [self.placePage.extendedPlacePageView refresh];
+  [self.placePage.actionBar refresh];
+}
+
+- (BOOL)hasPlacePage
+{
+  return self.placePage != nil;
 }
 
 - (void)setPlacePageForiPad
@@ -180,45 +202,93 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
 
 - (void)buildRoute
 {
-  auto & f = GetFramework();
-  m2::PointD const & destination = m_userMark->GetUserMark()->GetOrg();
-  m2::PointD const myPosition (ToMercator([MapsAppDelegate theApp].m_locationManager.lastLocation.coordinate));
-  f.SetRouter(f.GetBestRouter(myPosition, destination));
-  [self.delegate buildRoute:destination];
+  [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatBuildRoute)
+                   withParameters:@{kStatValue : kStatDestination}];
+  [Alohalytics logEvent:kAlohalyticsTapEventKey withValue:@"ppRoute"];
+  m2::PointD const & destination = m_userMark->GetUserMark()->GetPivot();
+  m2::PointD const myPosition([MapsAppDelegate theApp].m_locationManager.lastLocation.mercator);
+  using namespace location;
+  EMyPositionMode mode = self.myPositionMode;
+  [self.delegate buildRouteFrom:mode != EMyPositionMode::MODE_UNKNOWN_POSITION && mode != EMyPositionMode::MODE_PENDING_POSITION ?
+                                                     MWMRoutePoint(myPosition) :
+                                              MWMRoutePoint::MWMRoutePointZero()
+            to:{destination, self.placePage.basePlacePageView.titleLabel.text}];
+}
+
+- (void)routeFrom
+{
+  [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatBuildRoute)
+                   withParameters:@{kStatValue : kStatSource}];
+  [Alohalytics logEvent:kAlohalyticsTapEventKey withValue:@"ppRoute"];
+  [self.delegate buildRouteFrom:self.target];
+  [self hidePlacePage];
+}
+
+- (void)routeTo
+{
+  [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatBuildRoute)
+                   withParameters:@{kStatValue : kStatDestination}];
+  [Alohalytics logEvent:kAlohalyticsTapEventKey withValue:@"ppRoute"];
+  [self.delegate buildRouteTo:self.target];
+  [self hidePlacePage];
+}
+
+- (MWMRoutePoint)target
+{
+  UserMark const * m = m_userMark->GetUserMark();
+  m2::PointD const & org = m->GetPivot();
+  return m->GetMarkType() == UserMark::Type::MY_POSITION ?
+                          MWMRoutePoint(org) :
+                          MWMRoutePoint(org, self.placePage.basePlacePageView.titleLabel.text);
 }
 
 - (void)share
 {
+  [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatShare)];
+  [Alohalytics logEvent:kAlohalyticsTapEventKey withValue:@"ppShare"];
   MWMPlacePageEntity * entity = self.entity;
+  NSString * title = entity.bookmarkTitle ? entity.bookmarkTitle : entity.title;
   CLLocationCoordinate2D const coord = CLLocationCoordinate2DMake(entity.point.x, entity.point.y);
-  MWMActivityViewController * shareVC = [MWMActivityViewController shareControllerForLocationTitle:entity.title
-                                                                                          location:coord
-                                                                                        myPosition:NO];
-  [shareVC presentInParentViewController:self.ownerViewController anchorView:self.placePage.actionBar];
+  MWMActivityViewController * shareVC =
+      [MWMActivityViewController shareControllerForLocationTitle:title
+                                                        location:coord
+                                                      myPosition:NO];
+  [shareVC presentInParentViewController:self.ownerViewController
+                              anchorView:self.placePage.actionBar.shareButton];
 }
 
 - (void)apiBack
 {
+  [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatAPI)];
   ApiMarkPoint const * p = static_cast<ApiMarkPoint const *>(m_userMark->GetUserMark());
   NSURL * url = [NSURL URLWithString:@(GetFramework().GenerateApiBackUrl(*p).c_str())];
   [[UIApplication sharedApplication] openURL:url];
   [self.delegate apiBack];
 }
 
+- (void)changeBookmarkCategory:(BookmarkAndCategory)bac;
+{
+  BookmarkCategory * category = GetFramework().GetBmCategory(bac.first);
+  BookmarkCategory::Guard guard(*category);
+  UserMark const * bookmark = guard.m_controller.GetUserMark(bac.second);
+  m_userMark.reset(new UserMarkCopy(bookmark, false));
+}
+
 - (void)addBookmark
 {
+  [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatBookmarks)
+                   withParameters:@{kStatValue : kStatAdd}];
   Framework & f = GetFramework();
   BookmarkData data = BookmarkData(self.entity.title.UTF8String, f.LastEditedBMType());
   size_t const categoryIndex = f.LastEditedBMCategory();
-  size_t const bookmarkIndex =
-      f.GetBookmarkManager().AddBookmark(categoryIndex, m_userMark->GetUserMark()->GetOrg(), data);
+  size_t const bookmarkIndex = f.GetBookmarkManager().AddBookmark(categoryIndex, m_userMark->GetUserMark()->GetPivot(), data);
   self.entity.bac = make_pair(categoryIndex, bookmarkIndex);
   self.entity.type = MWMPlacePageEntityTypeBookmark;
-  BookmarkCategory const * category = f.GetBmCategory(categoryIndex);
-  Bookmark const * bookmark = category->GetBookmark(bookmarkIndex);
+
+  BookmarkCategory::Guard guard(*f.GetBmCategory(categoryIndex));
+
+  UserMark const * bookmark = guard.m_controller.GetUserMark(bookmarkIndex);
   m_userMark.reset(new UserMarkCopy(bookmark, false));
-  f.ActivateUserMark(bookmark);
-  f.Invalidate();
   [NSNotificationCenter.defaultCenter postNotificationName:kBookmarksChangedNotification
                                                     object:nil
                                                   userInfo:nil];
@@ -227,20 +297,29 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
 
 - (void)removeBookmark
 {
+  [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatBookmarks)
+                   withParameters:@{kStatValue : kStatRemove}];
   Framework & f = GetFramework();
-  BookmarkCategory * bookmarkCategory = f.GetBookmarkManager().GetBmCategory(self.entity.bac.first);
-  UserMark const * bookmark = bookmarkCategory->GetBookmark(self.entity.bac.second);
-  BookmarkAndCategory const bookmarkAndCategory = f.FindBookmark(bookmark);
+  BookmarkAndCategory bookmarkAndCategory = self.entity.bac;
+  BookmarkCategory * bookmarkCategory = f.GetBookmarkManager().GetBmCategory(bookmarkAndCategory.first);
+  if (!bookmarkCategory)
+    return;
+
+  UserMark const * bookmark = bookmarkCategory->GetUserMark(bookmarkAndCategory.second);
+  ASSERT_EQUAL(bookmarkAndCategory, f.FindBookmark(bookmark), ());
+
   self.entity.type = MWMPlacePageEntityTypeRegular;
-  PoiMarkPoint const * poi = f.GetAddressMark(bookmark->GetOrg());
+
+  PoiMarkPoint const * poi = f.GetAddressMark(bookmark->GetPivot());
   m_userMark.reset(new UserMarkCopy(poi, false));
-  f.ActivateUserMark(poi);
   if (bookmarkCategory)
   {
-    bookmarkCategory->DeleteBookmark(bookmarkAndCategory.second);
+    {
+      BookmarkCategory::Guard guard(*bookmarkCategory);
+      guard.m_controller.DeleteUserMark(bookmarkAndCategory.second);
+    }
     bookmarkCategory->SaveToKMLFile();
   }
-  f.Invalidate();
   [NSNotificationCenter.defaultCenter postNotificationName:kBookmarksChangedNotification
                                                     object:nil
                                                   userInfo:nil];
@@ -251,11 +330,12 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
 {
   [self.entity synchronize];
   [self.placePage reloadBookmark];
+  [self updateDistance];
 }
 
-- (void)dragPlacePage:(CGPoint)point
+- (void)dragPlacePage:(CGRect)frame
 {
-  [self.delegate dragPlacePage:point];
+  [self.delegate dragPlacePage:frame];
 }
 
 - (void)onLocationUpdate:(location::GpsInfo const &)info
@@ -276,14 +356,11 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
   CLLocation * location = [MapsAppDelegate theApp].m_locationManager.lastLocation;
   if (!location || !m_userMark)
     return @"";
-
-  double azimut = -1;
-  double north = -1;
-  [[MapsAppDelegate theApp].m_locationManager getNorthRad:north];
   string distance;
   CLLocationCoordinate2D const coord = location.coordinate;
-  GetFramework().GetDistanceAndAzimut(m_userMark->GetUserMark()->GetOrg(), coord.latitude, coord.longitude, north,
-                                      distance, azimut);
+  ms::LatLon const target = MercatorBounds::ToLatLon(m_userMark->GetUserMark()->GetPivot());
+  MeasurementUtils::FormatDistance(ms::DistanceOnEarth(coord.latitude, coord.longitude,
+                                                       target.lat, target.lon), distance);
   return @(distance.c_str());
 }
 
@@ -293,7 +370,7 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
   if (!location || !m_userMark)
     return;
 
-  CGFloat const angle = ang::AngleTo(ToMercator(location.coordinate), m_userMark->GetUserMark()->GetOrg()) + info.m_bearing;
+  CGFloat const angle = ang::AngleTo(location.mercator, m_userMark->GetUserMark()->GetPivot()) + info.m_bearing;
   CGAffineTransform transform = CGAffineTransformMakeRotation(M_PI_2 - angle);
   [self.placePage setDirectionArrowTransform:transform];
   [self.directionView setDirectionArrowTransform:transform];
@@ -302,9 +379,11 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
 - (void)showDirectionViewWithTitle:(NSString *)title type:(NSString *)type
 {
   MWMDirectionView * directionView = self.directionView;
+  UIView * ownerView = self.ownerViewController.view;
   directionView.titleLabel.text = title;
   directionView.typeLabel.text = type;
-  [self.ownerViewController.view addSubview:directionView];
+  [ownerView addSubview:directionView];
+  [ownerView endEditing:YES];
   [directionView setNeedsLayout];
   [self.delegate updateStatusBarStyle];
   [(MapsAppDelegate *)[UIApplication sharedApplication].delegate disableStandby];
@@ -316,6 +395,13 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
   [self.directionView removeFromSuperview];
   [self.delegate updateStatusBarStyle];
   [(MapsAppDelegate *)[UIApplication sharedApplication].delegate enableStandby];
+}
+
+- (void)changeHeight:(CGFloat)height
+{
+  if (!IPAD)
+    return;
+  ((MWMiPadPlacePage *)self.placePage).height = height;
 }
 
 #pragma mark - Properties
@@ -340,6 +426,11 @@ typedef NS_ENUM(NSUInteger, MWMPlacePageManagerState)
 - (void)setLeftBound:(CGFloat)leftBound
 {
   _leftBound = self.placePage.leftBound = leftBound;
+}
+
+- (location::EMyPositionMode)myPositionMode
+{
+  return self.delegate.myPositionMode;
 }
 
 @end

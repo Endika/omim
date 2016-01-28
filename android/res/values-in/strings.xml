@@ -55,7 +55,7 @@
 	<!-- Settings/Downloader - No internet connection dialog title -->
 	<string name="no_internet_connection_detected">Tidak ada koneksi internet yang terdeteksi</string>
 	<!-- Settings/Downloader - 3G download warning dialog title -->
-	<string name="no_wifi_ask_cellular_download">Tidak ada koneksi WiFi yang terdeteksi. Apakah Anda ingin menggunakan paket data seluler (GPRS, EDGE or 3G) untuk mengunduh %s?</string>
+	<string name="no_wifi_ask_cellular_download">Tidak ada koneksi WiFi yang terdeteksi. Apakah Anda ingin menggunakan paket data seluler (GPRS, EDGE, 3G or LTE) untuk mengunduh %s?</string>
 	<string name="ok">OK</string>
 	<!-- not used? Search View - Location is disabled by user warning text -->
 	<string name="enable_location_services">Mohon aktifkan Layanan Lokasi</string>
@@ -94,7 +94,7 @@
 	<!-- Message to display at the center of the screen when the country is added to the downloading queue -->
 	<string name="country_status_added_to_queue">^\ntelah ditambahkan ke antrean pengunduhan.</string>
 	<!-- Message to display at the center of the screen when the country is downloading -->
-	<string name="country_status_downloading">Sedang mengunduh\n^\n^%</string>
+	<string name="country_status_downloading">Sedang mengunduh\n^\n^</string>
 	<!-- Button text for the button at the center of the screen when the country is not downloaded -->
 	<string name="country_status_download">Unduh Peta\n(^ ^)</string>
 	<!-- Button text for the button at the center of the screen when the country is not downloaded -->
@@ -304,8 +304,47 @@
 	<string name="length">Panjang</string>
 	<string name="share_my_location">Bagikan Lokasi Saya</string>
 	<string name="menu_search">Cari</string>
+	<!-- Settings screen: "Map" category title -->
+	<string name="prefs_group_map">Peta</string>
+	<!-- Settings screen: "Miscellaneous" category title -->
+	<string name="prefs_group_misc">Lain-Lain</string>
+	<string name="prefs_group_route">Navigasi</string>
 	<string name="pref_zoom_title">Tombol perbesaran</string>
 	<string name="pref_zoom_summary">Tampilkan pada layar</string>
+	<!-- Settings «Map» category: «Night style» title -->
+	<string name="pref_map_style_title">Mode Malam</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_default">Tidak Aktif</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_night">Aktif</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_auto">Otomatis</string>
+	<!-- Settings «Map» category: «Perspective view» title -->
+	<string name="pref_map_3d_title">Pandangan perspektif</string>
+	<!-- Settings «Map» category: «3D buildings» title -->
+	<string name="pref_map_3d_buildings_title">Bangunan 3D</string>
+	<!-- Settings «Map» category: «3D buildings» summary -->
+	<string name="pref_map_3d_buildings_subtitle">Memengaruhi daya baterai</string>
+	<!-- Settings «Route» category: «Tts enabled» title -->
+	<string name="pref_tts_enable_title">Petunjuk Suara</string>
+	<!-- Settings «Route» category: «Tts language» title -->
+	<string name="pref_tts_language_title">Bahasa Suara</string>
+	<!-- Settings «Route» category: «Tts unavailable» subtitle -->
+	<string name="pref_tts_unavailable">Tidak Tersedia</string>
+	<!-- Title for "Other" section in TTS settings. -->
+	<string name="pref_tts_other_section_title">Lainnya</string>
+	<string name="pref_tts_how_to_set_up_voice">Cara mengatur suara</string>
+	<!-- Settings «Map» category: «Record track» title -->
+	<string name="pref_track_record_title">Jalur terkini</string>
+	<string name="duration_disabled">Nonaktif</string>
+	<string name="duration_1_hour">1 jam</string>
+	<string name="duration_2_hours">2 jam</string>
+	<string name="duration_6_hours">6 jam</string>
+	<string name="duration_12_hours">12 jam</string>
+	<string name="duration_1_day">1 hari</string>
+	<string name="recent_track_help_text">Harap perhatikan: mengaktifkan fungsi ini menyebabkan pemakaian baterai meningkat.</string>
+	<string name="pref_track_ios_caption">Jalur terakhir menunjukkan jalur yang sudah Anda lalui.</string>
+	<string name="pref_track_ios_subcaption">Silakan pilih jangka waktu penyimpanan jalur.</string>
 	<string name="placepage_distance">Jarak</string>
 	<string name="placepage_coordinates">Koordinat</string>
 	<string name="placepage_unsorted">Tidak diurutkan</string>
@@ -326,10 +365,6 @@
 	<string name="route">Rute</string>
 	<!-- category title -->
 	<string name="routes">Rute</string>
-	<!-- button in the interface -->
-	<string name="choose_starting_point">Pilih titik awal…</string>
-	<!-- button in the interface -->
-	<string name="choose_destination">Pilih tujuan…</string>
 	<!-- Show on first launch. -->
 	<string name="maps_licence_info">Aplikasi ini menggunakan data geografis (termasuk peta, daftar perusahaan, lokasi-lokasi menarik, batas-batas negara dan daerah, dll) yang diambil dari proyek OpenStreetMap. Kami tidak menjamin konsistensi, akurasi, kelengkapan atau kesesuaian data OpenStreetMap apa pun.</string>
 	<!-- Show on first launch. -->
@@ -427,7 +462,7 @@
 	<!-- Context menu item for downloader. -->
 	<string name="downloader_download_map">Unduh peta</string>
 	<string name="downloader_download_map_no_routing">Unduh peta tanpa perutean</string>
-	<!-- Button for routing PP. -->
+	<!-- Button for routing. -->
 	<string name="routing_go">Mulai!</string>
 	<!-- Item status in downloader. -->
 	<string name="downloader_retry">Coba lagi</string>
@@ -708,6 +743,7 @@
 	<string name="dialog_routing_disclaimer_priority">— Kondisi jalan, peraturan lalu lintas, dan marka jalan harus selalu didahulukan daripada saran navigasi;</string>
 	<string name="dialog_routing_disclaimer_precision">— Peta mungkin tidak akurat dan rute yang disarankan tidak mutlak merupakan cara paling optimal untuk mencapai tujuan;</string>
 	<string name="dialog_routing_disclaimer_recommendations">— Rute yang disarankan hanya untuk digunakan sebagai rekomendasi;</string>
+	<string name="dialog_routing_disclaimer_borders">— Berhati-hatilah dengan rute di zona perbatasan: rute yang dibuat oleh aplikasi kami terkadang mungkin saja melintasi batas negara di lokasi yang tidak sah;</string>
 	<string name="dialog_routing_disclaimer_beware">Jaga selalu kewaspadaan dan keselamatan di jalan!</string>
 	<string name="dialog_routing_check_gps">Periksa sinyal GPS</string>
 	<string name="dialog_routing_error_location_not_found">Tidak dapat membuat rute. Koordinat GPS saat ini tidak dapat dikenali.</string>
@@ -756,35 +792,9 @@
 	<!-- Failed planning route message in navigation view -->
 	<string name="routing_planning_error">Sudah sampai di tujuan</string>
 	<!-- Arrive routing message in navigation view -->
-	<string name="routing_arrive">Kedatangan</string>
-	<!-- Routing Start button title -->
-	<string name="routing_start">Mulai</string>
-	<!-- Planning route message in navigation view -->
-	<string name="routing_planning">Merencanakan Rute</string>
+	<string name="routing_arrive">Kedatangan: %s</string>
 	<!-- Text for routing::IRouter::FileTooOld dialog. -->
 	<string name="dialog_routing_download_and_update_maps">Untuk membuat rute, silakan unduh dan perbarui semua peta sepanjang rute.</string>
-	<!-- Text for facebook sharing news about walking routes -->
-	<string name="share_walking_routes_facebook">Jalur terpendek yang pernah ada. MAPS.ME menghemat waktu berjalan Anda. Lebih dari 2 juta km rute, jalan, dan jalur untuk pejalan kaki tersedia untuk petunjuk berjalan sekarang.</string>
-	<!-- Text for messenger sharing news about walking routes -->
-	<string name="share_walking_routes_messenger">MAPS.ME memberikan rute berjalan yang terpendek di seluruh dunia! Ayo lihat: http://maps.me/get?walk_im</string>
-	<!-- Text for sms sharing news about walking routes -->
-	<string name="share_walking_routes_sms">MAPS.ME memberikan rute berjalan yang terpendek: http://maps.me/get?walk</string>
-	<!-- Subject for email sharing news about walking routes -->
-	<string name="share_walking_routes_email_subject">Rute berjalan yang terpendek tersedia</string>
-	<!-- Text for email sharing news about walking routes -->
-	<string name="share_walking_routes_email_body">MAPS.ME baru saja merilis petunjuk berjalan berdasarkan peta dengan perincian yang terlengkap di dunia! Aplikasi ini memberikan rute terpendek ke destinasi mana saja. Ayo dicoba: http://maps.me/get?walk_em</string>
-	<!-- Title for walking routes dialog, notifications etc. -->
-	<string name="title_walking_available">Petunjuk berjalan tersedia di MAPS.ME!</string>
-	<!-- Text for walking routes dialog -->
-	<string name="share_walking_routes_first_launch">Petunjuk berjalan memberikan rute terpendek ke destinasi mana saja. Bantu teman-teman Anda untuk menghemat waktu berjalan juga!</string>
-	<!-- Title for walking routes dialog after 3 built routes -->
-	<string name="share_walking_routes_congratulations">Selamat!</string>
-	<!-- Text for walking routes dialog after 3 built routes -->
-	<string name="share_walking_routes_mastering">Anda telah menguasai fungsi petunjuk berjalan. Bantu teman-teman Anda untuk menghemat waktu berjalan juga. Beri tahu mereka tentang MAPS.ME.</string>
-	<!-- Android notification about walking directions for update users -->
-	<string name="walking_notification_text">Maukah Anda mencobanya?</string>
-	<!-- Android notification with picture (rich) about walking directions for update users -->
-	<string name="walking_rich_notification_text">Petunjuk berjalan memberikan rute terpendek ke titik destinasi mana saja. Ayo coba sendiri dan bantu teman-teman Anda menghemat waktu perjalanan.</string>
 	<string name="rate_alert_title">Suka aplikasi ini?</string>
 	<string name="rate_alert_default_message">Terima kasih karena menggunakan MAPS.ME. Mohon beri peringkat untuk aplikasi ini. Masukan dari Anda membantu kami untuk menjadi lebih baik.</string>
 	<string name="rate_alert_five_star_message">Hore! Kami juga sangat menyukai Anda!</string>
@@ -801,8 +811,21 @@
 	<string name="search_not_found_location">Unduh peta dari lokasi Anda saat ini.</string>
 	<string name="search_history_title">Riwayat Pencarian</string>
 	<string name="search_history_text">Akses kueri pencarian terbaru dengan cepat.</string>
-	<string name="update_maps_alert_title">Menelusuri peta kini lebih mudah</string>
-	<string name="update_maps_alert_message">Kami telah mengadakan peningkatan pada gaya peta: sekarang semua objek tampak lebih jelas dan mudah dipahami. Perbarui peta untuk menikmati seluruh manfaat dari desain baru ini.</string>
-	<string name="update_maps_alert_button_title">Perbarui peta</string>
 	<string name="clear_search">Bersihkan riwayat pencarian</string>
+	<!-- Title for settings to enable/disable showcase menu button -->
+	<string name="showcase_settings_title">Tampilkan penawaran</string>
+	<string name="showcase_more_apps">Lebih Banyak Aplikasi My.com</string>
+	<string name="p2p_route_planning">Perencana Rute</string>
+	<string name="p2p_your_location">Lokasi Anda</string>
+	<string name="p2p_from">Titik keberangkatan</string>
+	<string name="p2p_to">Titik tujuan</string>
+	<string name="p2p_start">Mulai</string>
+	<string name="p2p_planning">Merencanakan…</string>
+	<string name="p2p_from_here">Dari</string>
+	<string name="p2p_to_here">Ke</string>
+	<string name="p2p_only_from_current">Navigasi tersedia hanya dari lokasi Anda saat ini.</string>
+	<string name="p2p_reroute_from_current">Apakah Anda ingin kami merencanakan sebuah rute dari lokasi Anda saat ini?</string>
+	<string name="whats_new_next_button">Berikut</string>
+	<string name="whats_new_night_caption">Navigasi mode malam</string>
+	<string name="whats_new_night_body">Untuk memfasilitasi penggunaan MAPS.ME saat berkendara dalam gelap, kami telah menambahkan mode malam. Mode ini diaktifkan secara otomatis setelah matahari terbenam.</string>
 </resources>

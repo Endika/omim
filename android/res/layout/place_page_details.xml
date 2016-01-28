@@ -6,7 +6,7 @@
       android:id="@+id/pp__details"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="@color/bg_top_panels"
+      android:background="?ppBackground"
       android:overScrollMode="never">
     <LinearLayout
         android:id="@+id/rl__place_details"
@@ -25,9 +25,15 @@
 
       <include layout="@layout/place_page_placename"/>
 
+      <include layout="@layout/place_page_entrance"/>
+
       <include layout="@layout/place_page_phone"/>
 
       <include layout="@layout/place_page_website"/>
+
+      <include layout="@layout/place_page_wiki"/>
+
+      <include layout="@layout/place_page_email"/>
 
       <include layout="@layout/place_page_schedule"/>
 
@@ -35,14 +41,13 @@
 
       <include layout="@layout/place_page_wifi"/>
 
-      <include layout="@layout/place_page_email"/>
-
       <include layout="@layout/place_page_operator"/>
 
-      <View
+      <include layout="@layout/place_page_cuisine"/>
+
+      <Space
           android:layout_width="match_parent"
-          android:layout_height="0px"
-          android:layout_marginBottom="@dimen/margin_half"/>
+          android:layout_height="@dimen/margin_half"/>
 
       <include
           layout="@layout/place_page_bookmark_details"
@@ -53,8 +58,5 @@
 
   <include layout="@layout/shadow_top"/>
 
-  <include layout="@layout/shadow_bottom"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_gravity="bottom"/>
+  <include layout="@layout/shadow_bottom"/>
 </FrameLayout>

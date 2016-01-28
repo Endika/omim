@@ -1,8 +1,8 @@
 #pragma once
 
 #include "indexer/drawing_rule_def.hpp"
-#include "indexer/drules_city_rank_table.hpp"
 #include "indexer/drules_selector.hpp"
+#include "indexer/map_style.hpp"
 
 #include "base/base.hpp"
 #include "base/buffer_vector.hpp"
@@ -80,8 +80,6 @@ namespace drule
     /// background color for scales in range [0...scales::UPPER_STYLE_SCALE]
     vector<uint32_t> m_bgColors;
 
-    unique_ptr<ICityRankTable> m_cityRankTable;
-
   public:
     RulesHolder();
     ~RulesHolder();
@@ -97,15 +95,12 @@ namespace drule
 
     uint32_t GetBgColor(int scale) const;
 
-    double GetCityRank(int scale, uint32_t population) const;
-
 #ifdef OMIM_OS_DESKTOP
     void LoadFromTextProto(string const & buffer);
     static void SaveToBinaryProto(string const & buffer, ostream & s);
 #endif
 
     void LoadFromBinaryProto(string const & s);
-    void LoadCityRankTableFromString(string & s);
 
     template <class ToDo> void ForEachRule(ToDo toDo)
     {
@@ -127,6 +122,7 @@ namespace drule
     void InitBackgroundColors(ContainerProto const & cp);
   };
 
+  RulesHolder & rules(MapStyle mapStyle);
   RulesHolder & rules();
 
   void LoadRules();

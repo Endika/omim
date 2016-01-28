@@ -15,6 +15,7 @@ screenlog.0
 data/*.mwm.osm2ft
 data/*.mwm.routing
 data/*.mwmmeta
+data/[!W]*.mwm
 
 # Compiled Python
 crawler/*.pyc
@@ -58,27 +59,16 @@ iphone/*/build/*
 xcode/**/xcuserdata
 xcode/**/xcshareddata
 tools/emacsmode/build
+**/DerivedData/*
 
 # GeneratedFiles
 version/version.hpp
 tools/win/MapsWithMe*
 GeneratedFiles
 
-# bada
-bada/.metadata
-bada/repository
-bada/Maps/.settings
-bada/Maps/.Simulator-Debug
-bada/Maps/.Simulator-Release
-bada/Maps/Res
-bada/Maps/Home
-bada/Maps/*.zip
-
 # data
 data/intermediate_data
-data/*.mwm
-!data/World.mwm
-!data/WorldCoasts.mwm
+data/[0-9][0-9][0-9][0-9][0-9][0-9]
 # temporary files for downloader
 data/*.mwm.downloading2
 data/*.mwm.resume2
@@ -131,6 +121,7 @@ tizen/*/.*
 
 tizen/*/crash-info/*
 .idea/*
+.idea
 
 # Private repository files.
 .private_repository_url

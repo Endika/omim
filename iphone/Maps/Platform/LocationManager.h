@@ -2,7 +2,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <UIKit/UIApplication.h>
 
-#include "indexer/mercator.hpp"
+#include "geometry/mercator.hpp"
 #include "platform/location.hpp"
 #include "std/utility.hpp"
 
@@ -23,6 +23,8 @@
   BOOL m_isCourse;
 }
 
+@property (nonatomic, readonly) BOOL isDaemonMode;
+
 - (void)start:(id <LocationObserver>)observer;
 - (void)stop:(id <LocationObserver>)observer;
 - (CLLocation *)lastLocation;
@@ -40,6 +42,17 @@
 - (bool)lastLocationIsValid;
 - (BOOL)enabledOnMap;
 - (void)triggerCompass;
+
+- (void)onDaemonMode;
+- (void)onForeground;
+- (void)onBackground;
+- (void)beforeTerminate;
+
+@end
+
+@interface CLLocation (Mercator)
+
+- (m2::PointD)mercator;
 
 @end
 

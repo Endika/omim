@@ -8,6 +8,12 @@
       location = "container:"
       name = "3party">
       <FileRef
+         location = "group:agg/agg.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:lodepng/lodepng.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "container:gflags/gflags.xcodeproj">
       </FileRef>
       <FileRef
@@ -46,10 +52,13 @@
       <FileRef
          location = "group:tess2/tess2.xcodeproj">
       </FileRef>
+      <FileRef
+         location = "group:sdf_image/sdf_image.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:stb_image/stb_image.xcodeproj">
+      </FileRef>
    </Group>
-   <FileRef
-      location = "container:anim/anim.xcodeproj">
-   </FileRef>
    <FileRef
       location = "container:api/api.xcodeproj">
    </FileRef>
@@ -63,16 +72,13 @@
       location = "container:drape/drape.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:drape_frontend/drape_frontend.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "container:geometry/geometry.xcodeproj">
    </FileRef>
    <FileRef
       location = "container:generator/generator.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "container:graphics/graphics.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "container:gui/gui.xcodeproj">
    </FileRef>
    <FileRef
       location = "container:indexer/indexer.xcodeproj">
@@ -82,9 +88,6 @@
    </FileRef>
    <FileRef
       location = "container:platform/platform.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "container:render/render.xcodeproj">
    </FileRef>
    <FileRef
       location = "container:routing/routing.xcodeproj">
@@ -100,5 +103,15 @@
    </FileRef>
    <FileRef
       location = "container:MapsMe/MapsMe.xcodeproj">
+   </FileRef>
+   <Group
+      location = "container:"
+      name = "iOS">
+      <FileRef
+         location = "group:../iphone/Maps/Maps.xcodeproj">
+      </FileRef>
+   </Group>
+   <FileRef
+      location = "group:mapshot/mapshot.xcodeproj">
    </FileRef>
 </Workspace>

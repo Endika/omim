@@ -1,7 +1,9 @@
-#import "MWMBookmarkColorViewController.h"
 #import "MWMBookmarkColorCell.h"
+#import "MWMBookmarkColorViewController.h"
 #import "MWMPlacePageEntity.h"
 #import "MWMPlacePageViewManager.h"
+#import "Statistics.h"
+#import "UIColor+MapsMeColor.h"
 #import "UIViewController+navigation.h"
 
 extern NSArray * const kBookmarkColorsVariant;
@@ -25,6 +27,8 @@ static NSString * const kBookmarkColorCellIdentifier = @"MWMBookmarkColorCell";
 {
   [super viewDidLoad];
   self.title = L(@"bookmark_color");
+  self.tableView.separatorColor = [UIColor blackDividers];
+  self.view.backgroundColor = [UIColor pressBackground];
   [self.tableView registerNib:[UINib nibWithNibName:kBookmarkColorCellIdentifier bundle:nil] forCellReuseIdentifier:kBookmarkColorCellIdentifier];
   self.colorWasChanged = NO;
 }
@@ -47,7 +51,7 @@ static NSString * const kBookmarkColorCellIdentifier = @"MWMBookmarkColorCell";
 {
   if (self.iPadOwnerNavigationController)
    [self.iPadOwnerNavigationController setNavigationBarHidden:YES];
-
+  [self.placePageManager reloadBookmark];
   [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -120,13 +124,15 @@ static NSString * const kBookmarkColorCellIdentifier = @"MWMBookmarkColorCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+  NSString * bookmarkColor = kBookmarkColorsVariant[indexPath.row];
+  [[Statistics instance] logEvent:kStatEventName(kStatPlacePage, kStatChangeBookmarkColor)
+                   withParameters:@{kStatValue : bookmarkColor}];
   self.colorWasChanged = YES;
-  self.placePageManager.entity.bookmarkColor = kBookmarkColorsVariant[indexPath.row];
+  self.placePageManager.entity.bookmarkColor = bookmarkColor;
   if (!self.iPadOwnerNavigationController)
     return;
 
-  [self.placePageManager reloadBookmark];
-  GetFramework().Invalidate();
+  [self.placePageManager.entity synchronize];
 }
 
 @end

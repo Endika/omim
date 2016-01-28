@@ -58,10 +58,28 @@ namespace
     QPoint m_pen;
     QVector<QPair<QPoint, QImage> > m_images;
   };
+
+  class DummyGlyphIndex : public GlyphIndex
+  {
+    typedef GlyphIndex TBase;
+  public:
+    DummyGlyphIndex(m2::PointU size, ref_ptr<GlyphManager> mng)
+      : TBase(size, mng)
+    {
+    }
+
+    ref_ptr<Texture::ResourceInfo> MapResource(GlyphKey const & key)
+    {
+      bool dummy = false;
+      return TBase::MapResource(key, dummy);
+    }
+  };
 }
 
 UNIT_TEST(UploadingGlyphs)
 {
+  // This unit test creates window so can't be run in GUI-less Linux machine.
+#ifndef OMIM_OS_LINUX
   EXPECTGL(glHasExtension(_)).Times(AnyNumber());
   EXPECTGL(glBindTexture(_)).Times(AnyNumber());
   EXPECTGL(glDeleteTexture(_)).Times(AnyNumber());
@@ -77,25 +95,36 @@ UNIT_TEST(UploadingGlyphs)
   GetPlatform().GetFontNames(args.m_fonts);
 
   GlyphManager mng(args);
-  GlyphIndex index(m2::PointU(64, 64), MakeStackRefPointer(&mng));
-  index.MapResource(GlyphKey(0x58));
-  index.MapResource(GlyphKey(0x59));
-  index.MapResource(GlyphKey(0x61));
+  DummyGlyphIndex index(m2::PointU(128, 128), make_ref(&mng));
+  size_t count = 1; // invalid symbol glyph has mapped internally.
+  count += (index.MapResource(GlyphKey(0x58)) != nullptr) ? 1 : 0;
+  count += (index.MapResource(GlyphKey(0x59)) != nullptr) ? 1 : 0;
+  count += (index.MapResource(GlyphKey(0x61)) != nullptr) ? 1 : 0;
+  while (index.GetPendingNodesCount() < count);
+
+  Texture::Params p;
+  p.m_allocator = GetDefaultAllocator();
+  p.m_format = dp::ALPHA;
+  p.m_width = p.m_height = 128;
 
   DummyTexture tex;
-  tex.Create(64, 64, dp::ALPHA, MakeStackRefPointer<void>(nullptr));
+  tex.Create(p);
   EXPECTGL(glTexSubImage2D(_, _, _, _, _, _, _)).WillOnce(Invoke(&r, &UploadedRender::glMemoryToQImage));
-  index.UploadResources(MakeStackRefPointer<Texture>(&tex));
+  index.UploadResources(make_ref(&tex));
 
-  index.MapResource(GlyphKey(0x68));
-  index.MapResource(GlyphKey(0x30));
-  index.MapResource(GlyphKey(0x62));
-  index.MapResource(GlyphKey(0x65));
-  index.MapResource(GlyphKey(0x400));
-  index.MapResource(GlyphKey(0x401));
+  count = 0;
+  count += (index.MapResource(GlyphKey(0x68)) != nullptr) ? 1 : 0;
+  count += (index.MapResource(GlyphKey(0x30)) != nullptr) ? 1 : 0;
+  count += (index.MapResource(GlyphKey(0x62)) != nullptr) ? 1 : 0;
+  count += (index.MapResource(GlyphKey(0x65)) != nullptr) ? 1 : 0;
+  count += (index.MapResource(GlyphKey(0x400)) != nullptr) ? 1 : 0;
+  count += (index.MapResource(GlyphKey(0x401)) != nullptr) ? 1 : 0;
+  while (index.GetPendingNodesCount() < count);
+
   EXPECTGL(glTexSubImage2D(_, _, _, _, _, _, _)).WillOnce(Invoke(&r, &UploadedRender::glMemoryToQImage))
                                                 .WillOnce(Invoke(&r, &UploadedRender::glMemoryToQImage));
-  index.UploadResources(MakeStackRefPointer<Texture>(&tex));
+  index.UploadResources(make_ref(&tex));
 
   RunTestLoop("UploadingGlyphs", bind(&UploadedRender::Render, &r, _1));
+#endif
 }

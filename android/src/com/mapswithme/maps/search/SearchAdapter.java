@@ -1,6 +1,8 @@
 package com.mapswithme.maps.search;
 
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
@@ -12,7 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.mapswithme.maps.R;
+import com.mapswithme.maps.routing.RoutingController;
+import com.mapswithme.util.Graphics;
+import com.mapswithme.util.ThemeUtils;
 import com.mapswithme.util.UiUtils;
 
 class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.BaseViewHolder>
@@ -21,8 +27,9 @@ class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.BaseViewHolder>
   private static final int TYPE_SUGGEST = 1;
   private static final int TYPE_RESULT = 2;
 
-  private SearchResult[] mResults;
   private final SearchFragment mSearchFragment;
+  private SearchResult[] mResults;
+  private Drawable mClosedMarkerBackground;
 
   protected static abstract class BaseViewHolder extends RecyclerView.ViewHolder
   {
@@ -33,6 +40,17 @@ class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.BaseViewHolder>
     BaseViewHolder(View view)
     {
       super(view);
+      if (view instanceof TextView)
+      {
+        int tintAttr = getTintAttr();
+        if (tintAttr != 0)
+          Graphics.tint((TextView)view, tintAttr);
+      }
+    }
+
+    @AttrRes int getTintAttr()
+    {
+      return R.attr.colorAccent;
     }
 
     void bind(@NonNull SearchResult result, int order)
@@ -129,6 +147,11 @@ class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.BaseViewHolder>
     final TextView mRegion;
     final TextView mDistance;
 
+    @Override
+    int getTintAttr()
+    {
+      return 0;
+    }
 
     // FIXME: Better format based on result type
     private CharSequence formatDescription(SearchResult result)
@@ -169,6 +192,8 @@ class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.BaseViewHolder>
       mDescription = (TextView) view.findViewById(R.id.description);
       mRegion = (TextView) view.findViewById(R.id.region);
       mDistance = (TextView) view.findViewById(R.id.distance);
+
+      mClosedMarker.setBackgroundDrawable(mClosedMarkerBackground);
     }
 
     @Override
@@ -191,14 +216,15 @@ class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.BaseViewHolder>
     @Override
     void processClick(SearchResult result, int order)
     {
-      mSearchFragment.showSingleResultOnMap(order);
-      notifyDataSetChanged();
+      mSearchFragment.showSingleResultOnMap(result, order);
     }
   }
 
   public SearchAdapter(SearchFragment fragment)
   {
     mSearchFragment = fragment;
+    mClosedMarkerBackground = fragment.getResources().getDrawable(ThemeUtils.isNightTheme() ? R.drawable.search_closed_marker_night
+                                                                                            : R.drawable.search_closed_marker);
   }
 
   @Override
@@ -262,7 +288,8 @@ class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.BaseViewHolder>
 
   private boolean showPopulateButton()
   {
-    return (mResults != null &&
+    return (!RoutingController.get().isWaitingPoiPick() &&
+            mResults != null &&
             mResults.length > 0 &&
             mResults[0].type != SearchResult.TYPE_SUGGEST);
   }
@@ -276,13 +303,15 @@ class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.BaseViewHolder>
   @Override
   public int getItemCount()
   {
+    int res = 0;
     if (mResults == null)
-      return 0;
+      return res;
 
     if (showPopulateButton())
-      return mResults.length + 1;
+      res++;
 
-    return mResults.length;
+    res += mResults.length;
+    return res;
   }
 
   public void clear()

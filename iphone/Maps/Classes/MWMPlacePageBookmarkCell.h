@@ -1,16 +1,11 @@
-#import <UIKit/UIKit.h>
+#import "MWMTableViewCell.h"
 
-@class MWMPlacePageEntity, MWMPlacePage, MWMTextView;
+@class MWMPlacePage;
 
 @interface MWMPlacePageBookmarkCell : UITableViewCell
 
-@property (weak, nonatomic, readonly) IBOutlet UITextField * title;
-@property (weak, nonatomic, readonly) IBOutlet UIButton * categoryButton;
-@property (weak, nonatomic, readonly) IBOutlet UIButton * markButton;
-@property (weak, nonatomic, readonly) IBOutlet UILabel * descriptionLabel;
-@property (weak, nonatomic) UITableView * ownerTableView;
-@property (weak, nonatomic) MWMPlacePage * placePage;
+- (void)config:(MWMPlacePage *)placePage forHeight:(BOOL)forHeight;
 
-- (void)configure;
+- (CGFloat)cellHeight;
 
 @end

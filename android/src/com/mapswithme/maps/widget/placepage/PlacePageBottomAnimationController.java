@@ -103,8 +103,8 @@ class PlacePageBottomAnimationController extends BasePlacePageAnimationControlle
   {
     mGestureDetector = new GestureDetectorCompat(mPlacePage.getContext(), new GestureDetector.SimpleOnGestureListener()
     {
-      private final int Y_MIN = UiUtils.dp(10);
-      private final int Y_MAX = UiUtils.dp(50);
+      private final int Y_MIN = UiUtils.toPx(10);
+      private final int Y_MAX = UiUtils.toPx(50);
       private static final int X_TO_Y_SCROLL_RATIO = 2;
 
       @Override
@@ -167,7 +167,6 @@ class PlacePageBottomAnimationController extends BasePlacePageAnimationControlle
     }
   }
 
-  @SuppressLint("NewApi")
   protected void showPreview(final State currentState)
   {
     UiUtils.show(mPlacePage, mPreview);
@@ -229,18 +228,6 @@ class PlacePageBottomAnimationController extends BasePlacePageAnimationControlle
     animator.setDuration(DURATION);
     animator.setInterpolator(interpolator);
     animator.start();
-  }
-
-  private void correctPreviewTranslation()
-  {
-    UiThread.runLater(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        mPreview.setTranslationY(-mDetailsContent.getHeight());
-      }
-    });
   }
 
   private void showPreviewFrame()

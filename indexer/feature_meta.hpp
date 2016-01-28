@@ -35,24 +35,43 @@ namespace feature
       FMD_EMAIL = 14,
       FMD_POSTCODE = 15,
       FMD_WIKIPEDIA = 16,
+      FMD_MAXSPEED = 17,
+      FMD_FLATS = 18,
+      FMD_HEIGHT = 19,
+      FMD_MIN_HEIGHT = 20,
+      FMD_DENOMINATION = 21,
       FMD_COUNT
     };
 
     static_assert(FMD_COUNT <= 255, "Meta types count is limited to one byte.");
 
-    bool Add(EType type, string const & s)
+    /// Empty value drops (clears) corresponding type.
+    void Set(EType type, string const & value)
     {
-      string & val = m_metadata[type];
-      if (val.empty())
-        val = s;
+      auto found = m_metadata.find(type);
+      if (found == m_metadata.end())
+      {
+        if (!value.empty())
+          m_metadata[type] = value;
+      }
       else
-        val = val + ", " + s;
-      return true;
+      {
+        if (value.empty())
+          m_metadata.erase(found);
+        else
+          found->second = value;
+      }
+    }
+
+    /// Synonym of Set(type, "").
+    void Drop(EType type)
+    {
+      Set(type, "");
     }
 
     string Get(EType type) const
     {
-      auto it = m_metadata.find(type);
+      auto const it = m_metadata.find(type);
       return (it == m_metadata.end()) ? string() : it->second;
     }
 
@@ -67,13 +86,10 @@ namespace feature
       return types;
     }
 
-    void Drop(EType type)
-    {
-      m_metadata.erase(type);
-    }
-
     inline bool Empty() const { return m_metadata.empty(); }
     inline size_t Size() const { return m_metadata.size(); }
+
+    string GetWikiURL() const;
 
     template <class ArchiveT> void SerializeToMWM(ArchiveT & ar) const
     {

@@ -1,7 +1,7 @@
 #include "route.hpp"
 #include "turns_generator.hpp"
 
-#include "indexer/mercator.hpp"
+#include "geometry/mercator.hpp"
 
 #include "platform/location.hpp"
 
@@ -12,9 +12,6 @@
 #include "base/logging.hpp"
 
 #include "std/numeric.hpp"
-#include "std/utility.hpp"
-#include "std/algorithm.hpp"
-
 
 namespace routing
 {
@@ -43,6 +40,11 @@ void Route::Swap(Route & rhs)
   swap(m_turns, rhs.m_turns);
   swap(m_times, rhs.m_times);
   m_absentCountries.swap(rhs.m_absentCountries);
+}
+
+void Route::AddAbsentCountry(string const & name)
+{
+  if (!name.empty()) m_absentCountries.insert(name);
 }
 
 double Route::GetTotalDistanceMeters() const
@@ -148,21 +150,20 @@ Route::TTurns::const_iterator Route::GetCurrentTurn() const
          });
 }
 
-void Route::GetCurrentTurn(double & distanceToTurnMeters, turns::TurnItem & turn) const
+bool Route::GetCurrentTurn(double & distanceToTurnMeters, turns::TurnItem & turn) const
 {
   auto it = GetCurrentTurn();
   if (it == m_turns.end())
   {
-    ASSERT(it != m_turns.end(), ());
-    distanceToTurnMeters = 0;
-    turn = turns::TurnItem();
-    return;
+    ASSERT(false, ());
+    return false;
   }
 
   size_t const segIdx = (*it).m_index;
   turn = (*it);
   distanceToTurnMeters = m_poly.GetDistanceM(m_poly.GetCurrentIter(),
                                              m_poly.GetIterToIndex(segIdx));
+  return true;
 }
 
 bool Route::GetNextTurn(double & distanceToTurnMeters, turns::TurnItem & turn) const
@@ -182,6 +183,21 @@ bool Route::GetNextTurn(double & distanceToTurnMeters, turns::TurnItem & turn) c
   turn = *it;
   distanceToTurnMeters = m_poly.GetDistanceM(m_poly.GetCurrentIter(),
                                              m_poly.GetIterToIndex(it->m_index));
+  return true;
+}
+
+bool Route::GetNextTurns(vector<turns::TurnItemDist> & turns) const
+{
+  turns::TurnItemDist currentTurn;
+  if (!GetCurrentTurn(currentTurn.m_distMeters, currentTurn.m_turnItem))
+    return false;
+
+  turns.clear();
+  turns.emplace_back(move(currentTurn));
+
+  turns::TurnItemDist nextTurn;
+  if (GetNextTurn(nextTurn.m_distMeters, nextTurn.m_turnItem))
+    turns.emplace_back(move(nextTurn));
   return true;
 }
 
@@ -212,12 +228,6 @@ bool Route::MoveIterator(location::GpsInfo const & info) const
   if (m_simplifiedPoly.IsValid())
     m_simplifiedPoly.UpdateProjectionByPrediction(rect, predictDistance);
   return res.IsValid();
-}
-
-double Route::GetCurrentSqDistance(m2::PointD const & pt) const
-{
-  ASSERT(m_poly.IsValid(), ());
-  return pt.SquareLength(m_poly.GetCurrentIter().m_pt);
 }
 
 double Route::GetPolySegAngle(size_t ind) const
@@ -255,7 +265,7 @@ void Route::MatchLocationToRoute(location::GpsInfo & location, location::RouteMa
       if (m_routingSettings.m_matchRoute)
         location.m_bearing = location::AngleToBearing(GetPolySegAngle(iter.m_ind));
 
-      routeMatchingInfo.Set(iter.m_pt, iter.m_ind);
+      routeMatchingInfo.Set(iter.m_pt, iter.m_ind, GetMercatorDistanceFromBegin());
     }
   }
 }

@@ -6,7 +6,7 @@ cp ../data/categories.txt assets/
 cp ../data/classificator.txt assets/
 cp ../data/copyright.html assets/
 cp ../data/countries.txt assets/
-cp ../data/drules_proto.bin assets/
+cp ../data/drules_proto_legacy.bin assets/
 cp ../data/drules_proto_dark.bin assets/
 cp ../data/drules_proto_clear.bin assets/
 cp ../data/external_resources.txt assets/
@@ -18,21 +18,24 @@ cp ../data/packed_polygons.bin assets/
 cp ../data/types.txt assets/
 cp ../data/unicode_blocks.txt assets/
 
-cp -r ../data/resources-hdpi/ assets/
+cp -r ../data/resources-hdpi_legacy/ assets/
 cp -r ../data/resources-hdpi_dark/ assets/
 cp -r ../data/resources-hdpi_clear/ assets/
-cp -r ../data/resources-ldpi/ assets/
+cp -r ../data/resources-ldpi_legacy/ assets/
 cp -r ../data/resources-ldpi_dark/ assets/
 cp -r ../data/resources-ldpi_clear/ assets/
-cp -r ../data/resources-mdpi/ assets/
+cp -r ../data/resources-mdpi_legacy/ assets/
 cp -r ../data/resources-mdpi_dark/ assets/
 cp -r ../data/resources-mdpi_clear/ assets/
-cp -r ../data/resources-xhdpi/ assets/
+cp -r ../data/resources-xhdpi_legacy/ assets/
 cp -r ../data/resources-xhdpi_dark/ assets/
 cp -r ../data/resources-xhdpi_clear/ assets/
-cp -r ../data/resources-xxhdpi/ assets/
+cp -r ../data/resources-xxhdpi_legacy/ assets/
 cp -r ../data/resources-xxhdpi_dark/ assets/
 cp -r ../data/resources-xxhdpi_clear/ assets/
+cp -r ../data/resources-6plus_legacy/ assets/
+cp -r ../data/resources-6plus_dark/ assets/
+cp -r ../data/resources-6plus_clear/ assets/
 
 cp -r ../data/sound-strings/ assets/
 
@@ -44,6 +47,7 @@ cp ../data/03_jomolhari-id-a3d.ttf flavors/mwm-ttf-assets/
 cp ../data/04_padauk.ttf flavors/mwm-ttf-assets/
 cp ../data/05_khmeros.ttf flavors/mwm-ttf-assets/
 cp ../data/06_code2000.ttf flavors/mwm-ttf-assets/
+cp ../data/07_roboto_medium.ttf flavors/mwm-ttf-assets/
 cp ../data/World.mwm flavors/mwm-ttf-assets/
 cp ../data/WorldCoasts.mwm flavors/mwm-ttf-assets/
 

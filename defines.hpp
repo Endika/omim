@@ -24,6 +24,7 @@
 #define METADATA_FILE_TAG "meta"
 #define METADATA_INDEX_FILE_TAG "metaidx"
 #define COMPRESSED_SEARCH_INDEX_FILE_TAG "csdx"
+#define FEATURE_OFFSETS_FILE_TAG "offs"
 
 #define ROUTING_MATRIX_FILE_TAG "mercedes"
 #define ROUTING_EDGEDATA_FILE_TAG "daewoo"
@@ -35,8 +36,8 @@
 #define ROUTING_NODEIND_TO_FTSEGIND_FILE_TAG  "node2ftseg"
 
 #define READY_FILE_EXTENSION ".ready"
-#define RESUME_FILE_EXTENSION ".resume3"
-#define DOWNLOADING_FILE_EXTENSION ".downloading3"
+#define RESUME_FILE_EXTENSION ".resume"
+#define DOWNLOADING_FILE_EXTENSION ".downloading"
 #define BOOKMARKS_FILE_EXTENSION ".kml"
 #define ROUTING_FILE_EXTENSION ".routing"
 
@@ -61,4 +62,4 @@
 /// How many langs we're supporting on indexing stage
 #define MAX_SUPPORTED_LANGUAGES 64
 
-
+#define GPS_TRACK_FILENAME "gps_track.dat"

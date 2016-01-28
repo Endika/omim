@@ -3,6 +3,7 @@
 
 #include "coding/base64.hpp"
 #include "coding/file_name_utils.hpp"
+#include "coding/internal/file_data.hpp"
 #include "coding/sha2.hpp"
 #include "coding/writer.hpp"
 
@@ -14,6 +15,14 @@
 #include "private.h"
 
 #include <errno.h>
+
+namespace
+{
+bool IsSpecialDirName(string const & dirName)
+{
+  return dirName == "." || dirName == "..";
+}
+} // namespace
 
 // static
 Platform::EError Platform::ErrnoToError()
@@ -31,6 +40,42 @@ Platform::EError Platform::ErrnoToError()
     default:
       return ERR_UNKNOWN;
   }
+}
+
+// static
+bool Platform::RmDirRecursively(string const & dirName)
+{
+  if (dirName.empty() || IsSpecialDirName(dirName))
+    return false;
+
+  bool res = true;
+
+  FilesList allFiles;
+  GetFilesByRegExp(dirName, ".*", allFiles);
+  for (string const & file : allFiles)
+  {
+    string const path = my::JoinFoldersToPath(dirName, file);
+
+    EFileType type;
+    if (GetFileType(path, type) != ERR_OK)
+      continue;
+
+    if (type == FILE_TYPE_DIRECTORY)
+    {
+      if (!IsSpecialDirName(file) && !RmDirRecursively(path))
+        res = false;
+    }
+    else
+    {
+      if (!my::DeleteFileX(path))
+        res = false;
+    }
+  }
+
+  if (RmDir(dirName) != ERR_OK)
+    res = false;
+
+  return res;
 }
 
 string Platform::ReadPathForFile(string const & file, string searchScope) const
@@ -93,15 +138,13 @@ void Platform::GetFontNames(FilesList & res) const
   /// @todo Actually, this list should present once in all our code.
   /// We can take it from data/external_resources.txt
   char const * arrDef[] = {
-#ifndef OMIM_OS_ANDROID
-    "00_roboto_regular.ttf",
-#endif
     "01_dejavusans.ttf",
     "02_droidsans-fallback.ttf",
     "03_jomolhari-id-a3d.ttf",
     "04_padauk.ttf",
     "05_khmeros.ttf",
     "06_code2000.ttf",
+    "07_roboto_medium.ttf"
   };
   res.insert(res.end(), arrDef, arrDef + ARRAY_SIZE(arrDef));
 
@@ -120,7 +163,8 @@ void Platform::GetFilesByExt(string const & directory, string const & ext, Files
 }
 
 // static
-void Platform::GetFilesByType(string const & directory, unsigned typeMask, FilesList & outFiles)
+void Platform::GetFilesByType(string const & directory, unsigned typeMask,
+                              TFilesWithType & outFiles)
 {
   FilesList allFiles;
   GetFilesByRegExp(directory, ".*", allFiles);
@@ -130,7 +174,7 @@ void Platform::GetFilesByType(string const & directory, unsigned typeMask, Files
     if (GetFileType(my::JoinFoldersToPath(directory, file), type) != ERR_OK)
       continue;
     if (typeMask & type)
-      outFiles.push_back(file);
+      outFiles.emplace_back(file, type);
   }
 }
 

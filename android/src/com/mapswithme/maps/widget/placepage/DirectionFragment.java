@@ -3,7 +3,6 @@ package com.mapswithme.maps.widget.placepage;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,14 +11,16 @@ import android.widget.TextView;
 
 import com.mapswithme.maps.Framework;
 import com.mapswithme.maps.R;
+import com.mapswithme.maps.base.BaseMwmDialogFragment;
 import com.mapswithme.maps.bookmarks.data.DistanceAndAzimut;
 import com.mapswithme.maps.bookmarks.data.MapObject;
 import com.mapswithme.maps.location.LocationHelper;
 import com.mapswithme.maps.widget.ArrowView;
 import com.mapswithme.util.LocationUtils;
 import com.mapswithme.util.statistics.AlohaHelper;
+import com.mapswithme.util.statistics.Statistics;
 
-public class DirectionFragment extends DialogFragment implements LocationHelper.LocationListener
+public class DirectionFragment extends BaseMwmDialogFragment implements LocationHelper.LocationListener
 {
   private static final String EXTRA_MAP_OBJECT = "MapObject";
 
@@ -31,10 +32,9 @@ public class DirectionFragment extends DialogFragment implements LocationHelper.
   private MapObject mMapObject;
 
   @Override
-  public void onCreate(Bundle savedInstanceState)
+  protected int getCustomTheme()
   {
-    super.onCreate(savedInstanceState);
-    setStyle(DialogFragment.STYLE_NORMAL, R.style.MwmMain_DialogFragment_Fullscreen_SemiTransparent);
+    return R.style.MwmTheme_DialogFragment_Fullscreen_Translucent;
   }
 
   @Override
@@ -47,6 +47,7 @@ public class DirectionFragment extends DialogFragment implements LocationHelper.
       public boolean onTouch(View v, MotionEvent event)
       {
         dismiss();
+        Statistics.INSTANCE.trackEvent(Statistics.EventName.PP_DIRECTION_ARROW_CLOSE);
         AlohaHelper.logClick(AlohaHelper.PP_DIRECTION_ARROW_CLOSE);
         return false;
       }
@@ -93,7 +94,7 @@ public class DirectionFragment extends DialogFragment implements LocationHelper.
   public void onResume()
   {
     super.onResume();
-    LocationHelper.INSTANCE.addLocationListener(this);
+    LocationHelper.INSTANCE.addLocationListener(this, true);
     refreshViews();
   }
 

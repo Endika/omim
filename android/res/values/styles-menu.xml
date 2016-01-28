@@ -9,11 +9,13 @@
     <item name="android:layout_height">@dimen/menu_line_height</item>
     <item name="android:scaleType">centerInside</item>
     <item name="android:background">@drawable/menu_button</item>
+    <item name="android:tint">?iconTint</item>
   </style>
 
   <style name="MwmTheme.Menu.Line.CurrentLocationText">
     <item name="android:gravity">center</item>
-    <item name="android:singleLine">true</item>
+    <item name="android:maxLines">2</item>
+    <item name="android:ellipsize">end</item>
     <item name="android:textAppearance">@style/MwmTextAppearance.Body1</item>
   </style>
 
@@ -38,7 +40,7 @@
   <style name="MwmTheme.Menu.Content.GridItem.Text">
     <item name="android:textSize">@dimen/text_size_icon_title</item>
     <item name="android:gravity">center_horizontal</item>
-    <item name="android:textColor">@color/text_dark</item>
+    <item name="android:textColor">?android:textColorPrimary</item>
     <item name="android:drawablePadding">0dp</item>
     <item name="android:paddingTop">@dimen/margin_half</item>
     <item name="android:paddingBottom">@dimen/margin_half</item>

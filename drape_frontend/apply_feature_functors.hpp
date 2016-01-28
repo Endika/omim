@@ -3,54 +3,66 @@
 #include "drape_frontend/stylist.hpp"
 #include "drape_frontend/tile_key.hpp"
 
+#include "drape/pointers.hpp"
+
 #include "indexer/point_to_int64.hpp"
 
 #include "geometry/point2d.hpp"
 #include "geometry/spline.hpp"
 
-class CircleRuleProto;
-class SymbolRuleProto;
+#include "std/unordered_map.hpp"
+
 class CaptionDefProto;
+class CircleRuleProto;
+class ShieldRuleProto;
+class SymbolRuleProto;
+
+//#define CALC_FILTERED_POINTS
 
 namespace df
 {
 
 struct TextViewParams;
-class EngineContext;
+class MapShape;
+struct BuildingEdge;
+
+using TInsertShapeFn = function<void(drape_ptr<MapShape> && shape)>;
 
 class BaseApplyFeature
 {
 public:
-  BaseApplyFeature(EngineContext & context,
-                   TileKey tileKey,
-                   FeatureID const & id,
-                   CaptionDescription const & captions);
+  BaseApplyFeature(TInsertShapeFn const & insertShape, FeatureID const & id,
+                   int minVisibleScale, uint8_t rank, CaptionDescription const & captions);
+
+  virtual ~BaseApplyFeature() {}
 
 protected:
   void ExtractCaptionParams(CaptionDefProto const * primaryProto,
                             CaptionDefProto const * secondaryProto,
-                            double depth,
-                            TextViewParams & params) const;
+                            double depth, TextViewParams & params) const;
 
-protected:
-  EngineContext & m_context;
-  TileKey m_tileKey;
+  TInsertShapeFn m_insertShape;
   FeatureID m_id;
   CaptionDescription const & m_captions;
+  int m_minVisibleScale;
+  uint8_t m_rank;
 };
 
 class ApplyPointFeature : public BaseApplyFeature
 {
-  typedef BaseApplyFeature TBase;
+  using TBase = BaseApplyFeature;
+
 public:
-  ApplyPointFeature(EngineContext & context,
-                    TileKey tileKey,
-                    FeatureID const & id,
-                    CaptionDescription const & captions);
+  ApplyPointFeature(TInsertShapeFn const & insertShape, FeatureID const & id,
+                    int minVisibleScale, uint8_t rank, CaptionDescription const & captions,
+                    float posZ);
 
   void operator()(m2::PointD const & point);
-  void ProcessRule(Stylist::rule_wrapper_t const & rule);
+  void ProcessRule(Stylist::TRuleWrapper const & rule);
   void Finish();
+
+protected:
+  float const m_posZ;
 
 private:
   bool m_hasPoint;
@@ -63,40 +75,63 @@ private:
 
 class ApplyAreaFeature : public ApplyPointFeature
 {
-  typedef ApplyPointFeature TBase;
+  using TBase = ApplyPointFeature;
+
 public:
-  ApplyAreaFeature(EngineContext & context,
-                   TileKey tileKey,
-                   FeatureID const & id,
-                   CaptionDescription const & captions);
+  ApplyAreaFeature(TInsertShapeFn const & insertShape, FeatureID const & id, float minPosZ, float posZ,
+                   int minVisibleScale, uint8_t rank, CaptionDescription const & captions);
 
   using TBase::operator ();
 
   void operator()(m2::PointD const & p1, m2::PointD const & p2, m2::PointD const & p3);
-  void ProcessRule(Stylist::rule_wrapper_t const & rule);
+  void ProcessRule(Stylist::TRuleWrapper const & rule);
 
 private:
+  using TEdge = pair<int, int>;
+
+  void ProcessBuildingPolygon(m2::PointD const & p1, m2::PointD const & p2, m2::PointD const & p3);
+  void CalculateBuildingEdges(vector<BuildingEdge> & edges);
+  int GetIndex(m2::PointD const & pt);
+  void BuildEdges(int vertexIndex1, int vertexIndex2, int vertexIndex3);
+  bool EqualEdges(TEdge const & edge1, TEdge const & edge2) const;
+  bool FindEdge(TEdge const & edge);
+  m2::PointD CalculateNormal(m2::PointD const & p1, m2::PointD const & p2, m2::PointD const & p3) const;
+
   vector<m2::PointF> m_triangles;
+
+  unordered_map<int, m2::PointD> m_indices;
+  vector<pair<TEdge, int>> m_edges;
+  float const m_minPosZ;
+  bool const m_isBuilding;
 };
 
 class ApplyLineFeature : public BaseApplyFeature
 {
-  typedef BaseApplyFeature TBase;
+  using TBase = BaseApplyFeature;
+
 public:
-  ApplyLineFeature(EngineContext & context,
-                   TileKey tileKey,
-                   FeatureID const & id,
-                   CaptionDescription const & captions,
-                   double currentScaleGtoP);
+  ApplyLineFeature(TInsertShapeFn const & insertShape, FeatureID const & id,
+                   int minVisibleScale, uint8_t rank, CaptionDescription const & captions,
+                   double currentScaleGtoP, bool simplify, size_t pointsCount);
 
   void operator() (m2::PointD const & point);
   bool HasGeometry() const;
-  void ProcessRule(Stylist::rule_wrapper_t const & rule);
+  void ProcessRule(Stylist::TRuleWrapper const & rule);
   void Finish();
 
 private:
   m2::SharedSpline m_spline;
   double m_currentScaleGtoP;
+  double m_sqrScale;
+  m2::PointD m_lastAddedPoint;
+  bool m_simplify;
+  size_t m_initialPointsCount;
+  double m_shieldDepth;
+  ShieldRuleProto const * m_shieldRule;
+
+#ifdef CALC_FILTERED_POINTS
+  int m_readedCount;
+#endif
 };
 
 } // namespace df

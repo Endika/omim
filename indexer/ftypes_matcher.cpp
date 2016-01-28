@@ -70,6 +70,19 @@ IsATMChecker const & IsATMChecker::Instance()
   return inst;
 }
 
+IsSpeedCamChecker::IsSpeedCamChecker()
+{
+  Classificator const & c = classif();
+  m_types.push_back(c.GetTypeByPath({"highway", "speed_camera"}));
+}
+
+// static
+IsSpeedCamChecker const & IsSpeedCamChecker::Instance()
+{
+  static const IsSpeedCamChecker instance;
+  return instance;
+}
+
 IsFuelStationChecker::IsFuelStationChecker()
 {
   Classificator const & c = classif();
@@ -186,6 +199,21 @@ IsLocalityChecker::IsLocalityChecker()
     m_types.push_back(c.GetTypeByPath(vector<string>(arr[i], arr[i] + 2)));
 }
 
+IsBuildingPartChecker::IsBuildingPartChecker() : BaseChecker(3)
+{
+}
+
+IsBuildingPartChecker const & IsBuildingPartChecker::Instance()
+{
+  static const IsBuildingPartChecker inst;
+  return inst;
+}
+
+bool IsBuildingPartChecker::IsMatched(uint32_t type) const
+{
+  return IsTypeConformed(type, {"building:part"});
+}
+
 IsBridgeChecker::IsBridgeChecker() : BaseChecker(3)
 { 
 }
@@ -287,7 +315,7 @@ bool IsTypeConformed(uint32_t type, vector<string> const & path)
   ASSERT(p, ());
 
   uint8_t val = 0, i = 0;
-  for (auto const n : path)
+  for (auto const & n : path)
   {
     if (!ftype::GetValue(type, i, val))
       return false;
@@ -341,6 +369,7 @@ HighwayClass GetHighwayClass(feature::TypesHolder const & types)
       {HighwayClass::Trunk, c.GetTypeByPath({"highway", "motorway_link"})},
       {HighwayClass::Trunk, c.GetTypeByPath({"highway", "trunk"})},
       {HighwayClass::Trunk, c.GetTypeByPath({"highway", "trunk_link"})},
+      {HighwayClass::Trunk, c.GetTypeByPath({"route", "ferry"})},
       {HighwayClass::Primary, c.GetTypeByPath({"highway", "primary"})},
       {HighwayClass::Primary, c.GetTypeByPath({"highway", "primary_link"})},
       {HighwayClass::Secondary, c.GetTypeByPath({"highway", "secondary"})},

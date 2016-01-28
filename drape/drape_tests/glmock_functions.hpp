@@ -27,6 +27,7 @@ public:
   MOCK_METHOD1(glDeleteBuffer, void(uint32_t vbo));
   MOCK_METHOD4(glBufferData, void(glConst target, uint32_t size, void const * data, glConst usage));
   MOCK_METHOD4(glBufferSubData, void(glConst target, uint32_t size, void const * data, uint32_t offset));
+  MOCK_METHOD2(glGetBufferParameter, int32_t(glConst target, glConst name));
 
   MOCK_METHOD2(glGetUniformLocation, int8_t(uint32_t programID, string const & name));
   MOCK_METHOD2(glUniformValuei, void(int8_t location, int32_t v));
@@ -80,6 +81,7 @@ public:
   MOCK_METHOD2(glTexParameter, void(glConst, glConst));
 
   MOCK_METHOD1(glGetInteger, int32_t(glConst));
+  MOCK_METHOD1(glGetString, string(glConst));
 
 private:
   static GLMockFunctions * m_mock;

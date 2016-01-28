@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		39B24A021BAB222E00681326 /* crypt_argchk.c in Sources */ = {isa = PBXBuildFile; fileRef = 39B24A011BAB222E00681326 /* crypt_argchk.c */; settings = {ASSET_TAGS = (); }; };
+		39B24A021BAB222E00681326 /* crypt_argchk.c in Sources */ = {isa = PBXBuildFile; fileRef = 39B24A011BAB222E00681326 /* crypt_argchk.c */; };
 		675345291A3F6AF000A0A8C3 /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 675345281A3F6AF000A0A8C3 /* sha256.c */; settings = {COMPILER_FLAGS = "-O2"; }; };
 		6753452C1A3F6B0100A0A8C3 /* base64_decode.c in Sources */ = {isa = PBXBuildFile; fileRef = 6753452A1A3F6B0100A0A8C3 /* base64_decode.c */; settings = {COMPILER_FLAGS = "-O2"; }; };
 		6753452D1A3F6B0100A0A8C3 /* base64_encode.c in Sources */ = {isa = PBXBuildFile; fileRef = 6753452B1A3F6B0100A0A8C3 /* base64_encode.c */; settings = {COMPILER_FLAGS = "-O2"; }; };
@@ -98,7 +98,7 @@
 		675344E21A3F693B00A0A8C3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = maps.me;
 				TargetAttributes = {
 					675344E91A3F693B00A0A8C3 = {
@@ -158,6 +158,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;

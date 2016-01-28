@@ -7,6 +7,7 @@
 #import "MapViewController.h"
 #import "MWMMapViewControlsManager.h"
 #import "Statistics.h"
+#import "UIColor+MapsMeColor.h"
 #import <MessageUI/MFMailComposeViewController.h>
 
 #include "Framework.h"
@@ -67,7 +68,7 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
   else if (section == m_trackSection)
     return GetFramework().GetBmCategory(m_categoryIndex)->GetTracksCount();
   else if (section == m_bookmarkSection)
-    return GetFramework().GetBmCategory(m_categoryIndex)->GetBookmarksCount();
+    return GetFramework().GetBmCategory(m_categoryIndex)->GetUserMarkCount();
   else if (section == m_shareSection)
     return 1;
   else
@@ -76,8 +77,13 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
 
 - (void)onVisibilitySwitched:(UISwitch *)sender
 {
+  [[Statistics instance] logEvent:kStatEventName(kStatBookmarks, kStatToggleVisibility)
+                   withParameters:@{kStatValue : sender.on ? kStatVisible : kStatHidden}];
   BookmarkCategory * cat = GetFramework().GetBmCategory(m_categoryIndex);
-  cat->SetVisible(sender.on);
+  {
+    BookmarkCategory::Guard guard(*cat);
+    guard.m_controller.SetIsVisible(sender.on);
+  }
   cat->SaveToKMLFile();
 }
 
@@ -115,9 +121,11 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
         [cell layoutIfNeeded];
         CGRect const leftR = cell.textLabel.frame;
         CGFloat const padding = leftR.origin.x;
-        CGRect r = CGRectMake(padding + leftR.size.width + padding, leftR.origin.y,
-                              cell.contentView.frame.size.width - 3 * padding - leftR.size.width, leftR.size.height);
-        UITextField * f = [[UITextField alloc] initWithFrame:r];
+
+        UITextField * f = [[UITextField alloc] initWithFrame:{{padding + leftR.size.width + padding + leftR.origin.x,
+                                                              leftR.origin.y},
+                                                              {cell.contentView.frame.size.width - 3 * padding - leftR.size.width,
+                                                              leftR.size.height}}];
         f.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         f.enablesReturnKeyAutomatically = YES;
         f.returnKeyType = UIReturnKeyDone;
@@ -147,6 +155,7 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
       }
       UISwitch * sw = (UISwitch *)cell.accessoryView;
       sw.on = cat->IsVisible();
+      sw.onTintColor = [UIColor linkBlue];
       [sw addTarget:self action:@selector(onVisibilitySwitched:) forControlEvents:UIControlEventValueChanged];
     }
   }
@@ -164,8 +173,9 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
       cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ %@", L(@"length"), [NSString  stringWithUTF8String:dist.c_str()]];
     else
       cell.detailTextLabel.text = nil;
-    const graphics::Color c = tr->GetMainColor();
-    cell.imageView.image = [CircleView createCircleImageWith:PINDIAMETER andColor:[UIColor colorWithRed:c.r/255.f green:c.g/255.f blue:c.b/255.f alpha:1.f]];
+    const dp::Color c = tr->GetColor(0);
+    cell.imageView.image = [CircleView createCircleImageWith:PINDIAMETER andColor:[UIColor colorWithRed:c.GetRed()/255.f green:c.GetGreen()/255.f
+                                                                                                   blue:c.GetBlue()/255.f alpha:1.f]];
   }
   // Contains bookmarks list
   else if (indexPath.section == m_bookmarkSection)
@@ -173,7 +183,7 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
     BookmarkCell * bmCell = (BookmarkCell *)[tableView dequeueReusableCellWithIdentifier:@"BookmarksVCBookmarkItemCell"];
     if (!bmCell)
       bmCell = [[BookmarkCell alloc] initWithReuseIdentifier:@"BookmarksVCBookmarkItemCell"];
-    Bookmark const * bm = cat->GetBookmark(indexPath.row);
+    Bookmark const * bm = static_cast<Bookmark const *>(cat->GetUserMark(indexPath.row));
     if (bm)
     {
       bmCell.bmName.text = @(bm->GetName().c_str());
@@ -189,7 +199,7 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
         [m_locationManager getNorthRad:north];
 
         string distance;
-        fr.GetDistanceAndAzimut(bm->GetOrg(), lat, lon, north, distance, azimut);
+        fr.GetDistanceAndAzimut(bm->GetPivot(), lat, lon, north, distance, azimut);
 
         bmCell.bmDistance.text = @(distance.c_str());
       }
@@ -212,7 +222,9 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
       cell.textLabel.text = L(@"share_by_email");
     }
   }
-
+  cell.backgroundColor = [UIColor white];
+  cell.textLabel.textColor = [UIColor blackPrimaryText];
+  cell.detailTextLabel.textColor = [UIColor blackHintText];
   return cell;
 }
 
@@ -249,10 +261,11 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
   {
     if (cat)
     {
-      Bookmark const * bm = cat->GetBookmark(indexPath.row);
+      Bookmark const * bm = static_cast<Bookmark const *>(cat->GetUserMark(indexPath.row));
       ASSERT(bm, ("NULL bookmark"));
       if (bm)
       {
+        [[Statistics instance] logEvent:kStatEventName(kStatBookmarks, kStatShowOnMap)];
         // Same as "Close".
         MapViewController * mapVC = self.navigationController.viewControllers.firstObject;
         mapVC.controlsManager.searchHidden = YES;
@@ -266,6 +279,7 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
     BookmarkCategory const * cat = GetFramework().GetBmCategory(m_categoryIndex);
     if (cat)
     {
+      [[Statistics instance] logEvent:kStatEventName(kStatBookmarks, kStatExport)];
       NSMutableString * catName = [NSMutableString stringWithUTF8String:cat->GetName().c_str()];
       if (![catName length])
         [catName setString:@"MapsMe"];
@@ -286,8 +300,9 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
+  [[Statistics instance] logEvent:kStatEventName(kStatBookmarks, kStatExport)
+                   withParameters:@{kStatValue : kStatKML}];
   [self dismissViewControllerAnimated:YES completion:nil];
-  [[Statistics instance] logEvent:@"KML Export"];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -315,7 +330,8 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
           BookmarkAndCategory bookmarkAndCategory = BookmarkAndCategory(m_categoryIndex, indexPath.row);
           NSValue * value = [NSValue valueWithBytes:&bookmarkAndCategory objCType:@encode(BookmarkAndCategory)];
           [[NSNotificationCenter defaultCenter] postNotificationName:BOOKMARK_DELETED_NOTIFICATION object:value];
-          cat->DeleteBookmark(indexPath.row);
+          BookmarkCategory::Guard guard(*cat);
+          guard.m_controller.DeleteUserMark(indexPath.row);
           [NSNotificationCenter.defaultCenter postNotificationName:kBookmarksChangedNotification
                                                             object:nil
                                                           userInfo:nil];
@@ -329,7 +345,7 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
         [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
       else
         [self.tableView reloadData];
-      if (cat->GetBookmarksCount() + cat->GetTracksCount() == 0)
+      if (cat->GetUserMarkCount() + cat->GetTracksCount() == 0)
       {
         self.navigationItem.rightBarButtonItem = nil;
         [self setEditing:NO animated:YES];
@@ -354,10 +370,10 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
       NSIndexPath * indexPath = [table indexPathForCell:cell];
       if (indexPath.section == m_bookmarkSection)
       {
-        Bookmark const * bm = cat->GetBookmark(indexPath.row);
+        Bookmark const * bm = static_cast<Bookmark const *>(cat->GetUserMark(indexPath.row));
         if (bm)
         {
-          m2::PointD const center = bm->GetOrg();
+          m2::PointD const center = bm->GetPivot();
           double const metres = ms::DistanceOnEarth(info.m_latitude, info.m_longitude,
               MercatorBounds::YToLat(center.y), MercatorBounds::XToLon(center.x));
           cell.bmDistance.text = [LocationManager formattedDistance:metres];
@@ -370,20 +386,13 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
 //*********** End of Location manager callbacks ********************
 //******************************************************************
 
-- (void)viewDidLoad
-{
-  [super viewDidLoad];
-  self.tableView.backgroundView = nil;
-  self.tableView.backgroundColor = [UIColor applicationBackgroundColor];
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
   [m_locationManager start:self];
 
   // Display Edit button only if table is not empty
   BookmarkCategory * cat = GetFramework().GetBmCategory(m_categoryIndex);
-  if (cat && (cat->GetBookmarksCount() + cat->GetTracksCount()))
+  if (cat && (cat->GetUserMarkCount() + cat->GetTracksCount()))
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
   else
     self.navigationItem.rightBarButtonItem = nil;
@@ -445,7 +454,7 @@ extern NSString * const kBookmarksChangedNotification = @"BookmarksChangedNotifi
     m_trackSection = index++;
   else
     m_trackSection = EMPTY_SECTION;
-  if (cat->GetBookmarksCount())
+  if (cat->GetUserMarkCount())
     m_bookmarkSection = index++;
   else
     m_bookmarkSection = EMPTY_SECTION;

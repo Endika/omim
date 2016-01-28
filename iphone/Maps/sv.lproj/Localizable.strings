@@ -83,7 +83,7 @@
 "no_internet_connection_detected" = "Ingen internetanslutning upptäcktes";
 
 /* Settings/Downloader - 3G download warning dialog title */
-"no_wifi_ask_cellular_download" = "Ingen WiFi-anslutning upptäcktes. Vill du använda mobildata (GPRS, EDGE eller 3G) till att ladda ner %@?";
+"no_wifi_ask_cellular_download" = "Ingen WiFi-anslutning upptäcktes. Vill du använda mobildata (GPRS, EDGE, 3G eller LTE) till att ladda ner %@?";
 
 "ok" = "OK";
 
@@ -142,7 +142,7 @@
 "country_status_added_to_queue" = "^\när tillagd till nedladdningskön";
 
 /* Message to display at the center of the screen when the country is downloading */
-"country_status_downloading" = "Laddar ner\n^\n^%";
+"country_status_downloading" = "Laddar ner\n^\n^";
 
 /* Button text for the button at the center of the screen when the country is not downloaded */
 "country_status_download" = "Ladda ner karta\n(^ ^)";
@@ -432,7 +432,7 @@
 "message" = "Meddelande";
 
 /* Share by email button text */
-"email" = "E-Mail";
+"email" = "E-mail";
 
 /* Copy Link */
 "copy_link" = "Kopiera Länk";
@@ -467,6 +467,9 @@
 /* Prints version number in About dialog */
 "version" = "Version: %@";
 
+/* Data version in «About» screen */
+"data_version" = "Data version: %d";
+
 /* Confirmation in downloading countries dialog */
 "are_you_sure" = "Är du säker på att du vill fortsätta?";
 
@@ -478,13 +481,75 @@
 
 "share_my_location" = "Dela Min Plats";
 
-"become_a_pro" = "Uppgradera";
-
 "menu_search" = "Sök";
+
+/* Settings screen: "Map" category title */
+"prefs_group_map" = "Karta";
+
+/* Settings screen: "Miscellaneous" category title */
+"prefs_group_misc" = "Diverse";
+
+"prefs_group_route" = "Navigering";
 
 "pref_zoom_title" = "Zoom-knappar";
 
 "pref_zoom_summary" = "Visa på skärmen";
+
+/* Settings «Map» category: «Night style» title */
+"pref_map_style_title" = "Nattläge";
+
+/* «Map style» entry value */
+"pref_map_style_default" = "Av";
+
+/* «Map style» entry value */
+"pref_map_style_night" = "På";
+
+/* «Map style» entry value */
+"pref_map_style_auto" = "Auto";
+
+/* Settings «Map» category: «Perspective view» title */
+"pref_map_3d_title" = "Perspektivvy";
+
+/* Settings «Map» category: «3D buildings» title */
+"pref_map_3d_buildings_title" = "3D-byggnader";
+
+/* Settings «Map» category: «3D buildings» summary */
+"pref_map_3d_buildings_subtitle" = "Påverkar batteriets livslängd";
+
+/* Settings «Route» category: «Tts enabled» title */
+"pref_tts_enable_title" = "Röstinstruktioner";
+
+/* Settings «Route» category: «Tts language» title */
+"pref_tts_language_title" = "Röstspråk";
+
+/* Settings «Route» category: «Tts unavailable» subtitle */
+"pref_tts_unavailable" = "Inte tillgängligt";
+
+/* Title for "Other" section in TTS settings. */
+"pref_tts_other_section_title" = "Övrigt";
+
+"pref_tts_how_to_set_up_voice" = "Hur man ställer in ljud";
+
+/* Settings «Map» category: «Record track» title */
+"pref_track_record_title" = "Senaste resväg";
+
+"duration_disabled" = "Av";
+
+"duration_1_hour" = "1 timme";
+
+"duration_2_hours" = "2 timmar";
+
+"duration_6_hours" = "6 timmar";
+
+"duration_12_hours" = "12 timmar";
+
+"duration_1_day" = "1 dag";
+
+"recent_track_help_text" = "Obs: aktivering av denna funktion orsakar ökad batterianvändning.";
+
+"pref_track_ios_caption" = "Senaste resväg visar den väg du rest.";
+
+"pref_track_ios_subcaption" = "Välj tidsintervall för att spara resvägen.";
 
 "placepage_distance" = "Avstånd";
 
@@ -524,12 +589,6 @@
 /* category title */
 "routes" = "Rutter";
 
-/* button in the interface */
-"choose_starting_point" = "Välj startpunkt…";
-
-/* button in the interface */
-"choose_destination" = "Välj destination…";
-
 /* Show on first launch. */
 "maps_licence_info" = "Detta program använder geografisk data (inkluderar kartor, företagsuppgifter, intressepunkter, landsgränser och regioner m.m.) från OpenStreetMap projektet. Vi garanterar ingen konsekvenshet, nogrannhet, fullständighet eller tillämpbarhet av OpenStreetMap datan.";
 
@@ -558,6 +617,12 @@
 "settings_and_more" = "Inställningar & Mer";
 
 /* Text in menu */
+"website" = "Website";
+
+/* Text in menu */
+"blog" = "Blog";
+
+/* Text in menu */
 "maps_me_community" = "MAPS.ME Gemenskap";
 
 /* Text in menu */
@@ -569,11 +634,26 @@
 /* Text in menu */
 "contact_us" = "Kontakta oss";
 
+/* Settings: Send feedback button and dialog title */
+"feedback" = "Feedback";
+
+/* Settings: "Send general feedback" button */
+"feedback_general" = "General feedback";
+
 /* Text in menu */
 "subscribe_to_news" = "Prenumerera på våra nyheter";
 
 /* Text in menu */
-"rate_the_app" = "Get appen ett betyg";
+"rate_the_app" = "Ge appen ett betyg";
+
+/* Rate in Google Play (Android only) */
+"rate_gp" = "Rate on Google Play";
+
+/* Share with friends: menu item title */
+"tell_friends" = "Tell a Friend";
+
+/* Share with friends: sharing text */
+"tell_friends_text" = "Hi! Install Maps.me!";
 
 /* Text in menu */
 "help" = "Hjälp";
@@ -590,6 +670,9 @@
 /* Email body */
 "subscribe_me_body" = "Jag vill bli först att veta om de senaste uppdateringarna och erbjudandena. Jag kan avbryta min prenumeration när som helst.";
 
+/* About short text (below logo) */
+"about_description" = "Joined efforts of Mail.Ru Group and OpenStreetMap make the most useful application for travelers!";
+
 /* About text */
 "about_text" = "MAPS.ME erbjuder de snabbaste offline-kartorna över alla städer och länder i hela världen. Res med förtroende: oavsett var du är hjälper MAPS.ME dig att placera dig på kartan, hitta den närmaste restaurangen, hotellet, banken, bensinstationen m.m. Den kräver inte internetanslutning.\n\nVi arbetar ständigt med nya funktioner och vill gärna veta hur du tycker att vi kan förbättra MAPS.ME. Ifall du har problem med appen, tveka inte att kontakta oss på support@maps.me. Vi svarar på alla mail!\n\nGillar du MAPS.ME och vill hjälpa oss? Det finns några enkla och kostnadsfria sätt:\n\n- posta en recension på din Appmarknad\n- gilla vår Facebooksida http://www.facebook.com/mapswithme\n- eller berätta bara om MAPS.ME för din mamma, vänner eller kollegor :)\n\nTack för att du är med oss. Vi uppskattar ditt stöd väldigt mycket!\n\nP.S. Vi använder oss av kartdata från OpenStreetMap, ett kartprojket som liknar Wikipedia och som tillåter användare att skapa och redigera kartor. Ifall du ser något som saknas eller är fel på kartan så kan du korrigera kartan direkt på http://openstreetmap.org och dina ändringar kommer att finns i MAPS.ME appen när nästa version släpps.";
 
@@ -600,7 +683,7 @@
 "email_error_title" = "Fel när mailet skulle skickas";
 
 /* Settings item title */
-"pref_calibration_title" = "Compass calibration";
+"pref_calibration_title" = "Kompasskalibrering";
 
 /* Search Suggestion */
 "wifi" = "WiFi";
@@ -679,7 +762,7 @@
 
 "downloader_download_map_no_routing" = "Hämta karta utan rutter";
 
-/* Button for routing PP. */
+/* Button for routing. */
 "routing_go" = "Kör!";
 
 /* Item status in downloader. */
@@ -1105,6 +1188,8 @@
 
 "dialog_routing_disclaimer_recommendations" = "— Föreslagna vägar endast är rekommendationer;";
 
+"dialog_routing_disclaimer_borders" = "— Iakttag försiktighet med rutter i gränszoner: rutterna som vår app skapat kan ibland korsa landsgränser på otillåtna platser;";
+
 "dialog_routing_disclaimer_beware" = "Var uppmärksam och kör säkert på vägarna!";
 
 "dialog_routing_check_gps" = "Kontrollera GPS-signal";
@@ -1193,49 +1278,10 @@
 "routing_planning_error" = "Ruttplanering misslyckades";
 
 /* Arrive routing message in navigation view */
-"routing_arrive" = "Ankomst";
-
-/* Routing Start button title */
-"routing_start" = "Starta";
-
-/* Planning route message in navigation view */
-"routing_planning" = "Planerar rutt";
+"routing_arrive" = "Ankomst: %s";
 
 /* Text for routing::IRouter::FileTooOld dialog. */
 "dialog_routing_download_and_update_maps" = "För att skapa en rutt, ladda ner och uppdatera alla kartor längs rutten.";
-
-/* Text for facebook sharing news about walking routes */
-"share_walking_routes_facebook" = "MAPS.ME sparar gångtid. Över 2 miljoner km gångrutter, stigar och leder finns med vägbeskrivningar till fots.";
-
-/* Text for messenger sharing news about walking routes */
-"share_walking_routes_messenger" = "MAPS.ME ger dig den kortaste gångrutten över hela världen! Kolla in på: http://maps.me/get?walk_im";
-
-/* Text for sms sharing news about walking routes */
-"share_walking_routes_sms" = "MAPS.ME ger dig de kortaste gångrutterna: http://maps.me/get?walk";
-
-/* Subject for email sharing news about walking routes */
-"share_walking_routes_email_subject" = "Nu med de kortaste gångrutterna";
-
-/* Text for email sharing news about walking routes */
-"share_walking_routes_email_body" = "MAPS.ME släppte precis vägbeskrivningar till fots baserade på världens mest detaljerade karta! De ger dig den kortaste rutten till alla destinationer. Prova på: http://maps.me/get?walk_em";
-
-/* Title for walking routes dialog, notifications etc. */
-"title_walking_available" = "MAPS.ME har nu vägbeskrivningar till fots!";
-
-/* Text for walking routes dialog */
-"share_walking_routes_first_launch" = "Du får den kortaste rutten till alla destinationer. Testa det själv och hjälp även dina vänner att spara restid!";
-
-/* Title for walking routes dialog after 3 built routes */
-"share_walking_routes_congratulations" = "Grattis!";
-
-/* Text for walking routes dialog after 3 built routes */
-"share_walking_routes_mastering" = "Du har bemästrat funktionen med vägbeskrivningar till fots. Hjälp även dina vänner att spara gångtid. Berätta för dem om MAPS.ME.";
-
-/* Android notification about walking directions for update users */
-"walking_notification_text" = "Vill du testa det?";
-
-/* Android notification with picture (rich) about walking directions for update users */
-"walking_rich_notification_text" = "Du får den kortaste rutten till alla destinationer. Testa det själv och hjälp dina vänner att spara restid.";
 
 "rate_alert_title" = "Gillar du appen?";
 
@@ -1269,10 +1315,38 @@
 
 "search_history_text" = "Få snabbare åtkomst till senaste sökförfrågan.";
 
-"update_maps_alert_title" = "Nu är det enklare att utforska kartan";
-
-"update_maps_alert_message" = "Kartornas stil har blivit bättre: objekt har ett mer positivt utseende och syns bättre. Uppdatera kartorna och utnyttja den nya designen maximalt.";
-
-"update_maps_alert_button_title" = "Uppdatera kartor";
-
 "clear_search" = "Rensa sökhistorik";
+
+/* Title for settings to enable/disable showcase menu button */
+"showcase_settings_title" = "Visa erbjudanden";
+
+"showcase_more_apps" = "Mai multe aplicații My.com";
+
+/* Place Page link to Wikipedia article (if map object has it). */
+"read_in_wikipedia" = "Wikipedia";
+
+"p2p_route_planning" = "Ruttplanering";
+
+"p2p_your_location" = "Din plats";
+
+"p2p_from" = "Startplats";
+
+"p2p_to" = "Målplats";
+
+"p2p_start" = "Start";
+
+"p2p_planning" = "Planerar…";
+
+"p2p_from_here" = "Från";
+
+"p2p_to_here" = "Till";
+
+"p2p_only_from_current" = "Navigering är endast tillgänglig från din aktuella plats.";
+
+"p2p_reroute_from_current" = "Vill du att vi planerar en färdväg från din nuvarande plats?";
+
+"whats_new_next_button" = "Nästa";
+
+"whats_new_night_caption" = "Navigering i nattläge";
+
+"whats_new_night_body" = "För att underlätta användandet av MAPS.ME under mörkerkörning har vi lagt till nattläget. Det slås automatiskt på efter att solen gått ned.";

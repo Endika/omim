@@ -8,7 +8,7 @@
 
 #include "platform/preferred_languages.hpp"
 
-#include "../defines.hpp" // just for file extensions
+#include "defines.hpp" // just for file extensions
 
 
 using namespace feature;
@@ -144,7 +144,7 @@ void FeatureType::ParseMetadata() const
   m_pLoader->ParseMetadata();
 
   if (HasInternet())
-    m_metadata.Add(Metadata::FMD_INTERNET, "wlan");
+    m_metadata.Set(Metadata::FMD_INTERNET, "wlan");
 
   m_bMetadataParsed = true;
 }
@@ -255,7 +255,7 @@ struct BestMatchedLangNames
 
   bool operator()(int8_t code, string const & name)
   {
-    static int8_t defaultCode = StringUtf8Multilang::GetLangIndex("default");
+    static int8_t const defaultCode = StringUtf8Multilang::GetLangIndex("default");
     static int8_t const nativeCode = StringUtf8Multilang::GetLangIndex(languages::GetCurrentNorm());
     static int8_t const intCode = StringUtf8Multilang::GetLangIndex("int_name");
     static int8_t const englishCode = StringUtf8Multilang::GetLangIndex("en");

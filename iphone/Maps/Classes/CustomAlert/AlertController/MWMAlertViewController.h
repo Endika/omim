@@ -1,12 +1,10 @@
-#import <UIKit/UIKit.h>
 #import "MWMAlert.h"
+#import "ViewController.h"
 
 #include "routing/router.hpp"
 #include "storage/storage.hpp"
 
-typedef void (^CloseAlertCompletion)();
-
-@interface MWMAlertViewController : UIViewController
+@interface MWMAlertViewController : ViewController
 
 @property (weak, nonatomic, readonly) UIViewController * ownerViewController;
 
@@ -17,14 +15,15 @@ typedef void (^CloseAlertCompletion)();
                                        code:(routing::IRouter::ResultCode)code;
 - (void)presentRateAlert;
 - (void)presentFacebookAlert;
+- (void)presentPoint2PointAlertWithOkBlock:(nonnull TMWMVoidBlock)block needToRebuild:(BOOL)needToRebuild;
 - (void)presentRoutingDisclaimerAlert;
 - (void)presentDisabledLocationAlert;
 - (void)presentLocationAlert;
 - (void)presentLocationServiceNotSupportedAlert;
 - (void)presentNoConnectionAlert;
-- (void)presentnoWiFiAlertWithName:(nonnull NSString *)name downloadBlock:(nullable RightButtonAction)block;
+- (void)presentnoWiFiAlertWithName:(nonnull NSString *)name downloadBlock:(nullable TMWMVoidBlock)block;
 - (void)presentPedestrianToastAlert:(BOOL)isFirstLaunch;
-- (void)closeAlertWithCompletion:(nullable CloseAlertCompletion)completion;
+- (void)closeAlertWithCompletion:(nullable TMWMVoidBlock)completion;
 
 - (nonnull instancetype)init __attribute__((unavailable("call -initWithViewController: instead!")));
 + (nonnull instancetype)new __attribute__((unavailable("call -initWithViewController: instead!")));

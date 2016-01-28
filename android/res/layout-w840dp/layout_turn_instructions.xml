@@ -3,9 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/bg_top_panels"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?panel"
+    android:clipToPadding="false"
     android:elevation="@dimen/appbar_elevation">
 
   <LinearLayout
@@ -25,7 +26,8 @@
         android:layout_weight="0"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="center"
-        android:src="@drawable/ic_close_routing"/>
+        android:tint="?iconTint"
+        android:src="@drawable/ic_cancel"/>
 
     <TextView
         android:id="@+id/tv__total_distance"
@@ -64,9 +66,10 @@
       android:layout_height="wrap_content"
       android:layout_below="@id/time_distance"
       app:headRadius="2dp"
-      app:progressColor="#757575"
-      app:progressThickness="4dp"
-      app:secondaryProgressColor="@color/base_black_divider"
+      app:progressColor="@color/routing_progress"
+      app:headColor="@color/routing_progress"
+      app:progressThickness="2dp"
+      app:secondaryProgressColor="@color/divider"
       app:secondaryProgressThickness="2dp"/>
 
   <include

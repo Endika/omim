@@ -2,19 +2,20 @@ package com.mapswithme.maps.search;
 
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mapswithme.maps.R;
-import com.mapswithme.util.UiUtils;
+import com.mapswithme.util.ThemeUtils;
 import com.mapswithme.util.statistics.Statistics;
 
-public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder>
+class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder>
 {
   private final int mCategoryResIds[];
   private final int mIconResIds[];
@@ -22,17 +23,18 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
   private final LayoutInflater mInflater;
   private final Resources mResources;
 
-  public interface OnCategorySelectedListener
+  interface OnCategorySelectedListener
   {
     void onCategorySelected(String category);
   }
 
   private OnCategorySelectedListener mListener;
 
-  public CategoriesAdapter(Fragment fragment)
+  CategoriesAdapter(Fragment fragment)
   {
     TypedArray categories = fragment.getActivity().getResources().obtainTypedArray(R.array.search_category_name_ids);
-    TypedArray icons = fragment.getActivity().getResources().obtainTypedArray(R.array.search_category_icon_ids);
+    TypedArray icons = fragment.getActivity().getResources().obtainTypedArray(ThemeUtils.isNightTheme() ? R.array.search_category_icon_night_ids
+                                                                                                        : R.array.search_category_icon_ids);
     int len = categories.length();
     if (icons.length() != len)
       throw new IllegalStateException("Categories and icons arrays must have the same length.");
@@ -63,8 +65,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
   @Override
   public void onBindViewHolder(ViewHolder holder, int position)
   {
-    UiUtils.setTextAndShow(holder.mName, mResources.getString(mCategoryResIds[position]));
-    holder.mImageLeft.setImageResource(mIconResIds[position]);
+    holder.setTextAndIcon(mCategoryResIds[position], mIconResIds[position]);
   }
 
   @Override
@@ -80,15 +81,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
   public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
   {
-    public TextView mName;
-    public ImageView mImageLeft;
+    private final TextView mTitle;
 
-    public ViewHolder(View v)
+    ViewHolder(View v)
     {
       super(v);
       v.setOnClickListener(this);
-      mName = (TextView) v.findViewById(R.id.tv__search_category);
-      mImageLeft = (ImageView) v.findViewById(R.id.iv__search_category);
+      mTitle = (TextView) v;
     }
 
     @Override
@@ -98,6 +97,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
       Statistics.INSTANCE.trackSearchCategoryClicked(mResources.getResourceEntryName(mCategoryResIds[position]));
       if (mListener != null)
         mListener.onCategorySelected(getSuggestionFromCategory(mCategoryResIds[position]));
+    }
+
+    void setTextAndIcon(@StringRes int textResId, @DrawableRes int iconResId)
+    {
+      mTitle.setText(textResId);
+      mTitle.setCompoundDrawablesWithIntrinsicBounds(iconResId, 0, 0, 0);
     }
   }
 }

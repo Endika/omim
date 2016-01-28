@@ -131,12 +131,21 @@ void FeatureBuilder1::AddPolygon(vector<m2::PointD> & poly)
   m_polygons.back().swap(poly);
 }
 
+void FeatureBuilder1::ResetGeometry()
+{
+  m_polygons.clear();
+  m_polygons.push_back(TPointSeq());
+  m_limitRect.MakeEmpty();
+}
+
 bool FeatureBuilder1::RemoveInvalidTypes()
 {
   if (!m_params.FinishAddingTypes())
     return false;
 
-  return feature::RemoveNoDrawableTypes(m_params.m_Types, m_params.GetGeomType());
+  return feature::RemoveNoDrawableTypes(m_params.m_Types,
+                                        m_params.GetGeomType(),
+                                        m_params.IsEmptyNames());
 }
 
 bool FeatureBuilder1::FormatFullAddress(string & res) const
@@ -196,18 +205,14 @@ namespace
 
 bool FeatureBuilder1::IsRoad() const
 {
-  static routing::CarModel const carModel;
   static routing::PedestrianModel const pedModel;
-  return carModel.IsRoad(m_params.m_Types) || pedModel.IsRoad(m_params.m_Types);
+  return routing::CarModel::Instance().IsRoad(m_params.m_Types) || pedModel.IsRoad(m_params.m_Types);
 }
 
 bool FeatureBuilder1::PreSerialize()
 {
   if (!m_params.IsValid())
     return false;
-
-  /// @todo Do not use flats info. Maybe in future.
-  m_params.flats.clear();
 
   switch (m_params.GetGeomType())
   {
@@ -260,11 +265,22 @@ void FeatureBuilder1::RemoveUselessNames()
   if (!m_params.name.IsEmpty() && !IsCoastCell())
   {
     using namespace feature;
-
-    static TypeSetChecker const checkBoundary({ "boundary", "administrative" });
+    // Use lambda syntax to correctly compile according to standard:
+    // http://en.cppreference.com/w/cpp/algorithm/remove
+    //     The signature of the predicate function should be equivalent to the following:
+    //     bool pred(const Type &a);
+    // Without it on clang-libc++ on Linux we get:
+    // candidate template ignored: substitution failure
+    //      [with _Tp = bool (unsigned int) const]: reference to function type 'bool (unsigned int) const' cannot have 'const'
+    //      qualifier
+    auto const typeRemover = [](uint32_t type)
+    {
+      static TypeSetChecker const checkBoundary({ "boundary", "administrative" });
+      return checkBoundary.IsEqual(type);
+    };
 
     TypesHolder types(GetFeatureBase());
-    if (types.RemoveIf(bind(&TypeSetChecker::IsEqual, cref(checkBoundary), _1)))
+    if (types.RemoveIf(typeRemover))
     {
       pair<int, int> const range = GetDrawableScaleRangeForRules(types, RULE_ANY_TEXT);
       if (range.first == -1)
@@ -422,6 +438,14 @@ osm::Id FeatureBuilder1::GetLastOsmId() const
   return m_osmIds.back();
 }
 
+bool FeatureBuilder1::HasOsmId(osm::Id const & id) const
+{
+  for (auto const & cid : m_osmIds)
+    if (cid == id)
+      return true;
+  return false;
+}
+
 string FeatureBuilder1::GetOsmIdsString() const
 {
   if (m_osmIds.empty())
@@ -439,14 +463,6 @@ int FeatureBuilder1::GetMinFeatureDrawScale() const
 
   // some features become invisible after merge processing, so -1 is possible
   return (minScale == -1 ? 1000 : minScale);
-}
-
-void FeatureBuilder1::SetCoastCell(int64_t iCell, string const & strCell)
-{
-  m_coastCell = iCell;
-
-  ASSERT(m_params.name.IsEmpty(), ());
-  m_params.name.AddString(0, strCell);
 }
 
 bool FeatureBuilder1::AddName(string const & lang, string const & name)

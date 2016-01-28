@@ -8,6 +8,10 @@ namespace gl_const
 {
 extern const glConst GLUnpackAlignment;
 
+extern const glConst GLRenderer;
+extern const glConst GLVendor;
+extern const glConst GLVersion;
+
 /// Hardware specific params
 extern const glConst GLMaxFragmentTextures;
 extern const glConst GLMaxVertexTextures;
@@ -17,8 +21,21 @@ extern const glConst GLMaxTextureSize;
 extern const glConst GLArrayBuffer;
 extern const glConst GLElementArrayBuffer;
 
+/// Buffer params
+extern const glConst GLBufferSize;
+extern const glConst GLBufferUsage;
+
 /// VBO Access
 extern const glConst GLWriteOnly;
+extern const glConst GLReadOnly;
+
+/// MapBufferRange
+extern const glConst GLWriteBufferBit;
+extern const glConst GLReadBufferBit;
+extern const glConst GLInvalidateRange;
+extern const glConst GLInvalidateBuffer;
+extern const glConst GLFlushExplicit;
+extern const glConst GLUnsynchronized;
 
 /// BufferUsage
 extern const glConst GLStaticDraw;
@@ -36,6 +53,7 @@ extern const glConst GLRGB;
 extern const glConst GLAlpha;
 extern const glConst GLLuminance;
 extern const glConst GLAlphaLuminance;
+extern const glConst GLDepthComponent;
 
 /// Texture layout size
 extern const glConst GLRGBA8;
@@ -109,6 +127,16 @@ extern const glConst GLOneMinusDstAlfa;
 /// OpenGL states
 extern const glConst GLDepthTest;
 extern const glConst GLBlending;
+extern const glConst GLCullFace;
+
+/// Triangle faces order
+extern const glConst GLClockwise;
+extern const glConst GLCounterClockwise;
+
+/// Triangle face
+extern const glConst GLFront;
+extern const glConst GLBack;
+extern const glConst GLFrontAndBack;
 
 /// OpenGL depth functions
 extern const glConst GLNever;
@@ -122,5 +150,18 @@ extern const glConst GLAlways;
 
 /// Program object parameter names
 extern const glConst GLActiveUniforms;
+
+/// Draw primitives
+extern const glConst GLLineStrip;
+extern const glConst GLTriangles;
+extern const glConst GLTriangleStrip;
+
+/// Framebuffer attachment points
+extern const glConst GLColorAttachment;
+extern const glConst GLDepthAttachment;
+extern const glConst GLStencilAttachment;
+
+/// Framebuffer status
+extern const glConst GLFramebufferComplete;
 
 } // namespace GLConst

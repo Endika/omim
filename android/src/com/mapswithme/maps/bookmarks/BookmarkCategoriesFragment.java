@@ -3,9 +3,10 @@ package com.mapswithme.maps.bookmarks;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
-import com.cocosw.bottomsheet.BottomSheet;
+
 import com.mapswithme.maps.R;
 import com.mapswithme.maps.base.BaseMwmRecyclerFragment;
 import com.mapswithme.maps.bookmarks.data.BookmarkCategory;
@@ -23,7 +24,6 @@ public class BookmarkCategoriesFragment extends BaseMwmRecyclerFragment
                                                 RecyclerLongClickListener
 {
   private int mSelectedPosition;
-  private BookmarkCategoriesAdapter mAdapter;
 
   @Override
   protected @LayoutRes int getLayoutRes()
@@ -32,21 +32,31 @@ public class BookmarkCategoriesFragment extends BaseMwmRecyclerFragment
   }
 
   @Override
+  protected RecyclerView.Adapter createAdapter()
+  {
+    return new BookmarkCategoriesAdapter(getActivity());
+  }
+
+  @Override
+  protected BookmarkCategoriesAdapter getAdapter()
+  {
+    return (BookmarkCategoriesAdapter)super.getAdapter();
+  }
+
+  @Override
   public void onViewCreated(View view, Bundle savedInstanceState)
   {
     super.onViewCreated(view, savedInstanceState);
 
-    mAdapter = new BookmarkCategoriesAdapter(getActivity());
-    mAdapter.setOnClickListener(this);
-    mAdapter.setOnLongClickListener(this);
-    getRecyclerView().setAdapter(mAdapter);
+    getAdapter().setOnClickListener(this);
+    getAdapter().setOnLongClickListener(this);
   }
 
   @Override
   public void onResume()
   {
     super.onResume();
-    mAdapter.notifyDataSetChanged();
+    getAdapter().notifyDataSetChanged();
   }
 
   @Override
@@ -61,7 +71,7 @@ public class BookmarkCategoriesFragment extends BaseMwmRecyclerFragment
   {
     final BookmarkCategory category = BookmarkManager.INSTANCE.getCategoryById(mSelectedPosition);
     category.setName(text);
-    mAdapter.notifyDataSetChanged();
+    getAdapter().notifyDataSetChanged();
   }
 
   @Override
@@ -71,7 +81,7 @@ public class BookmarkCategoriesFragment extends BaseMwmRecyclerFragment
     {
     case R.id.set_show:
       BookmarkManager.INSTANCE.toggleCategoryVisibility(mSelectedPosition);
-      mAdapter.notifyDataSetChanged();
+      getAdapter().notifyDataSetChanged();
       break;
 
     case R.id.set_share:
@@ -80,7 +90,7 @@ public class BookmarkCategoriesFragment extends BaseMwmRecyclerFragment
 
     case R.id.set_delete:
       BookmarkManager.INSTANCE.deleteCategory(mSelectedPosition);
-      mAdapter.notifyDataSetChanged();
+      getAdapter().notifyDataSetChanged();
       break;
 
     case R.id.set_edit:
@@ -99,18 +109,15 @@ public class BookmarkCategoriesFragment extends BaseMwmRecyclerFragment
     mSelectedPosition = position;
 
     BookmarkCategory category = BookmarkManager.INSTANCE.getCategoryById(mSelectedPosition);
-    BottomSheet bs = BottomSheetHelper.create(getActivity())
-        .title(category.getName())
-        .sheet(R.menu.menu_bookmark_categories)
-        .listener(this)
-        .build();
-
+    BottomSheetHelper.Builder bs = BottomSheetHelper.create(getActivity(), category.getName())
+                                                    .sheet(R.menu.menu_bookmark_categories)
+                                                    .listener(this);
     MenuItem show = bs.getMenu().getItem(0);
     show.setIcon(category.isVisible() ? R.drawable.ic_hide
                                       : R.drawable.ic_show);
     show.setTitle(category.isVisible() ? R.string.hide
                                        : R.string.show);
-    bs.show();
+    bs.tint().show();
   }
 
   @Override

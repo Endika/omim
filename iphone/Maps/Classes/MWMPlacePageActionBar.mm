@@ -1,3 +1,4 @@
+#import "Common.h"
 #import "MapsAppDelegate.h"
 #import "MWMBasePlacePageView.h"
 #import "MWMPlacePage.h"
@@ -17,7 +18,6 @@ static NSString * const kPlacePageActionBarNibName = @"PlacePageActionBar";
 @property (weak, nonatomic) MWMPlacePage * placePage;
 @property (weak, nonatomic) IBOutlet UIButton * apiBackButton;
 @property (weak, nonatomic) IBOutlet UIButton * bookmarkButton;
-@property (weak, nonatomic) IBOutlet UIButton * shareButton;
 @property (weak, nonatomic) IBOutlet UIButton * routeButton;
 @property (weak, nonatomic) IBOutlet UILabel * apiBackLabel;
 @property (weak, nonatomic) IBOutlet UILabel * routeLabel;
@@ -30,7 +30,16 @@ static NSString * const kPlacePageActionBarNibName = @"PlacePageActionBar";
 
 + (MWMPlacePageActionBar *)actionBarForPlacePage:(MWMPlacePage *)placePage
 {
-  MWMPlacePageActionBar * bar = [[[NSBundle mainBundle] loadNibNamed:kPlacePageActionBarNibName owner:self options:nil] firstObject];
+  BOOL const isPrepareRouteMode = MapsAppDelegate.theApp.routingPlaneMode != MWMRoutingPlaneModeNone;
+  NSUInteger const i = isPrepareRouteMode ? 1 : 0;
+  MWMPlacePageActionBar * bar = [NSBundle.mainBundle
+                                 loadNibNamed:kPlacePageActionBarNibName owner:nil options:nil][i];
+  NSAssert(i == bar.tag, @"Incorrect view!");
+  bar.isPrepareRouteMode = isPrepareRouteMode;
+  bar.placePage = placePage;
+  if (isPrepareRouteMode)
+    return bar;
+
   [bar setupBookmarkButton];
   [bar configureWithPlacePage:placePage];
   return bar;
@@ -112,7 +121,6 @@ static NSString * const kPlacePageActionBarNibName = @"PlacePageActionBar";
 {
   UIButton * btn = self.bookmarkButton;
   [btn setImage:[UIImage imageNamed:@"ic_bookmarks_on"] forState:UIControlStateHighlighted|UIControlStateSelected];
-  [btn setImage:[UIImage imageNamed:@"ic_bookmarks_off_pressed"] forState:UIControlStateHighlighted];
 
   NSUInteger const animationImagesCount = 11;
   NSMutableArray * animationImages = [NSMutableArray arrayWithCapacity:animationImagesCount];
@@ -122,6 +130,16 @@ static NSString * const kPlacePageActionBarNibName = @"PlacePageActionBar";
   UIImageView * animationIV = btn.imageView;
   animationIV.animationImages = animationImages;
   animationIV.animationRepeatCount = 1;
+}
+
+- (IBAction)fromTap
+{
+  [self.placePage.manager routeFrom];
+}
+
+- (IBAction)toTap
+{
+  [self.placePage.manager routeTo];
 }
 
 - (IBAction)bookmarkTap:(UIButton *)sender

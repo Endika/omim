@@ -31,23 +31,26 @@ class TextLayout
 public:
   virtual ~TextLayout() {}
 
-  dp::RefPointer<dp::Texture> GetMaskTexture() const;
+  ref_ptr<dp::Texture> GetMaskTexture() const;
 
   uint32_t GetGlyphCount() const;
 
   float GetPixelLength() const;
   float GetPixelHeight() const;
 
+  strings::UniString const & GetText() const;
+
 protected:
   void Init(strings::UniString const & text,
             float fontSize,
-            dp::RefPointer<dp::TextureManager> textures);
+            ref_ptr<dp::TextureManager> textures);
 
 protected:
   typedef dp::TextureManager::GlyphRegion GlyphRegion;
 
   dp::TextureManager::TGlyphsBuffer m_metrics;
-  float m_textSizeRatio = 0.0;
+  strings::UniString m_text;
+  float m_textSizeRatio = 0.0f;
 };
 
 class StraightTextLayout : public TextLayout
@@ -56,12 +59,17 @@ class StraightTextLayout : public TextLayout
 public:
   StraightTextLayout(strings::UniString const & text,
                      float fontSize,
-                     dp::RefPointer<dp::TextureManager> textures,
+                     ref_ptr<dp::TextureManager> textures,
                      dp::Anchor anchor);
 
-  void Cache(glsl::vec3 const & pivot, glsl::vec2 const & pixelOffset,
+  void Cache(const glm::vec4 & pivot, glsl::vec2 const & pixelOffset,
              dp::TextureManager::ColorRegion const & colorRegion,
              dp::TextureManager::ColorRegion const & outlineRegion,
+             gpu::TTextOutlinedStaticVertexBuffer & staticBuffer,
+             gpu::TTextDynamicVertexBuffer & dynamicBuffer) const;
+
+  void Cache(const glm::vec4 & pivot, glsl::vec2 const & pixelOffset,
+             dp::TextureManager::ColorRegion const & color,
              gpu::TTextStaticVertexBuffer & staticBuffer,
              gpu::TTextDynamicVertexBuffer & dynamicBuffer) const;
 
@@ -77,15 +85,21 @@ class PathTextLayout : public TextLayout
   typedef TextLayout TBase;
 public:
   PathTextLayout(strings::UniString const & text,
-                 float fontSize, dp::RefPointer<dp::TextureManager> textures);
+                 float fontSize, ref_ptr<dp::TextureManager> textures);
 
-  void CacheStaticGeometry(glsl::vec3 const & pivot,
-                           dp::TextureManager::ColorRegion const & colorRegion,
+  static void CalculatePositions(vector<float> & offsets, float splineLength,
+                                 float splineScaleToPixel, float textPixelLength);
+
+  void CacheStaticGeometry(dp::TextureManager::ColorRegion const & colorRegion,
                            dp::TextureManager::ColorRegion const & outlineRegion,
+                           gpu::TTextOutlinedStaticVertexBuffer & staticBuffer) const;
+
+  void CacheStaticGeometry(dp::TextureManager::ColorRegion const & colorRegion,
                            gpu::TTextStaticVertexBuffer & staticBuffer) const;
 
   bool CacheDynamicGeometry(m2::Spline::iterator const & iter,
-                            ScreenBase const & screen,
+                            float depth,
+                            m2::PointD const & globalPivot,
                             gpu::TTextDynamicVertexBuffer & buffer) const;
 };
 

@@ -137,6 +137,9 @@ UNIT_TEST(to_double)
   string s;
   double d;
 
+  s = "";
+  TEST(!strings::to_double(s, d), ());
+
   s = "0.123";
   TEST(strings::to_double(s, d), ());
   TEST_ALMOST_EQUAL_ULPS(0.123, d, ());
@@ -158,6 +161,9 @@ UNIT_TEST(to_double)
   TEST_ALMOST_EQUAL_ULPS(-2.0, d, ());
 
   s = "labuda";
+  TEST(!strings::to_double(s, d), ());
+
+  s = "123.456 we don't parse it.";
   TEST(!strings::to_double(s, d), ());
 }
 
@@ -419,6 +425,29 @@ UNIT_TEST(StartsWith)
   TEST(!StartsWith(s, "xyzabc"), ());
   TEST(!StartsWith(s, "ayz"), ());
   TEST(!StartsWith(s, "axy"), ());
+
+  UniString const us = MakeUniString(s);
+  TEST(StartsWith(us, UniString()), ());
+  TEST(StartsWith(us, MakeUniString("x")), ());
+  TEST(StartsWith(us, MakeUniString("xyz")), ());
+  TEST(!StartsWith(us, MakeUniString("xyzabc")), ());
+  TEST(!StartsWith(us, MakeUniString("ayz")), ());
+  TEST(!StartsWith(us, MakeUniString("axy")), ());
+}
+
+UNIT_TEST(EndsWith)
+{
+  using namespace strings;
+  TEST(EndsWith(string(), ""), ());
+
+  string s("xyz");
+  TEST(EndsWith(s, ""), ());
+  TEST(EndsWith(s, "z"), ());
+  TEST(EndsWith(s, "yz"), ());
+  TEST(EndsWith(s, "xyz"), ());
+  TEST(!EndsWith(s, "abcxyz"), ());
+  TEST(!EndsWith(s, "ayz"), ());
+  TEST(!EndsWith(s, "axyz"), ());
 }
 
 UNIT_TEST(UniString_LessAndEqualsAndNotEquals)
@@ -540,4 +569,33 @@ UNIT_TEST(AlmostEqual)
   TEST(!AlmostEqual("MKAD, 600 km", "MKAD, 599 km", 2), ());
   TEST(!AlmostEqual("MKAD, 45-y kilometre", "MKAD, 46", 2), ());
   TEST(!AlmostEqual("ул. Героев Панфиловцев", "ул. Планерная", 2), ());
+}
+
+UNIT_TEST(EditDistance)
+{
+  auto testEditDistance = [](std::string const & s1, std::string const & s2, uint32_t expected)
+  {
+    TEST_EQUAL(strings::EditDistance(s1.begin(), s1.end(), s2.begin(), s2.end()), expected, ());
+  };
+
+  testEditDistance("", "wwwww", 5);
+  testEditDistance("", "", 0);
+  testEditDistance("abc", "def", 3);
+  testEditDistance("zzzvvv", "zzzvvv", 0);
+  testEditDistance("a", "A", 1);
+  testEditDistance("bbbbb", "qbbbbb", 1);
+  testEditDistance("aaaaaa", "aaabaaa", 1);
+  testEditDistance("aaaab", "aaaac", 1);
+  testEditDistance("a spaces test", "aspacestest", 2);
+
+  auto testUniStringEditDistance =
+      [](std::string const & utf1, std::string const & utf2, uint32_t expected)
+  {
+    auto s1 = strings::MakeUniString(utf1);
+    auto s2 = strings::MakeUniString(utf2);
+    TEST_EQUAL(strings::EditDistance(s1.begin(), s1.end(), s2.begin(), s2.end()), expected, ());
+  };
+
+  testUniStringEditDistance("ll", "l1", 1);
+  testUniStringEditDistance("\u0132ij", "\u0133IJ", 3);
 }

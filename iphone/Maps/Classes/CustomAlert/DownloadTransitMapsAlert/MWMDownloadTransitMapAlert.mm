@@ -42,8 +42,6 @@
 
 @end
 
-typedef void (^MWMDownloaderBlock)();
-
 typedef NS_ENUM(NSUInteger, SelectionState)
 {
   SelectionStateNone,
@@ -69,7 +67,7 @@ static NSString * const kStatisticsEvent = @"Map download Alert";
 
 @property (weak, nonatomic) IBOutlet UILabel * titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel * messageLabel;
-@property (copy, nonatomic) MWMDownloaderBlock downloaderBlock;
+@property (copy, nonatomic) TMWMVoidBlock downloaderBlock;
 @property (weak, nonatomic) IBOutlet UITableView * dialogsTableView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint * tableViewHeight;
 @property (copy, nonatomic) NSArray * missedFiles;
@@ -89,7 +87,7 @@ static NSString * const kStatisticsEvent = @"Map download Alert";
                                  routes:(vector<storage::TIndex> const &)routes
                                    code:(routing::IRouter::ResultCode)code
 {
-  [Statistics.instance logEvent:[NSString stringWithFormat:@"%@ - %@", kStatisticsEvent, @"open"]];
+  [[Statistics instance] logEvent:kStatisticsEvent withParameters:@{kStatAction : kStatOpen}];
   MWMDownloadTransitMapAlert * alert = [self alertWithMaps:maps routes:routes];
   switch (code)
   {
@@ -156,13 +154,13 @@ static NSString * const kStatisticsEvent = @"Map download Alert";
 
 - (IBAction)notNowButtonTap:(id)sender
 {
-  [Statistics.instance logEvent:[NSString stringWithFormat:@"%@ - %@", kStatisticsEvent, @"notNowButtonTap"]];
+  [[Statistics instance] logEvent:kStatisticsEvent withParameters:@{kStatAction : kStatClose}];
   [self close];
 }
 
 - (IBAction)downloadButtonTap:(id)sender
 {
-  [Statistics.instance logEvent:[NSString stringWithFormat:@"%@ - %@", kStatisticsEvent, @"downloadButtonTap"]];
+  [[Statistics instance] logEvent:kStatisticsEvent withParameters:@{kStatAction : kStatApply}];
   [self downloadMaps];
 }
 
@@ -365,7 +363,7 @@ static NSString * const kStatisticsEvent = @"Map download Alert";
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
   UIView * view = [[UIView alloc] init];
-  view.backgroundColor = self.missedFiles.count == 2 && section == 0 ? UIColor.blackDividers : [UIColor colorWithWhite:0. alpha:0.06];
+  view.backgroundColor = self.missedFiles.count == 2 && section == 0 ? UIColor.blackDividers : UIColor.blackOpaque;
   return view;
 }
 

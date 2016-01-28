@@ -26,6 +26,11 @@
   return [MWMFacebookAlert alert];
 }
 
++ (MWMAlert *)point2PointAlertWithOkBlock:(TMWMVoidBlock)block needToRebuild:(BOOL)needToRebuild
+{
+  return [MWMDefaultAlert point2PointAlertWithOkBlock:block needToRebuild:needToRebuild];
+}
+
 + (MWMAlert *)routingDisclaimerAlertWithInitialOrientation:(UIInterfaceOrientation)orientation
 {
   return [MWMRoutingDisclaimerAlert alertWithInitialOrientation:orientation];
@@ -36,7 +41,7 @@
   return [MWMDefaultAlert disabledLocationAlert];
 }
 
-+ (MWMAlert *)noWiFiAlertWithName:(NSString *)name downloadBlock:(RightButtonAction)block
++ (MWMAlert *)noWiFiAlertWithName:(NSString *)name downloadBlock:(TMWMVoidBlock)block
 {
   return [MWMDefaultAlert noWiFiAlertWithName:name downloadBlock:block];
 }

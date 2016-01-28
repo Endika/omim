@@ -1,5 +1,6 @@
 #import "BookmarksVC.h"
 #import "MWMSearchBookmarksCell.h"
+#import "UIColor+MapsMeColor.h"
 #import "UIFont+MapsMeFonts.h"
 
 #include "Framework.h"
@@ -21,16 +22,23 @@
 
 - (void)awakeFromNib
 {
+  if (IPAD)
+    self.contentView.backgroundColor = [UIColor white];
   self.layer.shouldRasterize = YES;
   self.layer.rasterizationScale = UIScreen.mainScreen.scale;
 }
 
 - (void)configForIndex:(NSInteger)index
 {
-  BookmarkCategory const * cat = GetFramework().GetBmCategory(index);
+  BookmarkCategory * cat = GetFramework().GetBmCategory(index);
   self.index = index;
   self.isVisible = cat->IsVisible();
-  self.count = cat->GetBookmarksCount() + cat->GetTracksCount();
+  size_t userMarksCount = 0;
+  {
+    BookmarkCategory::Guard guard(*cat);
+    userMarksCount = guard.m_controller.GetUserMarkCount();
+  }
+  self.count = userMarksCount + cat->GetTracksCount();
   self.titleLabel.text = @(cat->GetName().c_str());
 }
 
@@ -38,7 +46,10 @@
 {
   self.isVisible = !self.isVisible;
   BookmarkCategory * cat = GetFramework().GetBmCategory(self.index);
-  cat->SetVisible(self.isVisible);
+  {
+    BookmarkCategory::Guard guard(*cat);
+    guard.m_controller.SetIsVisible(self.isVisible);
+  }
   cat->SaveToKMLFile();
 }
 
@@ -75,23 +86,6 @@
 {
   _count = count;
   self.countLabel.text = @(count).stringValue;
-}
-
-- (void)setIsLightTheme:(BOOL)isLightTheme
-{
-  _isLightTheme = isLightTheme;
-  if (isLightTheme)
-  {
-    [self.visibilityButton setImage:[UIImage imageNamed:@"ic_hide_light"] forState:UIControlStateNormal];
-    [self.visibilityButton setImage:[UIImage imageNamed:@"ic_show_light"] forState:UIControlStateSelected];
-    self.openArrow.image = [UIImage imageNamed:@"ic_carrot_light"];
-  }
-  else
-  {
-    [self.visibilityButton setImage:[UIImage imageNamed:@"ic_hide_dark"] forState:UIControlStateNormal];
-    [self.visibilityButton setImage:[UIImage imageNamed:@"ic_show_dark"] forState:UIControlStateSelected];
-    self.openArrow.image = [UIImage imageNamed:@"ic_carrot_dark"];
-  }
 }
 
 @end

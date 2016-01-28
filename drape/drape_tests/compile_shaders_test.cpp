@@ -98,7 +98,8 @@ void RunShaderTest(QString const & glslCompiler,
   }
 }
 
-void ForEachShader(vector<string> const & shaders,
+void ForEachShader(string const & defines,
+                   vector<string> const & shaders,
                    QString const & glslCompiler,
                    TPrepareProcessFn const & procPrepare,
                    TPrepareArgumentsFn const & argsPrepare,
@@ -109,7 +110,8 @@ void ForEachShader(vector<string> const & shaders,
   {
     QTemporaryFile srcFile;
     TEST(srcFile.open(), ("Temporary File can't be created!"));
-    WriteShaderToFile(srcFile, src);
+    string fullSrc = defines + src;
+    WriteShaderToFile(srcFile, fullSrc);
     RunShaderTest(glslCompiler, srcFile.fileName(),
                   procPrepare, argsPrepare, successComparator, errorLog);
   }
@@ -139,13 +141,36 @@ UNIT_TEST(CompileShaders_Test)
                        };
   auto successComparator = [] (QString const & output) { return output.indexOf("Success") != -1; };
 
-  ForEachShader(gpu::VertexEnum, compilerPath, [] (QProcess const &) {},
+  string defines = "";
+  ForEachShader(defines, gpu::VertexEnum, compilerPath, [] (QProcess const &) {},
                 argsPrepareFn, successComparator, ss);
   shaderType = "-f";
-  ForEachShader(gpu::FragmentEnum, compilerPath,[] (QProcess const &) {},
+  ForEachShader(defines, gpu::FragmentEnum, compilerPath,[] (QProcess const &) {},
                 argsPrepareFn, successComparator, ss);
 
-  TEST_EQUAL(errorLog.isEmpty(), true, (errorLog));
+  TEST_EQUAL(errorLog.isEmpty(), true, ("PVR without defines :", errorLog));
+
+  defines = "#define ENABLE_VTF\n";
+  errorLog.clear();
+  shaderType = "-v";
+  ForEachShader(defines, gpu::VertexEnum, compilerPath, [] (QProcess const &) {},
+                argsPrepareFn, successComparator, ss);
+  shaderType = "-f";
+  ForEachShader(defines, gpu::FragmentEnum, compilerPath,[] (QProcess const &) {},
+                argsPrepareFn, successComparator, ss);
+
+  TEST_EQUAL(errorLog.isEmpty(), true, ("PVR with defines : ", defines, "\n", errorLog));
+
+  defines = "#define SAMSUNG_GOOGLE_NEXUS\n";
+  errorLog.clear();
+  shaderType = "-v";
+  ForEachShader(defines, gpu::VertexEnum, compilerPath, [] (QProcess const &) {},
+                argsPrepareFn, successComparator, ss);
+  shaderType = "-f";
+  ForEachShader(defines, gpu::FragmentEnum, compilerPath,[] (QProcess const &) {},
+                argsPrepareFn, successComparator, ss);
+
+  TEST_EQUAL(errorLog.isEmpty(), true, ("PVR with defines : ", defines, "\n", errorLog));
 }
 
 #ifdef OMIM_OS_MAC
@@ -183,12 +208,14 @@ void TestMaliShaders(QString const & driver,
                               return output.indexOf("Compilation succeeded.") != -1;
                             };
 
+  string defines = "";
   QString const compilerPath = QString::fromStdString(glslCompilerPath);
-  ForEachShader(gpu::VertexEnum, compilerPath, procPrepare, argForming, succesComparator, ss);
+  ForEachShader(defines, gpu::VertexEnum, compilerPath, procPrepare, argForming, succesComparator, ss);
   shaderType = "-f";
-  ForEachShader(gpu::FragmentEnum, compilerPath, procPrepare, argForming, succesComparator, ss);
+  ForEachShader(defines, gpu::FragmentEnum, compilerPath, procPrepare, argForming, succesComparator, ss);
+  TEST(errorLog.isEmpty(), (shaderType, release, hardware, driver, defines, errorLog));
 
-  TEST(errorLog.isEmpty(), (errorLog));
+  // MALI GPUs do not support ENABLE_VTF. Do not test it here.
 }
 
 UNIT_TEST(MALI_CompileShaders_Test)

@@ -2,13 +2,15 @@
 
 #include "base/buffer_vector.hpp"
 
+#include "std/algorithm.hpp"
 #include "std/cstdint.hpp"
+#include "std/iterator.hpp"
 #include "std/limits.hpp"
+#include "std/regex.hpp"
 #include "std/sstream.hpp"
 #include "std/string.hpp"
 
 #include "3party/utfcpp/source/utf8/unchecked.h"
-
 
 /// All methods work with strings in utf-8 format
 namespace strings
@@ -48,7 +50,11 @@ UniString Normalize(UniString const & s);
 size_t CountNormLowerSymbols(UniString const & s, UniString const & lowStr);
 
 void AsciiToLower(string & s);
+// TODO(AlexZ): current boost impl uses default std::locale() to trim.
+// In general, it does not work for any unicode whitespace except ASCII U+0020 one.
 void Trim(string & s);
+/// Remove any characters that contain in "anyOf" on left and right side of string s
+void Trim(string & s, char const * anyOf);
 
 void MakeLowerCaseInplace(string & s);
 string MakeLowerCase(string const & s);
@@ -260,7 +266,11 @@ inline string to_string(uint64_t i)
 string to_string_dac(double d, int dac);
 //@}
 
+bool StartsWith(UniString const & s, UniString const & p);
+
 bool StartsWith(string const & s1, char const * s2);
+
+bool EndsWith(string const & s1, char const * s2);
 
 /// Try to guess if it's HTML or not. No guarantee.
 bool IsHTML(string const & utf8);
@@ -293,4 +303,49 @@ typename ContainerT::value_type JoinStrings(ContainerT const & container,
   return JoinStrings(container.begin(), container.end(), delimiter);
 }
 */
+
+template <typename TFn>
+void ForEachMatched(string const & s, regex const & regex, TFn && fn)
+{
+  for (sregex_token_iterator cur(s.begin(), s.end(), regex), end; cur != end; ++cur)
+    fn(*cur);
 }
+
+// Computes the minimum number of insertions, deletions and alterations
+// of characters needed to transform one string into another.
+// The function works in O(length1 * length2) time and memory
+// where length1 and length2 are the lengths of the argument strings.
+// See https://en.wikipedia.org/wiki/Levenshtein_distance.
+// One string is [b1, e1) and the other is [b2, e2). The iterator
+// form is chosen to fit both std::string and strings::UniString.
+// This function does not normalize either of the strings.
+template <typename TIter>
+size_t EditDistance(TIter const & b1, TIter const & e1, TIter const & b2, TIter const & e2)
+{
+  size_t const n = distance(b1, e1);
+  size_t const m = distance(b2, e2);
+  // |cur| and |prev| are current and previous rows of the
+  // dynamic programming table.
+  vector<size_t> prev(m + 1);
+  vector<size_t> cur(m + 1);
+  for (size_t j = 0; j <= m; j++)
+    prev[j] = j;
+  auto it1 = b1;
+  // 1-based to avoid corner cases.
+  for (size_t i = 1; i <= n; ++i, ++it1)
+  {
+    cur[0] = i;
+    auto const & c1 = *it1;
+    auto it2 = b2;
+    for (size_t j = 1; j <= m; ++j, ++it2)
+    {
+      auto const & c2 = *it2;
+
+      cur[j] = min(cur[j - 1], prev[j]) + 1;
+      cur[j] = min(cur[j], prev[j - 1] + (c1 == c2 ? 0 : 1));
+    }
+    prev.swap(cur);
+  }
+  return prev[m];
+}
+}  // namespace strings

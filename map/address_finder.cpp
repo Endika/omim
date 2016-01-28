@@ -1,6 +1,7 @@
 #include "map/framework.hpp"
 
 #include "search/result.hpp"
+#include "drape_frontend/visual_params.hpp"
 
 #include "indexer/classificator.hpp"
 #include "indexer/feature_visibility.hpp"
@@ -164,7 +165,7 @@ namespace
 void Framework::GetFeatureTypes(m2::PointD const & pxPoint, vector<string> & types) const
 {
   m2::AnyRectD rect;
-  m_navigator.GetTouchRect(pxPoint, TOUCH_PIXEL_RADIUS * GetVisualScale(), rect);
+  m_currentModelView.GetTouchRect(pxPoint, df::VisualParams::Instance().GetTouchRectRadius(), rect);
 
   // This scale should fit in geometry scales range.
   int const scale = min(GetDrawScale(), scales::GetUpperScale());
@@ -485,7 +486,7 @@ void Framework::GetAddressInfoForGlobalPoint(m2::PointD const & pt, search::Addr
   DoGetAddressInfo getAddress(pt, scale, GetChecker(), addressR);
 
   m_model.ForEachFeature(rect, getAddress, scale);
-  getAddress.FillAddress(GetSearchEngine(), info);
+  getAddress.FillAddress(m_searchEngine.get(), info);
 
   // @todo Temporarily commented - it's slow and not used in UI
   //GetLocality(pt, info);
@@ -508,7 +509,7 @@ void Framework::GetAddressInfo(FeatureType const & ft, m2::PointD const & pt, se
   // FeatureType::WORST_GEOMETRY - no need to check on visibility
   DoGetAddressInfo getAddress(pt, FeatureType::WORST_GEOMETRY, GetChecker(), addressR);
   getAddress(ft);
-  getAddress.FillAddress(GetSearchEngine(), info);
+  getAddress.FillAddress(m_searchEngine.get(), info);
 
   /// @todo Temporarily commented - it's slow and not used in UI
   //GetLocality(pt, info);

@@ -3,22 +3,41 @@
 
   <!-- IMPORTANT : order of items in 'search_category_icon_ids' and 'search_category_name_ids' should be identical. -->
   <array name="search_category_icon_ids">
-    <item>@drawable/ic_food_light</item>
-    <item>@drawable/ic_hotel_light</item>
-    <item>@drawable/ic_tourism_light</item>
-    <item>@drawable/ic_wifi_light</item>
-    <item>@drawable/ic_transport_light</item>
-    <item>@drawable/ic_gas_light</item>
-    <item>@drawable/ic_parking_light</item>
-    <item>@drawable/ic_shop_light</item>
-    <item>@drawable/ic_atm_light</item>
-    <item>@drawable/ic_bank_light</item>
-    <item>@drawable/ic_entertainment_light</item>
-    <item>@drawable/ic_hospital_light</item>
-    <item>@drawable/ic_pharmacy_light</item>
-    <item>@drawable/ic_police_light</item>
-    <item>@drawable/ic_toilets_light</item>
-    <item>@drawable/ic_post_light</item>
+    <item>@drawable/ic_category_food</item>
+    <item>@drawable/ic_category_hotel</item>
+    <item>@drawable/ic_category_tourism</item>
+    <item>@drawable/ic_category_wifi</item>
+    <item>@drawable/ic_category_transport</item>
+    <item>@drawable/ic_category_fuel</item>
+    <item>@drawable/ic_category_parking</item>
+    <item>@drawable/ic_category_shop</item>
+    <item>@drawable/ic_category_atm</item>
+    <item>@drawable/ic_category_bank</item>
+    <item>@drawable/ic_category_entertainment</item>
+    <item>@drawable/ic_category_hospital</item>
+    <item>@drawable/ic_category_pharmacy</item>
+    <item>@drawable/ic_category_police</item>
+    <item>@drawable/ic_category_toilet</item>
+    <item>@drawable/ic_category_post</item>
+  </array>
+
+  <array name="search_category_icon_night_ids">
+    <item>@drawable/ic_category_food_night</item>
+    <item>@drawable/ic_category_hotel_night</item>
+    <item>@drawable/ic_category_tourism_night</item>
+    <item>@drawable/ic_category_wifi_night</item>
+    <item>@drawable/ic_category_transport_night</item>
+    <item>@drawable/ic_category_fuel_night</item>
+    <item>@drawable/ic_category_parking_night</item>
+    <item>@drawable/ic_category_shop_night</item>
+    <item>@drawable/ic_category_atm_night</item>
+    <item>@drawable/ic_category_bank_night</item>
+    <item>@drawable/ic_category_entertainment_night</item>
+    <item>@drawable/ic_category_hospital_night</item>
+    <item>@drawable/ic_category_pharmacy_night</item>
+    <item>@drawable/ic_category_police_night</item>
+    <item>@drawable/ic_category_toilet_night</item>
+    <item>@drawable/ic_category_post_night</item>
   </array>
 
   <array name="search_category_name_ids">
@@ -40,4 +59,24 @@
     <item>@string/post</item>
   </array>
 
+  <!-- What's new -->
+  <integer-array name="news_images">
+    <item>@drawable/img_news_night</item>
+  </integer-array>
+
+  <string-array name="news_titles">
+    <item>@string/whats_new_night_caption</item>
+  </string-array>
+
+  <string-array name="news_subtitles">
+    <item>@string/whats_new_night_body</item>
+  </string-array>
+
+  <string-array name="news_switch_titles">
+    <item/>
+  </string-array>
+
+  <string-array name="news_switch_subtitles">
+    <item/>
+  </string-array>
 </resources>

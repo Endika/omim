@@ -2,15 +2,15 @@
 #include "testing/testregister.hpp"
 
 #include "base/logging.hpp"
-#include "base/regexp.hpp"
 #include "base/string_utils.hpp"
 #include "base/timer.hpp"
 
 #include "std/cstring.hpp"
 #include "std/iomanip.hpp"
 #include "std/iostream.hpp"
-#include "std/target_os.hpp"
+#include "std/regex.hpp"
 #include "std/string.hpp"
+#include "std/target_os.hpp"
 #include "std/vector.hpp"
 
 #ifdef OMIM_UNIT_TEST_WITH_QT_EVENT_LOOP
@@ -39,6 +39,7 @@ char const kSuppressOption[] = "--suppress=";
 char const kHelpOption[] = "--help";
 char const kDataPathOptions[] = "--data_path=";
 char const kResourcePathOptions[] = "--user_resource_path=";
+char const kListAllTestsOption[] = "--list_tests";
 
 enum Status
 {
@@ -69,6 +70,7 @@ void Usage(char const * name)
                 "Do not run tests with names corresponding to regexp.");
   DisplayOption(cerr, kDataPathOptions, "<Path>", "Path to data files.");
   DisplayOption(cerr, kResourcePathOptions, "<Path>", "Path to resources, styles and classificators.");
+  DisplayOption(cerr, kListAllTestsOption, "List all the tests in the test suite and exit.");
   DisplayOption(cerr, kHelpOption, "Print this help message and exit.");
 }
 
@@ -87,6 +89,8 @@ void ParseOptions(int argc, char * argv[], CommandLineOptions & options)
       options.m_resourcePath = arg + sizeof(kResourcePathOptions) - 1;
     if (strcmp(arg, kHelpOption) == 0)
       options.m_help = true;
+    if (strcmp(arg, kListAllTestsOption) == 0)
+      options.m_listTests = true;
   }
 }
 }  // namespace
@@ -122,13 +126,13 @@ int main(int argc, char * argv[])
     return STATUS_SUCCESS;
   }
 
-  regexp::RegExpT filterRegExp;
+  regex filterRegExp;
   if (g_testingOptions.m_filterRegExp)
-    regexp::Create(g_testingOptions.m_filterRegExp, filterRegExp);
+    filterRegExp.assign(g_testingOptions.m_filterRegExp);
 
-  regexp::RegExpT suppressRegExp;
+  regex suppressRegExp;
   if (g_testingOptions.m_suppressRegExp)
-    regexp::Create(g_testingOptions.m_suppressRegExp, suppressRegExp);
+    suppressRegExp.assign(g_testingOptions.m_suppressRegExp);
 
   for (TestRegister * pTest = TestRegister::FirstRegister(); pTest; pTest = pTest->m_pNext)
   {
@@ -144,15 +148,29 @@ int main(int argc, char * argv[])
     testResults.push_back(true);
   }
 
+  if (GetTestingOptions().m_listTests)
+  {
+    for (auto const & name : testNames)
+      cout << name << endl;
+    return 0;
+  }
+
   int iTest = 0;
   for (TestRegister * pTest = TestRegister::FirstRegister(); pTest; ++iTest, pTest = pTest->m_pNext)
   {
-    if (g_testingOptions.m_filterRegExp && !regexp::Matches(testNames[iTest], filterRegExp))
+    auto const & testName = testNames[iTest];
+    if (g_testingOptions.m_filterRegExp &&
+        !regex_match(testName.begin(), testName.end(), filterRegExp))
+    {
       continue;
-    if (g_testingOptions.m_suppressRegExp && regexp::Matches(testNames[iTest], suppressRegExp))
+    }
+    if (g_testingOptions.m_suppressRegExp &&
+        regex_match(testName.begin(), testName.end(), suppressRegExp))
+    {
       continue;
+    }
 
-    LOG(LINFO, ("Running", testNames[iTest]));
+    LOG(LINFO, ("Running", testName));
     if (!g_bLastTestOK)
     {
       // Somewhere else global variables have been reset.

@@ -13,7 +13,9 @@ public:
     VertexArrayObject,
     TextureNPOT,
     RequiredInternalFormat,
-    MapBuffer
+    MapBuffer,
+    UintIndices,
+    MapBufferRange
   };
 
   static GLExtensionsList & Instance();

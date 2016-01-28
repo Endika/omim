@@ -6,8 +6,7 @@
 #include "std/cmath.hpp"
 #include "std/iomanip.hpp"
 
-#include <boost/algorithm/string.hpp> // boost::trim
-
+#include <boost/algorithm/string/trim.hpp>
 
 namespace strings
 {
@@ -81,7 +80,7 @@ bool to_double(char const * s, double & d)
 {
   char * stop;
   d = strtod(s, &stop);
-  return stop && *stop == 0;
+  return stop && *stop == 0 && s != stop;
 }
 
 UniString MakeLowerCase(UniString const & s)
@@ -138,6 +137,11 @@ void Trim(string & s)
   boost::trim(s);
 }
 
+void Trim(string & s, char const * anyOf)
+{
+  boost::trim_if(s, boost::is_any_of(anyOf));
+}
+
 bool EqualNoCase(string const & s1, string const & s2)
 {
   return MakeLowerCase(s1) == MakeLowerCase(s2);
@@ -165,9 +169,30 @@ bool IsASCIIString(string const & str)
   return true;
 }
 
+bool StartsWith(UniString const & s, UniString const & p)
+{
+  if (p.size() > s.size())
+    return false;
+  for (size_t i = 0; i < p.size(); ++i)
+  {
+    if (s[i] != p[i])
+      return false;
+  }
+  return true;
+}
+
 bool StartsWith(string const & s1, char const * s2)
 {
   return (s1.compare(0, strlen(s2), s2) == 0);
+}
+
+bool EndsWith(string const & s1, char const * s2)
+{
+  size_t const n = s1.size();
+  size_t const m = strlen(s2);
+  if (n < m)
+    return false;
+  return (s1.compare(n - m, m, s2) == 0);
 }
 
 string to_string_dac(double d, int dac)

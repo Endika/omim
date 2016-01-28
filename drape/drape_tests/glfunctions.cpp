@@ -3,6 +3,8 @@
 
 #include "base/assert.hpp"
 
+#include "std/string.hpp"
+
 using namespace emul;
 
 #define MOCK_CALL(f) GLMockFunctions::Instance().f;
@@ -57,7 +59,7 @@ uint32_t GLFunctions::glCreateShader(glConst type)
   return MOCK_CALL(glCreateShader(type));
 }
 
-void GLFunctions::glShaderSource(uint32_t shaderID, string const & src)
+void GLFunctions::glShaderSource(uint32_t shaderID, string const & src, string const & defines)
 {
   MOCK_CALL(glShaderSource(shaderID, src));
 }
@@ -239,9 +241,13 @@ int32_t GLFunctions::glGetInteger(glConst pname)
   return MOCK_CALL(glGetInteger(pname));
 }
 
-void CheckGLError() {}
+string GLFunctions::glGetString(glConst pname)
+{
+  return MOCK_CALL(glGetString(pname));
+}
 
-// @TODO add actual unit tests
+void CheckGLError(my::SrcPoint const & /*srcPt*/) {}
+
 void GLFunctions::glEnable(glConst mode) {}
 
 void GLFunctions::glBlendEquation(glConst function) {}
@@ -252,10 +258,17 @@ void GLFunctions::glDisable(glConst mode) {}
 
 void GLFunctions::glUniformValueiv(int8_t location, int32_t * v, uint32_t size) {}
 
-void * GLFunctions::glMapBuffer(glConst target) { return 0; }
+void * GLFunctions::glMapBuffer(glConst, glConst) { return 0; }
 
 void GLFunctions::glUnmapBuffer(glConst target) {}
 
-void GLFunctions::glDrawElements(uint16_t indexCount) {}
+void GLFunctions::glDrawElements(uint32_t sizeOfIndex, uint32_t indexCount, uint32_t startIndex) {}
+
+void GLFunctions::glDrawArrays(glConst mode, int32_t first, uint32_t count) {}
 
 void GLFunctions::glPixelStore(glConst name, uint32_t value) {}
+
+int32_t GLFunctions::glGetBufferParameter(glConst target, glConst name)
+{
+  return MOCK_CALL(glGetBufferParameter(target, name));
+}

@@ -118,7 +118,6 @@ void BaseRule::SetSelector(unique_ptr<ISelector> && selector)
 
 RulesHolder::RulesHolder()
   : m_bgColors(scales::UPPER_STYLE_SCALE+1, DEFAULT_BG_COLOR)
-  , m_cityRankTable(GetConstRankCityRankTable())
 {}
 
 RulesHolder::~RulesHolder()
@@ -176,14 +175,6 @@ uint32_t RulesHolder::GetBgColor(int scale) const
   return m_bgColors[scale];
 }
 
-double RulesHolder::GetCityRank(int scale, uint32_t population) const
-{
-  double rank;
-  if (!m_cityRankTable->GetCityRank(scale, population, rank))
-    return -1.0; // do not draw
-  return rank;
-}
-
 void RulesHolder::ClearCaches()
 {
   ForEachRule(bind(static_cast<void (BaseRule::*)()>(&BaseRule::MakeEmptyID), _4));
@@ -194,10 +185,17 @@ void RulesHolder::ResizeCaches(size_t s)
   ForEachRule(bind(&BaseRule::CheckCacheSize, _4, s));
 }
 
+RulesHolder & rules(MapStyle mapStyle)
+{
+  size_t const index = static_cast<size_t>(mapStyle);
+  ASSERT_LESS(index, MapStyleCount, ());
+  static RulesHolder h[MapStyleCount];
+  return h[index];
+}
+
 RulesHolder & rules()
 {
-  static RulesHolder holder;
-  return holder;
+  return rules(GetStyleReader().GetCurrentStyle());
 }
 
 namespace
@@ -526,45 +524,11 @@ void RulesHolder::LoadFromBinaryProto(string const & s)
   InitBackgroundColors(doSet.m_cont);
 }
 
-void RulesHolder::LoadCityRankTableFromString(string & s)
-{
-  unique_ptr<ICityRankTable> table;
-
-  if (!s.empty())
-  {
-    table = GetCityRankTableFromString(s);
-
-    if (nullptr == table)
-      LOG(LINFO, ("Invalid city-rank-table file"));
-  }
-
-  if (nullptr == table)
-    table = GetConstRankCityRankTable();
-
-  m_cityRankTable = move(table);
-}
-
 void LoadRules()
 {
   string buffer;
-
-  // Load drules_proto
   GetStyleReader().GetDrawingRulesReader().ReadAsString(buffer);
   rules().LoadFromBinaryProto(buffer);
-
-  // Load city_rank
-  buffer.clear();
-  try
-  {
-    ReaderPtr<Reader> cityRankFileReader = GetPlatform().GetReader("city_rank.txt");
-    cityRankFileReader.ReadAsString(buffer);
-  }
-  catch (FileAbsentException & e)
-  {
-    // city-rank.txt file is optional, if it does not exist, then default city-rank-table is used
-    LOG(LINFO, ("File city-rank-table does not exist", e.Msg()));
-  }
-  rules().LoadCityRankTableFromString(buffer);
 }
 
 }

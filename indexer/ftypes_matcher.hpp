@@ -46,6 +46,14 @@ public:
   static IsATMChecker const & Instance();
 };
 
+class IsSpeedCamChecker : public BaseChecker
+{
+  IsSpeedCamChecker();
+
+public:
+  static IsSpeedCamChecker const & Instance();
+};
+
 class IsFuelStationChecker : public BaseChecker
 {
 public:
@@ -91,6 +99,14 @@ class IsBuildingChecker : public BaseChecker
 public:
   static IsBuildingChecker const & Instance();
   uint32_t GetMainType() const { return m_types[0]; }
+};
+
+class IsBuildingPartChecker : public BaseChecker
+{
+  virtual bool IsMatched(uint32_t type) const;
+public:
+  IsBuildingPartChecker();
+  static IsBuildingPartChecker const & Instance();
 };
 
 class IsBridgeChecker : public BaseChecker

@@ -189,11 +189,6 @@ namespace android_tests
 
     bool HasAvailableSpaceForWriting(uint64_t size) const{ return true; }
 
-    static void RunOnGuiThreadImpl(TFunctor const & fn, bool blocking = false)
-    {
-      ASSERT(false, ());
-    }
-
     static Platform & Instance()
     {
       static Platform platform;
@@ -224,6 +219,12 @@ void AndroidThreadDetachFromJVM()
 void Platform::RunOnGuiThread(TFunctor const & fn)
 {
   LOG(LWARNING, ("Platform::RunOnGuiThread() is not implemented."));
+}
+
+Platform::EConnectionType Platform::ConnectionStatus()
+{
+  LOG(LWARNING, ("Platform::ConnectionStatus() is not implemented."));
+  return Platform::EConnectionType::CONNECTION_NONE;
 }
 
 JavaVM * GetJVM() 

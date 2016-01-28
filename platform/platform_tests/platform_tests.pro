@@ -26,7 +26,6 @@ SOURCES += \
     ../../testing/testingmain.cpp \
     apk_test.cpp \
     country_file_tests.cpp \
-    downloader_test.cpp \
     get_text_by_id_tests.cpp \
     jansson_test.cpp \
     language_test.cpp \
@@ -34,4 +33,3 @@ SOURCES += \
     location_test.cpp \
     measurement_tests.cpp \
     platform_test.cpp \
-    video_timer_test.cpp \

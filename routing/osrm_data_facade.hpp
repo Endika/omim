@@ -88,12 +88,12 @@ public:
     return (m_matrix.select(e) / 2) % GetNumberOfNodes();
   }
 
-  EdgeDataT GetEdgeData(const EdgeID e, NodeID node) override
+  EdgeDataT GetEdgeData(const EdgeID e, NodeID node) const override
   {
     EdgeDataT res;
 
     res.shortcut = m_shortcuts[e];
-    res.id = res.shortcut ? (node - static_cast<NodeID>(bits::ZigZagDecode(m_edgeId[m_shortcuts.rank(e)]))) : 0;
+    res.id = res.shortcut ? (node - static_cast<NodeID>(bits::ZigZagDecode(m_edgeId[static_cast<size_t>(m_shortcuts.rank(e))]))) : 0;
     res.backward = (m_matrix.select(e) % 2 == 1);
     res.forward = !res.backward;
     res.distance = static_cast<int>(m_edgeData[e]);
@@ -272,6 +272,10 @@ public:
   {
     Clear();
 
+    // Map huge data first, as we hope it will reduce fragmentation of the program address space.
+    m_handleFanoMatrix.Assign(container.Map(ROUTING_MATRIX_FILE_TAG));
+    ASSERT(m_handleFanoMatrix.IsValid(), ());
+
     m_handleEdgeData.Assign(container.Map(ROUTING_EDGEDATA_FILE_TAG));
     ASSERT(m_handleEdgeData.IsValid(), ());
 
@@ -281,11 +285,7 @@ public:
     m_handleShortcuts.Assign(container.Map(ROUTING_SHORTCUTS_FILE_TAG));
     ASSERT(m_handleShortcuts.IsValid(), ());
 
-    m_handleFanoMatrix.Assign(container.Map(ROUTING_MATRIX_FILE_TAG));
-    ASSERT(m_handleFanoMatrix.IsValid(), ());
-
     LoadRawData(m_handleEdgeData.GetData<char>(), m_handleEdgeId.GetData<char>(), m_handleShortcuts.GetData<char>(), m_handleFanoMatrix.GetData<char>());
-
   }
 
   void Clear()

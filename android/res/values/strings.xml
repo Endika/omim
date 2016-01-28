@@ -55,7 +55,7 @@
 	<!-- Settings/Downloader - No internet connection dialog title -->
 	<string name="no_internet_connection_detected">No Internet connection detected</string>
 	<!-- Settings/Downloader - 3G download warning dialog title -->
-	<string name="no_wifi_ask_cellular_download">No WiFi connection detected. Would you like to use cellular data (GPRS, EDGE or 3G) to download %s?</string>
+	<string name="no_wifi_ask_cellular_download">No WiFi connection detected. Would you like to use cellular data (GPRS, EDGE, 3G or LTE) to download %s?</string>
 	<string name="ok">OK</string>
 	<!-- not used? Search View - Location is disabled by user warning text -->
 	<string name="enable_location_services">Please enable Location Services</string>
@@ -94,7 +94,7 @@
 	<!-- Message to display at the center of the screen when the country is added to the downloading queue -->
 	<string name="country_status_added_to_queue">^\nis added to the downloading queue.</string>
 	<!-- Message to display at the center of the screen when the country is downloading -->
-	<string name="country_status_downloading">Downloading\n^\n^%</string>
+	<string name="country_status_downloading">Downloading\n^\n^</string>
 	<!-- Button text for the button at the center of the screen when the country is not downloaded -->
 	<string name="country_status_download">Download Map\n(^ ^)</string>
 	<!-- Button text for the button at the center of the screen when the country is not downloaded -->
@@ -191,7 +191,7 @@
 	<!-- Toast which is displayed when GPS has been deactivated -->
 	<string name="gps_is_disabled_long_text">GPS is disabled. Please enable it in Settings.</string>
 	<!-- Measurement units title in settings activity -->
-	<string name="measurement_units">Measurement Units</string>
+	<string name="measurement_units">Measurement units</string>
 	<!-- Detailed description of Measurement Units settings button -->
 	<string name="measurement_units_summary">Choose between miles and kilometres</string>
 	<!-- Do search in all sources -->
@@ -280,7 +280,7 @@
 	<!-- iOS share by Message button text (including SMS) -->
 	<string name="message">Message</string>
 	<!-- Share by email button text -->
-	<string name="email">E-Mail</string>
+	<string name="email">E-mail</string>
 	<!-- Copy Link -->
 	<string name="copy_link">Copy Link</string>
 	<!-- Text for the button that returns to caller application -->
@@ -303,6 +303,8 @@
 	<string name="show_on_backscreen">Show on Back screen</string>
 	<!-- Prints version number in About dialog -->
 	<string name="version">Version: %s</string>
+	<!-- Data version in «About» screen -->
+	<string name="data_version">Data version: %d</string>
 	<!-- Confirmation in downloading countries dialog -->
 	<string name="are_you_sure">Are you sure you want to continue?</string>
 	<!-- Title for tracks category in bookmarks manager -->
@@ -310,10 +312,48 @@
 	<!-- Length of track in cell that describes route -->
 	<string name="length">Length</string>
 	<string name="share_my_location">Share My Location</string>
-	<string name="become_a_pro">Upgrade</string>
 	<string name="menu_search">Search</string>
+	<!-- Settings screen: "Map" category title -->
+	<string name="prefs_group_map">Map</string>
+	<!-- Settings screen: "Miscellaneous" category title -->
+	<string name="prefs_group_misc">Miscellaneous</string>
+	<string name="prefs_group_route">Navigation</string>
 	<string name="pref_zoom_title">Zoom buttons</string>
 	<string name="pref_zoom_summary">Display on the screen</string>
+	<!-- Settings «Map» category: «Night style» title -->
+	<string name="pref_map_style_title">Night Mode</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_default">Off</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_night">On</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_auto">Auto</string>
+	<!-- Settings «Map» category: «Perspective view» title -->
+	<string name="pref_map_3d_title">Perspective view</string>
+	<!-- Settings «Map» category: «3D buildings» title -->
+	<string name="pref_map_3d_buildings_title">3D buildings</string>
+	<!-- Settings «Map» category: «3D buildings» summary -->
+	<string name="pref_map_3d_buildings_subtitle">Affects battery life</string>
+	<!-- Settings «Route» category: «Tts enabled» title -->
+	<string name="pref_tts_enable_title">Voice Instructions</string>
+	<!-- Settings «Route» category: «Tts language» title -->
+	<string name="pref_tts_language_title">Voice Language</string>
+	<!-- Settings «Route» category: «Tts unavailable» subtitle -->
+	<string name="pref_tts_unavailable">Not Available</string>
+	<!-- Title for "Other" section in TTS settings. -->
+	<string name="pref_tts_other_section_title">Other</string>
+	<string name="pref_tts_how_to_set_up_voice">How to set up voice</string>
+	<!-- Settings «Map» category: «Record track» title -->
+	<string name="pref_track_record_title">Recent track</string>
+	<string name="duration_disabled">Off</string>
+	<string name="duration_1_hour">1 hour</string>
+	<string name="duration_2_hours">2 hours</string>
+	<string name="duration_6_hours">6 hours</string>
+	<string name="duration_12_hours">12 hours</string>
+	<string name="duration_1_day">1 day</string>
+	<string name="recent_track_help_text">Please note: activation of this function causes increased battery usage.</string>
+	<string name="pref_track_ios_caption">Recent track shows your traveled path.</string>
+	<string name="pref_track_ios_subcaption">Please select the time range of saving the track.</string>
 	<string name="placepage_distance">Distance</string>
 	<string name="placepage_coordinates">Coordinates</string>
 	<string name="placepage_unsorted">Unsorted</string>
@@ -338,10 +378,6 @@
 	<string name="route">Route</string>
 	<!-- category title -->
 	<string name="routes">Routes</string>
-	<!-- button in the interface -->
-	<string name="choose_starting_point">Choose starting point…</string>
-	<!-- button in the interface -->
-	<string name="choose_destination">Choose destination…</string>
 	<!-- Show on first launch. -->
 	<string name="maps_licence_info">This applications uses geographical data (including maps, business listings, points of interest, borders of countries and regions, etc.) taken from the OpenStreetMap project. We do not warrant any consistency, accuracy, completeness or applicability of the OpenStreetMap data.</string>
 	<!-- Show on first launch. -->
@@ -361,6 +397,10 @@
 	<!-- Text in menu -->
 	<string name="settings_and_more">Settings &amp; More</string>
 	<!-- Text in menu -->
+	<string name="website">Website</string>
+	<!-- Text in menu -->
+	<string name="blog">Blog</string>
+	<!-- Text in menu -->
 	<string name="maps_me_community">MAPS.ME Community</string>
 	<!-- Text in menu -->
 	<string name="like_on_facebook">Like on Facebook</string>
@@ -368,10 +408,20 @@
 	<string name="follow_on_twitter">Follow on Twitter</string>
 	<!-- Text in menu -->
 	<string name="contact_us">Contact us</string>
+	<!-- Settings: Send feedback button and dialog title -->
+	<string name="feedback">Feedback</string>
+	<!-- Settings: "Send general feedback" button -->
+	<string name="feedback_general">General feedback</string>
 	<!-- Text in menu -->
 	<string name="subscribe_to_news">Subscribe to our news</string>
 	<!-- Text in menu -->
 	<string name="rate_the_app">Rate the app</string>
+	<!-- Rate in Google Play (Android only) -->
+	<string name="rate_gp">Rate on Google Play</string>
+	<!-- Share with friends: menu item title -->
+	<string name="tell_friends">Tell a Friend</string>
+	<!-- Share with friends: sharing text -->
+	<string name="tell_friends_text">Hi! Install Maps.me!</string>
 	<!-- Text in menu -->
 	<string name="help">Help</string>
 	<!-- Text in menu -->
@@ -382,6 +432,8 @@
 	<string name="subscribe_me_subject">Please subscribe me to the MAPS.ME newsletter</string>
 	<!-- Email body -->
 	<string name="subscribe_me_body">I want to be the first to learn about latest news updates and promotions. I can cancel my subscription at any time.</string>
+	<!-- About short text (below logo) -->
+	<string name="about_description">Joined efforts of Mail.Ru Group and OpenStreetMap make the most useful application for travelers!</string>
 	<!-- About text -->
 	<string name="about_text">MAPS.ME offers the fastest offline maps of all the cities, all countries of the world. Travel with full confidence: wherever you are, MAPS.ME helps to locate yourself on the map, find the nearest restaurant, hotel, bank, gas station etc. It doesn’t require internet connection.\n\nWe are always working on new features and would love to hear from you on how you think we could improve MAPS.ME. If you have any problems with the app, don\&#39;t hesitate to contact us at support@maps.me. We respond to every request!\n\nDo you like MAPS.ME and want to support us? There are some simple and absolutely free ways:\n\n- post a review at your App Market\n- like our Facebook page http://www.facebook.com/mapswithme\n- or just tell about MAPS.ME to your mom, friends and colleagues :)\n\nThank you for being with us. We appreciate your support very much!\n\nP.S. We take map data from OpenStreetMap, a mapping project similar to Wikipedia, which allows users to create and edit maps. If you see something is missing or wrong on the map, you can correct the maps directly at http://openstreetmap.org, and your changes will appear in MAPS.ME app with the next version release.</string>
 	<!-- Alert text -->
@@ -441,7 +493,7 @@
 	<!-- Context menu item for downloader. -->
 	<string name="downloader_download_map">Download map</string>
 	<string name="downloader_download_map_no_routing">Download map without routing</string>
-	<!-- Button for routing PP. -->
+	<!-- Button for routing. -->
 	<string name="routing_go">Go!</string>
 	<!-- Item status in downloader. -->
 	<string name="downloader_retry">Retry</string>
@@ -723,6 +775,7 @@
 	<string name="dialog_routing_disclaimer_priority">— Road conditions, traffic laws and road signs always take priority over the navigational advice;</string>
 	<string name="dialog_routing_disclaimer_precision">— The map might be inaccurate and the suggested route might not always be the most optimal way to reach the destination;</string>
 	<string name="dialog_routing_disclaimer_recommendations">— Suggested routes are to be taken only as recommendations;</string>
+	<string name="dialog_routing_disclaimer_borders">— Exercise caution with routes in border zones: the routes created by our app may sometimes cross country borders in unauthorized places;</string>
 	<string name="dialog_routing_disclaimer_beware">Please stay alert and safe on the roads!</string>
 	<string name="dialog_routing_check_gps">Check GPS signal</string>
 	<string name="dialog_routing_error_location_not_found">Unable to create route. Current GPS coordinates could not be identified.</string>
@@ -771,35 +824,9 @@
 	<!-- Failed planning route message in navigation view -->
 	<string name="routing_planning_error">Route Planning Failed</string>
 	<!-- Arrive routing message in navigation view -->
-	<string name="routing_arrive">Arrival at</string>
-	<!-- Routing Start button title -->
-	<string name="routing_start">Start</string>
-	<!-- Planning route message in navigation view -->
-	<string name="routing_planning">Planning Route</string>
+	<string name="routing_arrive">Arrival at %s</string>
 	<!-- Text for routing::IRouter::FileTooOld dialog. -->
 	<string name="dialog_routing_download_and_update_maps">Download and update all map along the projected path to calculate route.</string>
-	<!-- Text for facebook sharing news about walking routes -->
-	<string name="share_walking_routes_facebook">MAPS.ME saves your walking time. More than 2 million km of pedestrian routes, tracks, and trails are available for Walking Directions now.</string>
-	<!-- Text for messenger sharing news about walking routes -->
-	<string name="share_walking_routes_messenger">MAPS.ME gives the shortest walking routes worldwide! Check it out: http://maps.me/get?walk_im</string>
-	<!-- Text for sms sharing news about walking routes -->
-	<string name="share_walking_routes_sms">MAPS.ME gives the shortest walking routes: http://maps.me/get?walk</string>
-	<!-- Subject for email sharing news about walking routes -->
-	<string name="share_walking_routes_email_subject">The shortest walking routes are available</string>
-	<!-- Text for email sharing news about walking routes -->
-	<string name="share_walking_routes_email_body">MAPS.ME just released Walking Directions based on the most detailed map in the world! They give the shortest route to any destination. Try them out: http://maps.me/get?walk_em</string>
-	<!-- Title for walking routes dialog, notifications etc. -->
-	<string name="title_walking_available">Walking Directions are available in MAPS.ME!</string>
-	<!-- Text for walking routes dialog -->
-	<string name="share_walking_routes_first_launch">They give the shortest route to any destination. Help your friends save walking time too!</string>
-	<!-- Title for walking routes dialog after 3 built routes -->
-	<string name="share_walking_routes_congratulations">Congratulations!</string>
-	<!-- Text for walking routes dialog after 3 built routes -->
-	<string name="share_walking_routes_mastering">You mastered the Walking Directions function. Help your friends save walking time, too. Tell them about MAPS.ME.</string>
-	<!-- Android notification about walking directions for update users -->
-	<string name="walking_notification_text">Want to try them out?</string>
-	<!-- Android notification with picture (rich) about walking directions for update users -->
-	<string name="walking_rich_notification_text">They give the shortest route to any destination point. Try them yourself and help your friends save travel time.</string>
 	<string name="rate_alert_title">Like the app?</string>
 	<string name="rate_alert_default_message">Thank you for using MAPS.ME. Please rate the app. Your feedback helps us improve our product.</string>
 	<string name="rate_alert_five_star_message">Hooray! We love you, too!</string>
@@ -816,8 +843,23 @@
 	<string name="search_not_found_location">Download the map of your current location.</string>
 	<string name="search_history_title">Search History</string>
 	<string name="search_history_text">View recent searches.</string>
-	<string name="update_maps_alert_title">Navigating the map is easier now</string>
-	<string name="update_maps_alert_message">We have improved the map style: now all the objects look more user-friendly and clear. Update the maps to get the most from the new design.</string>
-	<string name="update_maps_alert_button_title">Update Maps</string>
 	<string name="clear_search">Clear Search History</string>
+	<!-- Title for settings to enable/disable showcase menu button -->
+	<string name="showcase_settings_title">Show offers</string>
+	<string name="showcase_more_apps">More My.com Apps</string>
+	<!-- Place Page link to Wikipedia article (if map object has it). -->
+	<string name="read_in_wikipedia">Wikipedia</string>
+	<string name="p2p_route_planning">Route Planning</string>
+	<string name="p2p_your_location">Your Location</string>
+	<string name="p2p_from">From</string>
+	<string name="p2p_to">To</string>
+	<string name="p2p_start">Start</string>
+	<string name="p2p_planning">Planning…</string>
+	<string name="p2p_from_here">From</string>
+	<string name="p2p_to_here">To</string>
+	<string name="p2p_only_from_current">Navigation is available only from your current location.</string>
+	<string name="p2p_reroute_from_current">Do you want us to plan a route from your current location?</string>
+	<string name="whats_new_next_button">Next</string>
+	<string name="whats_new_night_caption">Night Mode Navigation</string>
+	<string name="whats_new_night_body">To facilitate using MAPS.ME when driving in the dark, we have added night mode. It switches on automatically after sunset.</string>
 </resources>

@@ -6,12 +6,10 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 ROOT_DIR = ../..
-DEPENDENCIES = map render gui routing search storage graphics indexer platform anim geometry coding base \
+DEPENDENCIES = map drape_frontend routing search storage drape indexer platform geometry coding base \
                freetype fribidi expat protobuf tomcrypt jansson osrm stats_client minizip succinct
 
-!linux* {
-  DEPENDENCIES *= opening_hours
-}
+DEPENDENCIES *= opening_hours
 
 drape {
   DEPENDENCIES *= drape_frontend drape
@@ -33,10 +31,11 @@ SOURCES += \
   bookmarks_test.cpp \
   ge0_parser_tests.cpp  \
   geourl_test.cpp \
+  gps_track_collection_test.cpp \
+  gps_track_storage_test.cpp \
+  gps_track_test.cpp \
   kmz_unarchive_test.cpp \
   mwm_url_tests.cpp \
-  navigator_test.cpp \
-  mwm_set_test.cpp \
 
 !linux* {
   SOURCES += working_time_tests.cpp \

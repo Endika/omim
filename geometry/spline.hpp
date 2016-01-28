@@ -28,10 +28,11 @@ public:
     double GetLength() const;
     double GetFullLength() const;
 
+    int GetIndex() const;
+
   private:
     friend class Spline;
     double GetDistance() const;
-    int GetIndex() const;
 
     void AdvanceForward(double step);
     void AdvanceBackward(double step);
@@ -45,10 +46,14 @@ public:
 
 public:
   Spline() {}
+  Spline(size_t reservedSize);
   Spline(vector<PointD> const & path);
   Spline const & operator = (Spline const & spl);
 
   void AddPoint(PointD const & pt);
+  void ReplacePoint(PointD const & pt);
+  bool IsPrelonging(PointD const & pt);
+  size_t GetSize() const;
   vector<PointD> const & GetPath() const { return m_position; }
 
   template <typename TFunctor>

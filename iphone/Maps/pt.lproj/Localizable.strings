@@ -83,7 +83,7 @@
 "no_internet_connection_detected" = "Não foi detetada uma ligação à Internet";
 
 /* Settings/Downloader - 3G download warning dialog title */
-"no_wifi_ask_cellular_download" = "Não detetada uma ligação WiFi. Pretende utilizar os dados por pacotes (GPRS, EDGE or 3G) para descarregar %@?";
+"no_wifi_ask_cellular_download" = "Não detetada uma ligação WiFi. Pretende utilizar os dados por pacotes (GPRS, EDGE, 3G or LTE) para descarregar %@?";
 
 "ok" = "OK";
 
@@ -142,7 +142,7 @@
 "country_status_added_to_queue" = "^\né adicionado à fila de descargas";
 
 /* Message to display at the center of the screen when the country is downloading */
-"country_status_downloading" = "A descarregar\n^\n^%";
+"country_status_downloading" = "A descarregar\n^\n^";
 
 /* Button text for the button at the center of the screen when the country is not downloaded */
 "country_status_download" = "Descarregar Mapa\n(^ ^)";
@@ -432,7 +432,7 @@
 "message" = "Mensagem";
 
 /* Share by email button text */
-"email" = "E-Mail";
+"email" = "E-mail";
 
 /* Copy Link */
 "copy_link" = "Copiar hiperligação";
@@ -467,6 +467,9 @@
 /* Prints version number in About dialog */
 "version" = "Versão: %@";
 
+/* Data version in «About» screen */
+"data_version" = "Data version: %d";
+
 /* Confirmation in downloading countries dialog */
 "are_you_sure" = "Tem a certeza de que pretende continuar?";
 
@@ -478,13 +481,75 @@
 
 "share_my_location" = "Partilhar a minha localização";
 
-"become_a_pro" = "Obter PRO";
-
 "menu_search" = "Pesquisar";
+
+/* Settings screen: "Map" category title */
+"prefs_group_map" = "Mapa";
+
+/* Settings screen: "Miscellaneous" category title */
+"prefs_group_misc" = "Diversos";
+
+"prefs_group_route" = "Navegação";
 
 "pref_zoom_title" = "Botões de zoom";
 
 "pref_zoom_summary" = "Mostrar no ecrã";
+
+/* Settings «Map» category: «Night style» title */
+"pref_map_style_title" = "Modo Noturno";
+
+/* «Map style» entry value */
+"pref_map_style_default" = "Desligado";
+
+/* «Map style» entry value */
+"pref_map_style_night" = "Ligado";
+
+/* «Map style» entry value */
+"pref_map_style_auto" = "Automático";
+
+/* Settings «Map» category: «Perspective view» title */
+"pref_map_3d_title" = "Visão em Perspectiva";
+
+/* Settings «Map» category: «3D buildings» title */
+"pref_map_3d_buildings_title" = "Prédios em 3D";
+
+/* Settings «Map» category: «3D buildings» summary */
+"pref_map_3d_buildings_subtitle" = "Afeta a vida da bateria";
+
+/* Settings «Route» category: «Tts enabled» title */
+"pref_tts_enable_title" = "Instruções de voz";
+
+/* Settings «Route» category: «Tts language» title */
+"pref_tts_language_title" = "Idioma da voz";
+
+/* Settings «Route» category: «Tts unavailable» subtitle */
+"pref_tts_unavailable" = "Não disponível";
+
+/* Title for "Other" section in TTS settings. */
+"pref_tts_other_section_title" = "Outro";
+
+"pref_tts_how_to_set_up_voice" = "Como configurar a voz";
+
+/* Settings «Map» category: «Record track» title */
+"pref_track_record_title" = "Recent track";
+
+"duration_disabled" = "Desligado";
+
+"duration_1_hour" = "1 hora";
+
+"duration_2_hours" = "2 horas";
+
+"duration_6_hours" = "6 horas";
+
+"duration_12_hours" = "12 horas";
+
+"duration_1_day" = "1 dia";
+
+"recent_track_help_text" = "Atenção: a ativação desta função aumenta o uso da bateria.";
+
+"pref_track_ios_caption" = "O percurso recente mostra o seu caminho viajado.";
+
+"pref_track_ios_subcaption" = "Por favor, selecione o intervalo de tempo da gravação do percurso.";
 
 "placepage_distance" = "Distância";
 
@@ -524,12 +589,6 @@
 /* category title */
 "routes" = "Trajetos";
 
-/* button in the interface */
-"choose_starting_point" = "Selecione o ponto de partida…";
-
-/* button in the interface */
-"choose_destination" = "Selecione o destino…";
-
 /* Show on first launch. */
 "maps_licence_info" = "This applications uses geographical data (including maps, business listings, points of interest, borders of countries and regions, etc.) taken from the OpenStreetMap project. We do not warrant any consistency, accuracy, completeness or applicability of the OpenStreetMap data.";
 
@@ -558,6 +617,12 @@
 "settings_and_more" = "Definições e Mais";
 
 /* Text in menu */
+"website" = "Website";
+
+/* Text in menu */
+"blog" = "Blog";
+
+/* Text in menu */
 "maps_me_community" = "Comunidade MAPS.ME";
 
 /* Text in menu */
@@ -569,11 +634,26 @@
 /* Text in menu */
 "contact_us" = "Contacte-nos";
 
+/* Settings: Send feedback button and dialog title */
+"feedback" = "Feedback";
+
+/* Settings: "Send general feedback" button */
+"feedback_general" = "General feedback";
+
 /* Text in menu */
 "subscribe_to_news" = "Subscreva as nossas notícias";
 
 /* Text in menu */
 "rate_the_app" = "Classificar a aplicação";
+
+/* Rate in Google Play (Android only) */
+"rate_gp" = "Rate on Google Play";
+
+/* Share with friends: menu item title */
+"tell_friends" = "Tell a Friend";
+
+/* Share with friends: sharing text */
+"tell_friends_text" = "Hi! Install Maps.me!";
 
 /* Text in menu */
 "help" = "Ajuda";
@@ -589,6 +669,9 @@
 
 /* Email body */
 "subscribe_me_body" = "Quero ser o(a) primeiro(a) a saber sobre as últimas notícias atualizações e promoções. Posso cancelar a minha subscrição a qualquer altura.";
+
+/* About short text (below logo) */
+"about_description" = "Joined efforts of Mail.Ru Group and OpenStreetMap make the most useful application for travelers!";
 
 /* About text */
 "about_text" = "A MAPS.ME oferece os mapas offline mais rápidos de todas as cidades, de todos os países do mundo. Viaje com plena confiança: onde estiver, a MAPS.ME ajuda a localizar-se no mapa, a encontrar o restaurante, hotel, banco, posto de gasolina mais próximos, etc. Não requer ligação à Internet.\n\nEstamos sempre a trabalhar em novas funcionalidades e gostaríamos de saber a sua opinião sobre como poderíamos melhorar a MAPS.ME. Se tiver algum problema com a app, não hesite em contactar-nos em support@maps.me. Respondemos a cada pedido!\n\nGosta da MAPS.ME e quer apoiar-nos? Há algumas maneiras simples e absolutamente gratuitas:\n\n- publique um comentário no seu App Market\n- faça \"gosto\" na nossa página do Facebook http://www.facebook.com/mapswithme\n- ou fale da MAPS.ME à sua mãe, amigos e colegas :)\n\nObrigado por estar connosco. Agradecemos imenso o seu apoio!\n\nP. S. Tiramos os dados do OpenStreetMap, um projeto de mapeamento semelhante à Wikipedia, que permite aos utilizadores criarem e editarem mapas. Se vir que algo está em falta ou errado no mapa, pode corrigir diretamente os mapas em http://openstreetmap.org e as suas alterações irão aparecer na app MAPS.ME com o lançamento da próxima versão.";
@@ -679,7 +762,7 @@
 
 "downloader_download_map_no_routing" = "Baixar mapa sem roteamento";
 
-/* Button for routing PP. */
+/* Button for routing. */
 "routing_go" = "Avançar!";
 
 /* Item status in downloader. */
@@ -1105,6 +1188,8 @@
 
 "dialog_routing_disclaimer_recommendations" = "— As rotas indicadas devem ser tratadas apenas como sugestões;";
 
+"dialog_routing_disclaimer_borders" = "— Use de cautela em rotas de zonas fronteiriças: as rotas criadas por nosso aplicativo podem algumas vezes cruzar fronteiras nacionais em locais não autorizados;";
+
 "dialog_routing_disclaimer_beware" = "Fique sempre alerta nas estradas!";
 
 "dialog_routing_check_gps" = "Verifique o sinal do GPS";
@@ -1193,49 +1278,10 @@
 "routing_planning_error" = "Falhou o Planeamento da Rota";
 
 /* Arrive routing message in navigation view */
-"routing_arrive" = "Chegada";
-
-/* Routing Start button title */
-"routing_start" = "Começar";
-
-/* Planning route message in navigation view */
-"routing_planning" = "A planear a viagem";
+"routing_arrive" = "Chegada: %s";
 
 /* Text for routing::IRouter::FileTooOld dialog. */
 "dialog_routing_download_and_update_maps" = "Para criar uma rota, por favor, baixe e atualize todos os mapas ao longo da rota.";
-
-/* Text for facebook sharing news about walking routes */
-"share_walking_routes_facebook" = "O MAPS.ME economiza tempo de caminhada. Mais de 2 milhões de km de percursos, caminhos e trilhas pedestres estão disponíveis para rotas a pé agora.";
-
-/* Text for messenger sharing news about walking routes */
-"share_walking_routes_messenger" = "O MAPS.ME dá as rotas pedestres mais curtas em todo o mundo! Confira: http://maps.me/get?walk_im";
-
-/* Text for sms sharing news about walking routes */
-"share_walking_routes_sms" = "MAPS.ME dá as rotas pedestres mais curtas: http://maps.me/get?walk";
-
-/* Subject for email sharing news about walking routes */
-"share_walking_routes_email_subject" = "As rotas pedestres mais curtas estão disponíveis";
-
-/* Text for email sharing news about walking routes */
-"share_walking_routes_email_body" = "O MAPS.ME acaba de lançar as rotas a pé com base no mapa mais detalhado do mundo! Elas dão o caminho mais curto para qualquer destino. Experimente-as: http://maps.me/get?walk_em";
-
-/* Title for walking routes dialog, notifications etc. */
-"title_walking_available" = "As rotas a pé estão disponíveis no MAPS.ME!";
-
-/* Text for walking routes dialog */
-"share_walking_routes_first_launch" = "As rotas a pé estão disponíveis no MAPS.ME! Elas dão o caminho mais curto para qualquer destino. Ajude seus amigos a poupar tempo caminhando, também!";
-
-/* Title for walking routes dialog after 3 built routes */
-"share_walking_routes_congratulations" = "Parabéns!";
-
-/* Text for walking routes dialog after 3 built routes */
-"share_walking_routes_mastering" = "Você dominou a função rotas a pé. Ajude seus amigos a poupar tempo caminhando, também. Conte a eles sobre o MAPS.ME.";
-
-/* Android notification about walking directions for update users */
-"walking_notification_text" = "Quer experimentá-las?";
-
-/* Android notification with picture (rich) about walking directions for update users */
-"walking_rich_notification_text" = "Elas dão o caminho mais curto para qualquer ponto de destino. Experimente-as e ajude seus amigos a poupar tempo de viagem.";
 
 "rate_alert_title" = "Gosta do aplicativo?";
 
@@ -1269,10 +1315,38 @@
 
 "search_history_text" = "Acesse os termos de busca recentes rapidamente.";
 
-"update_maps_alert_title" = "Está mais fácil explorar o mapa";
-
-"update_maps_alert_message" = "Melhoramos os estilos de mapa: agora todos os objetos estão mais agradáveis e mais claros. Atualize os mapas para aproveitar o novo design ao máximo.";
-
-"update_maps_alert_button_title" = "Atualizar mapas";
-
 "clear_search" = "Limpar histórico de pesquisa";
+
+/* Title for settings to enable/disable showcase menu button */
+"showcase_settings_title" = "Mostrar ofertas";
+
+"showcase_more_apps" = "Mais aplicativos do My.com";
+
+/* Place Page link to Wikipedia article (if map object has it). */
+"read_in_wikipedia" = "Wikipedia";
+
+"p2p_route_planning" = "Planejar rota";
+
+"p2p_your_location" = "Localização atual";
+
+"p2p_from" = "O ponto de partida";
+
+"p2p_to" = "O ponto de destino";
+
+"p2p_start" = "Iniciar";
+
+"p2p_planning" = "Planejando…";
+
+"p2p_from_here" = "De";
+
+"p2p_to_here" = "Para";
+
+"p2p_only_from_current" = "Só é possível navegar a partir da sua localização atual.";
+
+"p2p_reroute_from_current" = "Deseja planejar uma rota a partir da sua localização atual?";
+
+"whats_new_next_button" = "Próxima";
+
+"whats_new_night_caption" = "Navegação em modo noturno";
+
+"whats_new_night_body" = "Para facilitar o uso do MAPS.ME ao dirigir no escuro, adicionamos o modo noturno. Ele é acionado automaticamente após o pôr do sol.";

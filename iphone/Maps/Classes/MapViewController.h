@@ -1,7 +1,7 @@
-
 #import "LocationManager.h"
 #import "LocationPredictor.h"
 #import "ViewController.h"
+#import <MyTargetSDKCorp/MTRGNativeAppwallAd.h>
 
 #include "geometry/point2d.hpp"
 #include "geometry/rect2d.hpp"
@@ -15,19 +15,10 @@ namespace search { struct AddressInfo; }
 
 @interface MapViewController : ViewController <LocationObserver, UIPopoverControllerDelegate>
 {
-	bool m_isSticking;
-	size_t m_StickyThreshold;
-	m2::PointD m_Pt1, m_Pt2;
-
-  /// Temporary solution to improve long touch detection.
-  m2::PointD m_touchDownPoint;
-
   CGPoint m_popoverPos;
   
   LocationPredictor * m_predictor;
 }
-
-- (void)setupMeasurementSystem;
 
 // called when app is terminated by system
 - (void)onTerminate;
@@ -41,6 +32,17 @@ namespace search { struct AddressInfo; }
 - (void)updateStatusBarStyle;
 
 - (void)showAPIBar;
+
+- (void)performAction:(NSString *)action;
+
+- (void)openBookmarks;
+
+- (void)refreshAd;
+
+- (void)initialize;
+
+@property (nonatomic) MTRGNativeAppwallAd * appWallAd;
+@property (nonatomic, readonly) BOOL isAppWallAdActive;
 
 @property (nonatomic) UIPopoverController * popoverVC;
 @property (nonatomic) ShareActionSheet * shareActionSheet;

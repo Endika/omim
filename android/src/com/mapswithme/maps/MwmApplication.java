@@ -1,20 +1,27 @@
 package com.mapswithme.maps;
 
+import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Log;
 
-import com.google.gsonaltered.Gson;
+import java.io.File;
+
+import com.google.gson.Gson;
 import com.mapswithme.country.ActiveCountryTree;
 import com.mapswithme.country.CountryItem;
-import com.mapswithme.maps.ads.LikesManager;
+import com.mapswithme.maps.background.AppBackgroundTracker;
 import com.mapswithme.maps.background.Notifier;
 import com.mapswithme.maps.bookmarks.data.BookmarkManager;
+import com.mapswithme.maps.location.TrackRecorder;
+import com.mapswithme.maps.sound.TtsPlayer;
+import com.mapswithme.util.Config;
 import com.mapswithme.util.Constants;
+import com.mapswithme.util.ThemeSwitcher;
 import com.mapswithme.util.UiUtils;
 import com.mapswithme.util.Yota;
 import com.mapswithme.util.statistics.AlohaHelper;
@@ -24,46 +31,50 @@ import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.SaveCallback;
 
-import java.io.File;
-
-public class MwmApplication extends android.app.Application implements ActiveCountryTree.ActiveCountryListener
+public class MwmApplication extends Application
+                         implements ActiveCountryTree.ActiveCountryListener
 {
   private final static String TAG = "MwmApplication";
-  private static final String LAUNCH_NUMBER_SETTING = "LaunchNumber"; // total number of app launches
-  private static final String SESSION_NUMBER_SETTING = "SessionNumber"; // session = number of days, when app was launched
-  private static final String LAST_SESSION_TIMESTAMP_SETTING = "LastSessionTimestamp"; // timestamp of last session
-  private static final String FIRST_INSTALL_VERSION = "FirstInstallVersion";
-  private static final String FIRST_INSTALL_FLAVOR = "FirstInstallFlavor";
+
   // Parse
   private static final String PREF_PARSE_DEVICE_TOKEN = "ParseDeviceToken";
   private static final String PREF_PARSE_INSTALLATION_ID = "ParseInstallationId";
 
-  private static MwmApplication mSelf;
+  private static MwmApplication sSelf;
+  private SharedPreferences mPrefs;
+  private AppBackgroundTracker mBackgroundTracker;
   private final Gson mGson = new Gson();
-  private static SharedPreferences mPrefs;
 
-  private boolean mAreCountersInitialised;
+  private boolean mAreCountersInitialized;
   private boolean mIsFrameworkInitialized;
+
+  private Handler mMainLoopHandler;
+  private final Object mMainQueueToken = new Object();
 
   public MwmApplication()
   {
     super();
-    mSelf = this;
+    sSelf = this;
   }
 
   public static MwmApplication get()
   {
-    return mSelf;
+    return sSelf;
   }
 
   public static Gson gson()
   {
-    return mSelf.mGson;
+    return sSelf.mGson;
+  }
+
+  public static AppBackgroundTracker backgroundTracker()
+  {
+    return sSelf.mBackgroundTracker;
   }
 
   public static SharedPreferences prefs()
   {
-    return mPrefs;
+    return sSelf.mPrefs;
   }
 
   @Override
@@ -84,9 +95,9 @@ public class MwmApplication extends android.app.Application implements ActiveCou
   public void onCountryGroupChanged(int oldGroup, int oldPosition, int newGroup, int newPosition)
   {
     if (oldGroup == ActiveCountryTree.GROUP_NEW && newGroup == ActiveCountryTree.GROUP_UP_TO_DATE)
-      Statistics.INSTANCE.myTrackerTrackMapDownload();
+      Statistics.INSTANCE.trackMapChanged(Statistics.EventName.MAP_DOWNLOADED);
     else if (oldGroup == ActiveCountryTree.GROUP_OUT_OF_DATE && newGroup == ActiveCountryTree.GROUP_UP_TO_DATE)
-      Statistics.INSTANCE.myTrackerTrackMapUpdate();
+      Statistics.INSTANCE.trackMapChanged(Statistics.EventName.MAP_UPDATED);
   }
 
   @Override
@@ -96,34 +107,37 @@ public class MwmApplication extends android.app.Application implements ActiveCou
   public void onCreate()
   {
     super.onCreate();
+    mMainLoopHandler = new Handler(getMainLooper());
 
+    initPaths();
+    nativeInitPlatform(getApkPath(), getDataStoragePath(), getTempPath(), getObbGooglePath(),
+                       BuildConfig.FLAVOR, BuildConfig.BUILD_TYPE,
+                       Yota.isFirstYota(), UiUtils.isTablet());
     initParse();
     mPrefs = getSharedPreferences(getString(R.string.pref_file_name), MODE_PRIVATE);
+    mBackgroundTracker = new AppBackgroundTracker();
+    TrackRecorder.init();
   }
 
-  public synchronized void initNativeCore()
+  public void initNativeCore()
   {
     if (mIsFrameworkInitialized)
       return;
 
-    initPaths();
-    nativeInit(getApkPath(), getDataStoragePath(), getTempPath(), getObbGooglePath(),
-               BuildConfig.FLAVOR, BuildConfig.BUILD_TYPE,
-               Yota.isFirstYota(), UiUtils.isSmallTablet() || UiUtils.isBigTablet());
+    nativeInitFramework();
     ActiveCountryTree.addListener(this);
     initNativeStrings();
     BookmarkManager.getIcons(); // init BookmarkManager (automatically loads bookmarks)
+    TtsPlayer.INSTANCE.init(this);
+    ThemeSwitcher.restart();
     mIsFrameworkInitialized = true;
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
   private void initPaths()
   {
-    final String extStoragePath = getDataStoragePath();
-    final String extTmpPath = getTempPath();
-
-    new File(extStoragePath).mkdirs();
-    new File(extTmpPath).mkdirs();
+    new File(getDataStoragePath()).mkdirs();
+    new File(getTempPath()).mkdirs();
   }
 
   private void initNativeStrings()
@@ -149,6 +163,11 @@ public class MwmApplication extends android.app.Application implements ActiveCou
     nativeAddLocalization("routing_failed_internal_error", getString(R.string.routing_failed_internal_error));
   }
 
+  public boolean isFrameworkInitialized()
+  {
+    return mIsFrameworkInitialized;
+  }
+
   public String getApkPath()
   {
     try
@@ -161,7 +180,7 @@ public class MwmApplication extends android.app.Application implements ActiveCou
     }
   }
 
-  public String getDataStoragePath()
+  public static String getDataStoragePath()
   {
     return Environment.getExternalStorageDirectory().getAbsolutePath() + Constants.MWM_DIR_POSTFIX;
   }
@@ -173,10 +192,10 @@ public class MwmApplication extends android.app.Application implements ActiveCou
       return cacheDir.getAbsolutePath();
 
     return Environment.getExternalStorageDirectory().getAbsolutePath() +
-        String.format(Constants.STORAGE_PATH, BuildConfig.APPLICATION_ID, Constants.CACHE_DIR);
+            String.format(Constants.STORAGE_PATH, BuildConfig.APPLICATION_ID, Constants.CACHE_DIR);
   }
 
-  private String getObbGooglePath()
+  private static String getObbGooglePath()
   {
     final String storagePath = Environment.getExternalStorageDirectory().getAbsolutePath();
     return storagePath.concat(String.format(Constants.OBB_PATH, BuildConfig.APPLICATION_ID));
@@ -187,40 +206,22 @@ public class MwmApplication extends android.app.Application implements ActiveCou
     System.loadLibrary("mapswithme");
   }
 
-  private native void nativeInit(String apkPath, String storagePath,
-                                 String tmpPath, String obbGooglePath,
-                                 String flavorName, String buildType,
-                                 boolean isYota, boolean isTablet);
+  /**
+   * Initializes native Platform with paths. Should be called before usage of any other native components.
+   */
+  private native void nativeInitPlatform(String apkPath, String storagePath, String tmpPath, String obbGooglePath,
+                                         String flavorName, String buildType, boolean isYota, boolean isTablet);
 
-  public native boolean nativeIsBenchmarking();
+  private native void nativeInitFramework();
 
   private native void nativeAddLocalization(String name, String value);
-
-  // Dealing with Settings
-  public native boolean nativeGetBoolean(String name, boolean defaultValue);
-
-  public native void nativeSetBoolean(String name, boolean value);
-
-  public native int nativeGetInt(String name, int defaultValue);
-
-  public native void nativeSetInt(String name, int value);
-
-  public native long nativeGetLong(String name, long defaultValue);
-
-  public native void nativeSetLong(String name, long value);
-
-  public native double nativeGetDouble(String name, double defaultValue);
-
-  public native void nativeSetDouble(String name, double value);
-
-  public native String nativeGetString(String name, String defaultValue);
-
-  public native void nativeSetString(String name, String value);
 
   /**
    * Check if device have at least {@code size} bytes free.
    */
   public native boolean hasFreeSpace(long size);
+
+  private native void runNativeFunctor(final long functorPointer);
 
   /*
    * init Parse SDK
@@ -244,8 +245,8 @@ public class MwmApplication extends android.app.Application implements ActiveCou
           org.alohalytics.Statistics.logEvent(AlohaHelper.PARSE_INSTALLATION_ID, newId);
           org.alohalytics.Statistics.logEvent(AlohaHelper.PARSE_DEVICE_TOKEN, newToken);
           prefs.edit()
-               .putString(PREF_PARSE_INSTALLATION_ID, newId)
-               .putString(PREF_PARSE_DEVICE_TOKEN, newToken).apply();
+                  .putString(PREF_PARSE_INSTALLATION_ID, newId)
+                  .putString(PREF_PARSE_DEVICE_TOKEN, newToken).apply();
         }
       }
     });
@@ -253,77 +254,36 @@ public class MwmApplication extends android.app.Application implements ActiveCou
 
   public void initCounters()
   {
-    if (!mAreCountersInitialised)
+    if (!mAreCountersInitialized)
     {
-      mAreCountersInitialised = true;
-      updateLaunchNumbers();
-      updateSessionsNumber();
-      PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+      mAreCountersInitialized = true;
+      Config.updateLaunchCounter();
+      PreferenceManager.setDefaultValues(this, R.xml.prefs_misc, false);
     }
   }
 
-  public void onUpgrade()
+  public static void onUpgrade()
   {
-    nativeSetInt(LAUNCH_NUMBER_SETTING, 0);
-    nativeSetInt(SESSION_NUMBER_SETTING, 0);
-    nativeSetLong(LAST_SESSION_TIMESTAMP_SETTING, 0);
-    nativeSetInt(LikesManager.LAST_RATED_SESSION, 0);
-    updateSessionsNumber();
+    Config.resetAppSessionCounters();
   }
 
-  private void updateLaunchNumbers()
+  @SuppressWarnings("unused")
+  public void runNativeFunctorOnUiThread(final long functorPointer)
   {
-    final int currentLaunches = nativeGetInt(LAUNCH_NUMBER_SETTING, 0);
-    if (currentLaunches == 0)
+    Message m = Message.obtain(mMainLoopHandler, new Runnable()
     {
-      final int installedVersion = getFirstInstallVersion();
-      if (installedVersion == 0)
-        nativeSetInt(FIRST_INSTALL_VERSION, BuildConfig.VERSION_CODE);
-
-      final String installedFlavor = getFirstInstallFlavor();
-      if (TextUtils.isEmpty(installedFlavor))
-        nativeSetString(FIRST_INSTALL_FLAVOR, BuildConfig.FLAVOR);
-    }
-
-    nativeSetInt(LAUNCH_NUMBER_SETTING, currentLaunches + 1);
+      @Override
+      public void run()
+      {
+        runNativeFunctor(functorPointer);
+      }
+    });
+    m.obj = mMainQueueToken;
+    mMainLoopHandler.sendMessage(m);
   }
 
-  private void updateSessionsNumber()
+  public void clearFunctorsOnUiThread()
   {
-    final int sessionNum = nativeGetInt(SESSION_NUMBER_SETTING, 0);
-    final long lastSessionTimestamp = nativeGetLong(LAST_SESSION_TIMESTAMP_SETTING, 0);
-    if (!DateUtils.isToday(lastSessionTimestamp))
-    {
-      nativeSetInt(SESSION_NUMBER_SETTING, sessionNum + 1);
-      nativeSetLong(LAST_SESSION_TIMESTAMP_SETTING, System.currentTimeMillis());
-    }
-  }
-
-  /**
-   * @return total number of application launches
-   */
-  public int getLaunchesNumber()
-  {
-    return nativeGetInt(LAUNCH_NUMBER_SETTING, 0);
-  }
-
-  /**
-   * Session = single day, when app was started any number of times.
-   *
-   * @return number of sessions.
-   */
-  public int getSessionsNumber()
-  {
-    return nativeGetInt(SESSION_NUMBER_SETTING, 0);
-  }
-
-  public int getFirstInstallVersion()
-  {
-    return nativeGetInt(FIRST_INSTALL_VERSION, 0);
-  }
-
-  public String getFirstInstallFlavor()
-  {
-    return nativeGetString(FIRST_INSTALL_FLAVOR, "");
+    mMainLoopHandler.removeCallbacksAndMessages(mMainQueueToken);
   }
 }

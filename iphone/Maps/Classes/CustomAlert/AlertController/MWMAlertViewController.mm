@@ -4,7 +4,7 @@
 
 static NSString * const kAlertControllerNibIdentifier = @"MWMAlertViewController";
 
-@interface MWMAlertViewController () <UIGestureRecognizerDelegate, UIAlertViewDelegate>
+@interface MWMAlertViewController () <UIGestureRecognizerDelegate>
 
 @property (weak, nonatomic, readwrite) UIViewController * ownerViewController;
 
@@ -40,7 +40,7 @@ static NSString * const kAlertControllerNibIdentifier = @"MWMAlertViewController
   NSString * openSettings = L(@"settings");
   if (isIOSVersionLessThan(8))
   {
-    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:title message:nil delegate:self cancelButtonTitle:cancel otherButtonTitles:nil];
+    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:title message:nil delegate:nil cancelButtonTitle:cancel otherButtonTitles:nil];
     [alertView show];
     return;
   }
@@ -61,6 +61,11 @@ static NSString * const kAlertControllerNibIdentifier = @"MWMAlertViewController
 //  });
 }
 
+- (void)presentPoint2PointAlertWithOkBlock:(nonnull TMWMVoidBlock)block needToRebuild:(BOOL)needToRebuild
+{
+  [self displayAlert:[MWMAlert point2PointAlertWithOkBlock:block needToRebuild:needToRebuild]];
+}
+
 - (void)presentFacebookAlert
 {
   [self displayAlert:MWMAlert.facebookAlert];
@@ -76,7 +81,7 @@ static NSString * const kAlertControllerNibIdentifier = @"MWMAlertViewController
   [self displayAlert:MWMAlert.noConnectionAlert];
 }
 
-- (void)presentnoWiFiAlertWithName:(nonnull NSString *)name downloadBlock:(nullable RightButtonAction)block
+- (void)presentnoWiFiAlertWithName:(nonnull NSString *)name downloadBlock:(nullable TMWMVoidBlock)block
 {
   [self displayAlert:[MWMAlert noWiFiAlertWithName:name downloadBlock:block]];
 }
@@ -129,7 +134,7 @@ static NSString * const kAlertControllerNibIdentifier = @"MWMAlertViewController
   }];
 }
 
-- (void)closeAlertWithCompletion:(nullable CloseAlertCompletion)completion
+- (void)closeAlertWithCompletion:(nullable TMWMVoidBlock)completion
 {
   MWMAlert * alert = self.view.subviews.firstObject;
   [UIView animateWithDuration:kDefaultAnimationDuration animations:^
@@ -153,14 +158,5 @@ static NSString * const kAlertControllerNibIdentifier = @"MWMAlertViewController
   if ([a canOpenURL:url])
     [a openURL:url];
 }
-
-#pragma mark - UIAlertViewDelegate
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-  if (buttonIndex == 1)
-    [self openSettings];
-}
-
 
 @end

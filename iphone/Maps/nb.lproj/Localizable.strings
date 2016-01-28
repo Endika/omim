@@ -83,7 +83,7 @@
 "no_internet_connection_detected" = "Ingen Internett-tilkobling oppdaget";
 
 /* Settings/Downloader - 3G download warning dialog title */
-"no_wifi_ask_cellular_download" = "Ingen WiFi-tilkobling oppdaget. Har du lyst til å bruke mobildata (GPRS, EDGE, 3G eller 4G) for å laste ned %@?";
+"no_wifi_ask_cellular_download" = "Ingen WiFi-tilkobling oppdaget. Har du lyst til å bruke mobildata (GPRS, EDGE, 3G eller LTE) for å laste ned %@?";
 
 "ok" = "OK";
 
@@ -142,7 +142,7 @@
 "country_status_added_to_queue" = "^\ner lagt til i nedlastingskøen.";
 
 /* Message to display at the center of the screen when the country is downloading */
-"country_status_downloading" = "Laster ned\n^\n^%";
+"country_status_downloading" = "Laster ned\n^\n^";
 
 /* Button text for the button at the center of the screen when the country is not downloaded */
 "country_status_download" = "Last ned kart\n(^ ^)";
@@ -467,6 +467,9 @@
 /* Prints version number in About dialog */
 "version" = "Versjon: %@";
 
+/* Data version in «About» screen */
+"data_version" = "Data version: %d";
+
 /* Confirmation in downloading countries dialog */
 "are_you_sure" = "Er du sikker på at du ønsker å fortsette?";
 
@@ -478,13 +481,75 @@
 
 "share_my_location" = "Del posisjonen min";
 
-"become_a_pro" = "Upgrade";
-
 "menu_search" = "Søk";
+
+/* Settings screen: "Map" category title */
+"prefs_group_map" = "Kart";
+
+/* Settings screen: "Miscellaneous" category title */
+"prefs_group_misc" = "Diverse";
+
+"prefs_group_route" = "Navigasjon";
 
 "pref_zoom_title" = "Zoom-knapper";
 
 "pref_zoom_summary" = "Vis på skjermen";
+
+/* Settings «Map» category: «Night style» title */
+"pref_map_style_title" = "Nattmodus";
+
+/* «Map style» entry value */
+"pref_map_style_default" = "Av";
+
+/* «Map style» entry value */
+"pref_map_style_night" = "På";
+
+/* «Map style» entry value */
+"pref_map_style_auto" = "Auto";
+
+/* Settings «Map» category: «Perspective view» title */
+"pref_map_3d_title" = "Perspektivvisning";
+
+/* Settings «Map» category: «3D buildings» title */
+"pref_map_3d_buildings_title" = "Bygninger i 3D";
+
+/* Settings «Map» category: «3D buildings» summary */
+"pref_map_3d_buildings_subtitle" = "Påvirker batteriets levetid";
+
+/* Settings «Route» category: «Tts enabled» title */
+"pref_tts_enable_title" = "Taleinstrukser";
+
+/* Settings «Route» category: «Tts language» title */
+"pref_tts_language_title" = "Talespråk";
+
+/* Settings «Route» category: «Tts unavailable» subtitle */
+"pref_tts_unavailable" = "Ikke tilgjengelig";
+
+/* Title for "Other" section in TTS settings. */
+"pref_tts_other_section_title" = "Andre";
+
+"pref_tts_how_to_set_up_voice" = "Slik installerer du stemme";
+
+/* Settings «Map» category: «Record track» title */
+"pref_track_record_title" = "Siste rute";
+
+"duration_disabled" = "Av";
+
+"duration_1_hour" = "1 time";
+
+"duration_2_hours" = "2 timer";
+
+"duration_6_hours" = "6 timer";
+
+"duration_12_hours" = "12 timer";
+
+"duration_1_day" = "1 dag";
+
+"recent_track_help_text" = "Merk følgende: Aktivering av denne funksjonen forårsaker økt batteribruk.";
+
+"pref_track_ios_caption" = "Nylig rute viser ruten du har fulgt.";
+
+"pref_track_ios_subcaption" = "Velg en tidsperiode for rutelagring.";
 
 "placepage_distance" = "Avstand";
 
@@ -524,12 +589,6 @@
 /* category title */
 "routes" = "Ruter";
 
-/* button in the interface */
-"choose_starting_point" = "Velg startpunkt…";
-
-/* button in the interface */
-"choose_destination" = "Velg destinasjon…";
-
 /* Show on first launch. */
 "maps_licence_info" = "Denne applikasjonen bruker geografiske data (inkludert kart, butikkoppføringer, interessepunkter, landegrenser og regiongrenser osv.) som er hentet fra OpenStreetMap-prosjektet. Vi garanterer ikke at data fra OpenStreetMap alltid er konsekvente, nøyaktige, fullstendige eller pålitelige.";
 
@@ -558,6 +617,12 @@
 "settings_and_more" = "Innstillinger med mer";
 
 /* Text in menu */
+"website" = "Website";
+
+/* Text in menu */
+"blog" = "Blog";
+
+/* Text in menu */
 "maps_me_community" = "MAPS.ME-samfunnet";
 
 /* Text in menu */
@@ -569,11 +634,26 @@
 /* Text in menu */
 "contact_us" = "Kontakt oss";
 
+/* Settings: Send feedback button and dialog title */
+"feedback" = "Feedback";
+
+/* Settings: "Send general feedback" button */
+"feedback_general" = "General feedback";
+
 /* Text in menu */
 "subscribe_to_news" = "Abonner på nyheter fra oss";
 
 /* Text in menu */
 "rate_the_app" = "Ranger appen";
+
+/* Rate in Google Play (Android only) */
+"rate_gp" = "Rate on Google Play";
+
+/* Share with friends: menu item title */
+"tell_friends" = "Tell a Friend";
+
+/* Share with friends: sharing text */
+"tell_friends_text" = "Hi! Install Maps.me!";
 
 /* Text in menu */
 "help" = "Hjelp";
@@ -589,6 +669,9 @@
 
 /* Email body */
 "subscribe_me_body" = "Jeg ønsker å være den første som får vite om siste nytt og nye kampanjer. Jeg kan avbestille abonnementet når som helst.";
+
+/* About short text (below logo) */
+"about_description" = "Joined efforts of Mail.Ru Group and OpenStreetMap make the most useful application for travelers!";
 
 /* About text */
 "about_text" = "MAPS.ME tilbyr de raskeste offline-kartene over alle byer i alle land i verden. Reis trygt: Uansett hvor du er, kan MAPS.ME hjelpe deg med å finne ut hvor du er på kartet eller finne nærmeste restaurant, hotell, bank, bensinstasjon osv. Det kreves ingen internettforbindelse.\n\nVi jobber alltid med å legge inn nye funksjoner, og vi vil gjerne høre hvordan du synes at vi kan forbedre MAPS.ME. Hvis du får problemer med appen, ikke nøl med å kontakte oss på support@maps.me. Vi svarer på alle forespørsler!\n\nLiker du MAPS.ME og ønsker å støtte oss? Det er noen enkle og helt gratis måter å gjøre det på:\n\n- Legg inn en vurdering på app-butikken\n- Lik Facebook-siden vår på http://www.facebook.com/mapswithme\n- Eller bare fortell mamma, venner og kolleger om MAPS.ME :)\n\nTakk for at du er med oss. Vi setter stor pris på støtten!\n\nPS! Vi henter kartdata fra OpenStreetMap, et kartprosjekt som ligner på Wikipedia, der brukerne selv kan opprette og redigere kart. Hvis du finner mangler eller feil på kartet, kan du korrigere kartet direkte på http://openstreetmap.org, og endringene vil vises i MAPS.ME-appen når neste versjon kommer.";
@@ -679,7 +762,7 @@
 
 "downloader_download_map_no_routing" = "Last ned kart uten veiviserfunksjon";
 
-/* Button for routing PP. */
+/* Button for routing. */
 "routing_go" = "Kjør!";
 
 /* Item status in downloader. */
@@ -1105,6 +1188,8 @@
 
 "dialog_routing_disclaimer_recommendations" = "– Foreslåtte ruter bør bare anses som anbefalinger;";
 
+"dialog_routing_disclaimer_borders" = "— Vær forsiktig når det gjelder ruter i grenseområder: rutene som appen vår oppretter kan komme til å krysse landegrenser i uatoriserte områder;";
+
 "dialog_routing_disclaimer_beware" = "Kjør trygt!";
 
 "dialog_routing_check_gps" = "Sjekk GPS-signal";
@@ -1193,49 +1278,10 @@
 "routing_planning_error" = "Mislykket ruteplanlegging";
 
 /* Arrive routing message in navigation view */
-"routing_arrive" = "Ankomme";
-
-/* Routing Start button title */
-"routing_start" = "Begynn";
-
-/* Planning route message in navigation view */
-"routing_planning" = "Planlegg en rute";
+"routing_arrive" = "Ankomme: %s";
 
 /* Text for routing::IRouter::FileTooOld dialog. */
 "dialog_routing_download_and_update_maps" = "Hvis du vil oppprette en rute, last ned og oppdater alle kartene langs ruten.";
-
-/* Text for facebook sharing news about walking routes */
-"share_walking_routes_facebook" = "MAPS.ME sparer deg gangetid. Mer enn 2 kilometer av gå-ruter, spor og stier er tilgjengelige for beskrivelser nå.";
-
-/* Text for messenger sharing news about walking routes */
-"share_walking_routes_messenger" = "MAPS.ME gir de korteste gå-rutene i hele verden! Sjekk dem ut: http://maps.me/get?walk_im";
-
-/* Text for sms sharing news about walking routes */
-"share_walking_routes_sms" = "MAPS.ME gir de korteste gå-rutene: http://maps.me/get?walk";
-
-/* Subject for email sharing news about walking routes */
-"share_walking_routes_email_subject" = "De korteste gå-rutene er tilgjengelige";
-
-/* Text for email sharing news about walking routes */
-"share_walking_routes_email_body" = "MAPS.ME har nettopp lansert gå-ruter basert på de mest detaljerte kartene i verden! De gir de korteste rutene til enhver destinasjon. Prøv dem: http://maps.me/get?walk_em";
-
-/* Title for walking routes dialog, notifications etc. */
-"title_walking_available" = "Gå-ruter er tilgjengelig i MAPS.ME!";
-
-/* Text for walking routes dialog */
-"share_walking_routes_first_launch" = "De gir den korteste ruten til enhver destinasjon. Hjelp vennene dine å spare tid også!";
-
-/* Title for walking routes dialog after 3 built routes */
-"share_walking_routes_congratulations" = "Gratulerer!";
-
-/* Text for walking routes dialog after 3 built routes */
-"share_walking_routes_mastering" = "Du mestret Gå-ruter funksjonen. Hjelp vennene dine å spare tid, også. Fortell dem om MAPS.ME.";
-
-/* Android notification about walking directions for update users */
-"walking_notification_text" = "Vil du prøve dem?";
-
-/* Android notification with picture (rich) about walking directions for update users */
-"walking_rich_notification_text" = "De gir den korteste ruten til enhver destinasjon. Prøv dem selv og hjelp vennene dine å spare reisetid.";
 
 "rate_alert_title" = "Liker du appen?";
 
@@ -1269,10 +1315,38 @@
 
 "search_history_text" = "Vis de siste søkene raskt.";
 
-"update_maps_alert_title" = "Enklere utforsking på kartet";
-
-"update_maps_alert_message" = "Vi har forbedret utformingen på kartene: Nå vil alle objektene se tydeligere og mer brukervennlige ut. Oppdater kartene for å få det meste ut av den nye utformingen.";
-
-"update_maps_alert_button_title" = "Oppdater kart";
-
 "clear_search" = "Tøm søkehistorikk";
+
+/* Title for settings to enable/disable showcase menu button */
+"showcase_settings_title" = "Vis tilbud";
+
+"showcase_more_apps" = "Flere apper fra My.com";
+
+/* Place Page link to Wikipedia article (if map object has it). */
+"read_in_wikipedia" = "Wikipedia";
+
+"p2p_route_planning" = "Ruteplanlegging";
+
+"p2p_your_location" = "Din beliggenhet";
+
+"p2p_from" = "Avreisested";
+
+"p2p_to" = "Destinasjonssted";
+
+"p2p_start" = "Start";
+
+"p2p_planning" = "Planlegger…";
+
+"p2p_from_here" = "Fra";
+
+"p2p_to_here" = "Til";
+
+"p2p_only_from_current" = "Navigering er kun tilgjengelig fra din nåværende beliggenhet.";
+
+"p2p_reroute_from_current" = "Vil du vi skal planlegge en rute fra din nåværende posisjon?";
+
+"whats_new_next_button" = "Neste";
+
+"whats_new_night_caption" = "Nattmodus-navigering";
+
+"whats_new_night_body" = "For å tilrettelegge bruk av MAPS.ME under mørkekjøring har vi lagt til funksjonen nattmodus. Funksjonen skrues automatisk på etter solnedgang.";

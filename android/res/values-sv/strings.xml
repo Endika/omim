@@ -51,7 +51,7 @@
 	<!-- Settings/Downloader - No internet connection dialog title -->
 	<string name="no_internet_connection_detected">Ingen internetanslutning upptäcktes</string>
 	<!-- Settings/Downloader - 3G download warning dialog title -->
-	<string name="no_wifi_ask_cellular_download">Ingen WiFi-anslutning upptäcktes. Vill du använda mobildata (GPRS, EDGE eller 3G) till att ladda ner %s?</string>
+	<string name="no_wifi_ask_cellular_download">Ingen WiFi-anslutning upptäcktes. Vill du använda mobildata (GPRS, EDGE, 3G eller LTE) till att ladda ner %s?</string>
 	<string name="ok">OK</string>
 	<!-- not used? Search View - Location is disabled by user warning text -->
 	<string name="enable_location_services">Vänligen aktivera platstjänster</string>
@@ -88,7 +88,7 @@
 	<!-- Message to display at the center of the screen when the country is added to the downloading queue -->
 	<string name="country_status_added_to_queue">^\när tillagd till nedladdningskön</string>
 	<!-- Message to display at the center of the screen when the country is downloading -->
-	<string name="country_status_downloading">Laddar ner\n^\n^%</string>
+	<string name="country_status_downloading">Laddar ner\n^\n^</string>
 	<!-- Button text for the button at the center of the screen when the country is not downloaded -->
 	<string name="country_status_download">Ladda ner karta\n(^ ^)</string>
 	<!-- Button text for the button at the center of the screen when the country is not downloaded -->
@@ -273,7 +273,7 @@
 	<!-- iOS share by Message button text (including SMS) -->
 	<string name="message">Meddelande</string>
 	<!-- Share by email button text -->
-	<string name="email">E-Mail</string>
+	<string name="email">E-mail</string>
 	<!-- Copy Link -->
 	<string name="copy_link">Kopiera Länk</string>
 	<!-- Text for the button that returns to caller application -->
@@ -303,10 +303,48 @@
 	<!-- Length of track in cell that describes route -->
 	<string name="length">Längd</string>
 	<string name="share_my_location">Dela Min Plats</string>
-	<string name="become_a_pro">Uppgradera</string>
 	<string name="menu_search">Sök</string>
+	<!-- Settings screen: "Map" category title -->
+	<string name="prefs_group_map">Karta</string>
+	<!-- Settings screen: "Miscellaneous" category title -->
+	<string name="prefs_group_misc">Diverse</string>
+	<string name="prefs_group_route">Navigering</string>
 	<string name="pref_zoom_title">Zoom-knappar</string>
 	<string name="pref_zoom_summary">Visa på skärmen</string>
+	<!-- Settings «Map» category: «Night style» title -->
+	<string name="pref_map_style_title">Nattläge</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_default">Av</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_night">På</string>
+	<!-- «Map style» entry value -->
+	<string name="pref_map_style_auto">Auto</string>
+	<!-- Settings «Map» category: «Perspective view» title -->
+	<string name="pref_map_3d_title">Perspektivvy</string>
+	<!-- Settings «Map» category: «3D buildings» title -->
+	<string name="pref_map_3d_buildings_title">3D-byggnader</string>
+	<!-- Settings «Map» category: «3D buildings» summary -->
+	<string name="pref_map_3d_buildings_subtitle">Påverkar batteriets livslängd</string>
+	<!-- Settings «Route» category: «Tts enabled» title -->
+	<string name="pref_tts_enable_title">Röstinstruktioner</string>
+	<!-- Settings «Route» category: «Tts language» title -->
+	<string name="pref_tts_language_title">Röstspråk</string>
+	<!-- Settings «Route» category: «Tts unavailable» subtitle -->
+	<string name="pref_tts_unavailable">Inte tillgängligt</string>
+	<!-- Title for "Other" section in TTS settings. -->
+	<string name="pref_tts_other_section_title">Övrigt</string>
+	<string name="pref_tts_how_to_set_up_voice">Hur man ställer in ljud</string>
+	<!-- Settings «Map» category: «Record track» title -->
+	<string name="pref_track_record_title">Senaste resväg</string>
+	<string name="duration_disabled">Av</string>
+	<string name="duration_1_hour">1 timme</string>
+	<string name="duration_2_hours">2 timmar</string>
+	<string name="duration_6_hours">6 timmar</string>
+	<string name="duration_12_hours">12 timmar</string>
+	<string name="duration_1_day">1 dag</string>
+	<string name="recent_track_help_text">Obs: aktivering av denna funktion orsakar ökad batterianvändning.</string>
+	<string name="pref_track_ios_caption">Senaste resväg visar den väg du rest.</string>
+	<string name="pref_track_ios_subcaption">Välj tidsintervall för att spara resvägen.</string>
 	<string name="placepage_distance">Avstånd</string>
 	<string name="placepage_coordinates">Koordinater</string>
 	<string name="placepage_unsorted">Osorterade</string>
@@ -331,10 +369,6 @@
 	<string name="route">Rutt</string>
 	<!-- category title -->
 	<string name="routes">Rutter</string>
-	<!-- button in the interface -->
-	<string name="choose_starting_point">Välj startpunkt…</string>
-	<!-- button in the interface -->
-	<string name="choose_destination">Välj destination…</string>
 	<!-- Show on first launch. -->
 	<string name="maps_licence_info">Detta program använder geografisk data (inkluderar kartor, företagsuppgifter, intressepunkter, landsgränser och regioner m.m.) från OpenStreetMap projektet. Vi garanterar ingen konsekvenshet, nogrannhet, fullständighet eller tillämpbarhet av OpenStreetMap datan.</string>
 	<!-- Show on first launch -->
@@ -362,7 +396,7 @@
 	<!-- Text in menu -->
 	<string name="subscribe_to_news">Prenumerera på våra nyheter</string>
 	<!-- Text in menu -->
-	<string name="rate_the_app">Get appen ett betyg</string>
+	<string name="rate_the_app">Ge appen ett betyg</string>
 	<!-- Text in menu -->
 	<string name="help">Hjälp</string>
 	<!-- Text in menu -->
@@ -379,6 +413,8 @@
 	<string name="email_error_body">E-mailklienten har inte konfigurerats. Konfigurera den eller använd ett annat sätt att kontakta oss på %s</string>
 	<!-- Alert title -->
 	<string name="email_error_title">Fel när mailet skulle skickas</string>
+	<!-- Settings item title -->
+	<string name="pref_calibration_title">Kompasskalibrering</string>
 	<!-- Update map suggestion -->
 	<string name="routing_map_outdated">Uppdatera kartan för att skapa en rutt.</string>
 	<!-- Update maps suggestion -->
@@ -428,7 +464,7 @@
 	<!-- Context menu item for downloader. -->
 	<string name="downloader_download_map">Ladda ner kartan</string>
 	<string name="downloader_download_map_no_routing">Hämta karta utan rutter</string>
-	<!-- Button for routing PP. -->
+	<!-- Button for routing. -->
 	<string name="routing_go">Kör!</string>
 	<!-- Item status in downloader. -->
 	<string name="downloader_retry">Försök igen</string>
@@ -710,6 +746,7 @@
 	<string name="dialog_routing_disclaimer_priority">— Vägförhållanden, trafiklagar och vägskyltar alltid ska prioriteras över navigeringsråd;</string>
 	<string name="dialog_routing_disclaimer_precision">— Kartan kan vara felaktig och den föreslagna vägen inte alltid är det optimala sättet att ta sig till destinationen;</string>
 	<string name="dialog_routing_disclaimer_recommendations">— Föreslagna vägar endast är rekommendationer;</string>
+	<string name="dialog_routing_disclaimer_borders">— Iakttag försiktighet med rutter i gränszoner: rutterna som vår app skapat kan ibland korsa landsgränser på otillåtna platser;</string>
 	<string name="dialog_routing_disclaimer_beware">Var uppmärksam och kör säkert på vägarna!</string>
 	<string name="dialog_routing_check_gps">Kontrollera GPS-signal</string>
 	<string name="dialog_routing_error_location_not_found">Kan inte skapa väg. Nuvarande GPS-koordinater kan inte identifieras.</string>
@@ -758,35 +795,9 @@
 	<!-- Failed planning route message in navigation view -->
 	<string name="routing_planning_error">Ruttplanering misslyckades</string>
 	<!-- Arrive routing message in navigation view -->
-	<string name="routing_arrive">Ankomst</string>
-	<!-- Routing Start button title -->
-	<string name="routing_start">Starta</string>
-	<!-- Planning route message in navigation view -->
-	<string name="routing_planning">Planerar rutt</string>
+	<string name="routing_arrive">Ankomst: %s</string>
 	<!-- Text for routing::IRouter::FileTooOld dialog. -->
 	<string name="dialog_routing_download_and_update_maps">För att skapa en rutt, ladda ner och uppdatera alla kartor längs rutten.</string>
-	<!-- Text for facebook sharing news about walking routes -->
-	<string name="share_walking_routes_facebook">MAPS.ME sparar gångtid. Över 2 miljoner km gångrutter, stigar och leder finns med vägbeskrivningar till fots.</string>
-	<!-- Text for messenger sharing news about walking routes -->
-	<string name="share_walking_routes_messenger">MAPS.ME ger dig den kortaste gångrutten över hela världen! Kolla in på: http://maps.me/get?walk_im</string>
-	<!-- Text for sms sharing news about walking routes -->
-	<string name="share_walking_routes_sms">MAPS.ME ger dig de kortaste gångrutterna: http://maps.me/get?walk</string>
-	<!-- Subject for email sharing news about walking routes -->
-	<string name="share_walking_routes_email_subject">Nu med de kortaste gångrutterna</string>
-	<!-- Text for email sharing news about walking routes -->
-	<string name="share_walking_routes_email_body">MAPS.ME släppte precis vägbeskrivningar till fots baserade på världens mest detaljerade karta! De ger dig den kortaste rutten till alla destinationer. Prova på: http://maps.me/get?walk_em</string>
-	<!-- Title for walking routes dialog, notifications etc. -->
-	<string name="title_walking_available">MAPS.ME har nu vägbeskrivningar till fots!</string>
-	<!-- Text for walking routes dialog -->
-	<string name="share_walking_routes_first_launch">Du får den kortaste rutten till alla destinationer. Testa det själv och hjälp även dina vänner att spara restid!</string>
-	<!-- Title for walking routes dialog after 3 built routes -->
-	<string name="share_walking_routes_congratulations">Grattis!</string>
-	<!-- Text for walking routes dialog after 3 built routes -->
-	<string name="share_walking_routes_mastering">Du har bemästrat funktionen med vägbeskrivningar till fots. Hjälp även dina vänner att spara gångtid. Berätta för dem om MAPS.ME.</string>
-	<!-- Android notification about walking directions for update users -->
-	<string name="walking_notification_text">Vill du testa det?</string>
-	<!-- Android notification with picture (rich) about walking directions for update users -->
-	<string name="walking_rich_notification_text">Du får den kortaste rutten till alla destinationer. Testa det själv och hjälp dina vänner att spara restid.</string>
 	<string name="rate_alert_title">Gillar du appen?</string>
 	<string name="rate_alert_default_message">Tack för att du använder MAPS.ME. Betygsätt gärna appen. Din feedback hjälper oss att bli bättre.</string>
 	<string name="rate_alert_five_star_message">Hurra! Vi älskar dig också!</string>
@@ -803,8 +814,21 @@
 	<string name="search_not_found_location">Ladda ner kartan över din nuvarande position.</string>
 	<string name="search_history_title">Sökhistorik</string>
 	<string name="search_history_text">Få snabbare åtkomst till senaste sökförfrågan.</string>
-	<string name="update_maps_alert_title">Nu är det enklare att utforska kartan</string>
-	<string name="update_maps_alert_message">Kartornas stil har blivit bättre: objekt har ett mer positivt utseende och syns bättre. Uppdatera kartorna och utnyttja den nya designen maximalt.</string>
-	<string name="update_maps_alert_button_title">Uppdatera kartor</string>
 	<string name="clear_search">Rensa sökhistorik</string>
+	<!-- Title for settings to enable/disable showcase menu button -->
+	<string name="showcase_settings_title">Visa erbjudanden</string>
+	<string name="showcase_more_apps">Mai multe aplicații My.com</string>
+	<string name="p2p_route_planning">Ruttplanering</string>
+	<string name="p2p_your_location">Din plats</string>
+	<string name="p2p_from">Startplats</string>
+	<string name="p2p_to">Målplats</string>
+	<string name="p2p_start">Start</string>
+	<string name="p2p_planning">Planerar…</string>
+	<string name="p2p_from_here">Från</string>
+	<string name="p2p_to_here">Till</string>
+	<string name="p2p_only_from_current">Navigering är endast tillgänglig från din aktuella plats.</string>
+	<string name="p2p_reroute_from_current">Vill du att vi planerar en färdväg från din nuvarande plats?</string>
+	<string name="whats_new_next_button">Nästa</string>
+	<string name="whats_new_night_caption">Navigering i nattläge</string>
+	<string name="whats_new_night_body">För att underlätta användandet av MAPS.ME under mörkerkörning har vi lagt till nattläget. Det slås automatiskt på efter att solen gått ned.</string>
 </resources>

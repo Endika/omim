@@ -1,5 +1,6 @@
 #import "Common.h"
 #import "MWMSearchHistoryRequestCell.h"
+#import "UIColor+MapsMeColor.h"
 #import "UIFont+MapsMeFonts.h"
 
 @interface MWMSearchHistoryRequestCell ()
@@ -13,6 +14,8 @@
 
 - (void)awakeFromNib
 {
+  if (IPAD)
+    self.contentView.backgroundColor = [UIColor white];
   self.layer.shouldRasterize = YES;
   self.layer.rasterizationScale = UIScreen.mainScreen.scale;
 }
@@ -33,15 +36,6 @@
 - (CGFloat)cellHeight
 {
   return ceil([self.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height);
-}
-
-#pragma mark - Properties
-
-- (void)setIsLightTheme:(BOOL)isLightTheme
-{
-  _isLightTheme = isLightTheme;
-  self.icon.image =
-      [UIImage imageNamed:isLightTheme ? @"ic_history_label_light" : @"ic_history_label_dark"];
 }
 
 @end

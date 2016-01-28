@@ -23,17 +23,7 @@ static inline CGFloat LengthCGPoint(CGPoint point)
 @interface NSObject (Optimized)
 
 + (NSString *)className;
-- (void)performAfterDelay:(NSTimeInterval)delayInSec block:(void (^)(void))block;
-
-@end
-
-
-@interface UIColor (HexColor)
-
-+ (UIColor *)colorWithColorCode:(NSString *)colorCode;
-+ (UIColor *)applicationBackgroundColor;
-+ (UIColor *)applicationColor;
-+ (UIColor *)navigationBarColor;
+- (void)performAfterDelay:(NSTimeInterval)delayInSec block:(TMWMVoidBlock)block;
 
 @end
 
@@ -50,11 +40,22 @@ static inline CGFloat LengthCGPoint(CGPoint point)
 @property (nonatomic) CGFloat height;
 @property (nonatomic) CGSize size;
 
-+ (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay damping:(double)dampingRatio initialVelocity:(double)springVelocity options:(UIViewAnimationOptions)options animations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion;
++ (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay damping:(double)dampingRatio initialVelocity:(double)springVelocity options:(UIViewAnimationOptions)options animations:(TMWMVoidBlock)animations completion:(void (^)(BOOL finished))completion;
 - (void)sizeToIntegralFit;
 
 @end
 
+@interface UIView (Refresh)
+
+- (void)refresh;
+
+@end
+
+@interface UIImageView (IOS7Workaround)
+
+- (void)makeImageAlwaysTemplate;
+
+@end
 
 @interface UIApplication (URLs)
 
@@ -73,7 +74,6 @@ static inline CGFloat LengthCGPoint(CGPoint point)
 @interface SolidTouchView : UIView
 
 @end
-
 
 @interface SolidTouchImageView : UIImageView
 
